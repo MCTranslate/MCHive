@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import guideIndex from '../../data/guides.json'
 import { parseMarkdown } from '../composables/markdown.js'
@@ -63,19 +63,74 @@ watch(function() { return route.params.id }, function(newId) {
 const relatedGuides = computed(function() {
   return guideIndex.filter(function(g) { return g.id !== route.params.id })
 })
+
+const headings = computed(function() {
+  const raw = html.value
+  const result = []
+  raw.replace(/<h([2-4])>([\s\S]*?)<\/h\1>/g, function(_, level, title) {
+    const cleanTitle = title.replace(/<[^>]*>/g, '')
+    result.push({ level: Number(level), title: cleanTitle, id: headingId(cleanTitle, result.length) })
+    return _
+  })
+  return result
+})
+
+const guidePosition = computed(function() {
+  return guideIndex.findIndex(function(item) { return item.id === route.params.id })
+})
+const previousGuide = computed(function() { return guideIndex[guidePosition.value - 1] || null })
+const nextGuide = computed(function() { return guideIndex[guidePosition.value + 1] || null })
+
+function headingId(title, index) {
+  return 'section-' + index + '-' + title.toLowerCase().replace(/[^\w\u4e00-\u9fa5]+/g, '-')
+}
+
+function setHeadingIds() {
+  nextTick(function() {
+    const rendered = document.querySelectorAll('.guide-content .markdown-body h2, .guide-content .markdown-body h3, .guide-content .markdown-body h4')
+    rendered.forEach(function(element, index) {
+      element.id = headings.value[index] ? headings.value[index].id : headingId(element.textContent, index)
+    })
+  })
+}
+
+function scrollToHeading(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+function copyCode(event) {
+  const button = event.target.closest('[data-copy-code]')
+  if (!button) return
+  const code = button.closest('pre')?.querySelector('code')?.textContent || ''
+  navigator.clipboard.writeText(code).then(function() {
+    button.textContent = '已复制'
+    window.setTimeout(function() { button.textContent = '复制' }, 1400)
+  }).catch(function() {
+    button.textContent = '复制失败'
+    window.setTimeout(function() { button.textContent = '复制' }, 1400)
+  })
+}
+
+watch(html, setHeadingIds)
 </script>
 
 <template>
   <div class="guide-detail" v-if="guide">
+    <div class="breadcrumb"><RouterLink to="/">首页</RouterLink><span>/</span><RouterLink to="/guides">开服指南</RouterLink><span>/</span><span>{{ guide.name }}</span></div>
     <header class="guide-header">
-      <span class="guide-icon">{{ guide.icon }}</span>
       <div>
+        <span class="section-kicker">SERVER SETUP GUIDE</span>
         <h1>{{ guide.name }}</h1>
         <p class="tagline">{{ guide.description }}</p>
       </div>
     </header>
 
-    <div class="guide-content">
+    <div class="guide-layout">
+      <aside class="guide-toc" v-if="headings.length">
+        <span class="toc-title">本页目录</span>
+        <a v-for="heading in headings" :key="heading.id" :href="`#${heading.id}`" :class="'toc-level-' + heading.level" @click.prevent="scrollToHeading(heading.id)">{{ heading.title }}</a>
+      </aside>
+      <div class="guide-content">
       <div v-if="loading" class="empty-state">
         <span class="icon">⚙️</span>
         <h3>正在加载内容...</h3>
@@ -87,11 +142,18 @@ const relatedGuides = computed(function() {
         <p>请检查 content/guides/ 目录下是否存在对应文件</p>
       </div>
 
-      <div v-else class="markdown-body" v-html="html"></div>
+      <div v-else class="markdown-body" v-html="html" @click="copyCode"></div>
+      </div>
     </div>
 
     <footer class="related">
-      <h3>继续阅读</h3>
+      <h3>沿着开服路线继续</h3>
+      <div class="guide-sequence" v-if="previousGuide || nextGuide">
+        <RouterLink v-if="previousGuide" :to="`/guide/${previousGuide.id}`" class="sequence-item"><span>上一步</span><b>← {{ previousGuide.name }}</b></RouterLink>
+        <span v-else></span>
+        <RouterLink v-if="nextGuide" :to="`/guide/${nextGuide.id}`" class="sequence-item next"><span>下一步</span><b>{{ nextGuide.name }} →</b></RouterLink>
+        <span v-else></span>
+      </div>
       <div class="related-list">
         <div
           v-for="g in relatedGuides"
@@ -125,6 +187,10 @@ const relatedGuides = computed(function() {
   margin: 0 auto;
   padding: 32px 40px;
 }
+.breadcrumb { display: flex; gap: 9px; margin-bottom: 37px; color: var(--text-muted); font-size: 11px; }
+.breadcrumb a { color: var(--text-muted); text-decoration: none; }
+.breadcrumb a:hover { color: var(--accent-strong); }
+.section-kicker { color: var(--accent-strong); font: 10px var(--font-mono); letter-spacing: 1px; }
 
 .guide-header {
   display: flex;
@@ -135,15 +201,11 @@ const relatedGuides = computed(function() {
   border-bottom: 1px solid var(--border);
 }
 
-.guide-icon {
-  font-size: 36px;
-  line-height: 1;
-}
-
 .guide-header h1 {
   font-size: 26px;
   font-weight: 800;
   color: var(--text-primary);
+  margin-top: 8px;
   margin-bottom: 4px;
 }
 
@@ -157,10 +219,24 @@ const relatedGuides = computed(function() {
   min-height: 300px;
 }
 
+.guide-layout { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 36px; align-items: start; }
+.guide-toc { position: sticky; top: 92px; display: flex; flex-direction: column; gap: 8px; max-height: calc(100vh - 120px); overflow-y: auto; padding-left: 12px; border-left: 1px solid var(--border); }
+.toc-title { margin-bottom: 5px; color: var(--text-primary); font-size: 11px; font-weight: 650; }
+.guide-toc a { color: var(--text-muted); text-decoration: none; font-size: 10px; line-height: 1.5; }
+.guide-toc a:hover { color: var(--accent-strong); }
+.guide-toc .toc-level-3 { padding-left: 8px; }
+.guide-toc .toc-level-4 { padding-left: 16px; }
+
 .related {
   border-top: 1px solid var(--border);
   padding-top: 24px;
 }
+.guide-sequence { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+.sequence-item { min-height: 66px; display: flex; flex-direction: column; justify-content: center; gap: 5px; padding: 10px 13px; border: 1px solid var(--border); border-radius: 4px; text-decoration: none; color: inherit; }
+.sequence-item span { color: var(--text-muted); font-size: 9px; }
+.sequence-item b { font-size: 11px; font-weight: 600; }
+.sequence-item:hover { border-color: var(--accent-strong); }
+.sequence-item.next { text-align: right; }
 
 .related h3 {
   font-size: 15px;
@@ -218,11 +294,16 @@ const relatedGuides = computed(function() {
 
 @media (max-width: 768px) {
   .guide-detail {
-    padding: 16px;
+    padding: 18px;
   }
+  .breadcrumb { margin-bottom: 29px; flex-wrap: wrap; }
   .guide-header {
     flex-direction: column;
     gap: 8px;
   }
+  .guide-layout { display: block; }
+  .guide-toc { position: static; max-height: 180px; margin: 0 0 24px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 4px; }
+  .guide-sequence { gap: 8px; }
+  .sequence-item { padding: 9px; }
 }
 </style>

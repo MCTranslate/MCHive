@@ -109,15 +109,36 @@ var tutorialHtml = computed(function() {
 function copyContent(text) {
   if (!text) return
   navigator.clipboard.writeText(text).then(function() {
-    alert('已复制到剪贴板')
+    copied.value = true
+    window.setTimeout(function() { copied.value = false }, 1400)
   }).catch(function() {
-    alert('复制失败，请手动选择文本复制')
+    copied.value = false
   })
 }
+
+const copied = ref(false)
+
+function copyCode(event) {
+  const button = event.target.closest('[data-copy-code]')
+  if (!button) return
+  const code = button.closest('pre')?.querySelector('code')?.textContent || ''
+  navigator.clipboard.writeText(code).then(function() {
+    button.textContent = '已复制'
+    window.setTimeout(function() { button.textContent = '复制' }, 1400)
+  }).catch(function() {
+    button.textContent = '复制失败'
+    window.setTimeout(function() { button.textContent = '复制' }, 1400)
+  })
+}
+
+const relatedPlugins = computed(function() {
+  return pluginIndex.filter(function(item) { return item.id !== route.params.id })
+})
 </script>
 
 <template>
   <div class="plugin-detail" v-if="plugin">
+    <div class="breadcrumb"><RouterLink to="/">首页</RouterLink><span>/</span><RouterLink to="/plugins">插件中心</RouterLink><span>/</span><span>{{ plugin.name }}</span></div>
     <header class="detail-header">
       <div class="header-info">
         <div class="plugin-icon-lg">{{ plugin.name[0] }}</div>
@@ -160,7 +181,7 @@ function copyContent(text) {
       </div>
 
       <div v-else-if="activeTab === 'tutorial'">
-        <div class="markdown-body" v-html="tutorialHtml"></div>
+        <div class="markdown-body" v-html="tutorialHtml" @click="copyCode"></div>
       </div>
 
       <section v-else-if="activeTab === 'lang'">
@@ -171,10 +192,10 @@ function copyContent(text) {
         <div class="file-toolbar">
           <span class="file-name">{{ findSection('lang') && findSection('lang').file }}</span>
           <button class="btn btn-secondary" @click="copyContent(sectionContents['lang'])">
-            复制内容
+            {{ copied ? '已复制' : '复制内容' }}
           </button>
         </div>
-        <pre class="file-content">{{ sectionContents['lang'] }}</pre>
+        <pre class="file-content"><code>{{ sectionContents['lang'] }}</code></pre>
       </section>
 
       <section v-else-if="activeTab === 'config'">
@@ -185,10 +206,10 @@ function copyContent(text) {
         <div class="file-toolbar">
           <span class="file-name">{{ findSection('config') && findSection('config').file }}</span>
           <button class="btn btn-secondary" @click="copyContent(sectionContents['config'])">
-            复制内容
+            {{ copied ? '已复制' : '复制内容' }}
           </button>
         </div>
-        <pre class="file-content">{{ sectionContents['config'] }}</pre>
+        <pre class="file-content"><code>{{ sectionContents['config'] }}</code></pre>
       </section>
     </div>
 
@@ -197,6 +218,10 @@ function copyContent(text) {
       :plugin-id="plugin.id"
       :plugin-name="plugin.name"
     />
+    <section class="related-plugins" v-if="relatedPlugins.length">
+      <h2>更多插件资料</h2>
+      <div><RouterLink v-for="item in relatedPlugins" :key="item.id" :to="`/plugin/${item.id}`"><span>{{ item.category }}</span><b>{{ item.name }}</b><small>{{ item.description }}</small></RouterLink></div>
+    </section>
   </div>
 
   <div v-else class="plugin-detail">
@@ -215,6 +240,9 @@ function copyContent(text) {
   margin: 0 auto;
   padding: 32px 40px;
 }
+.breadcrumb { display: flex; gap: 9px; margin-bottom: 29px; color: var(--text-muted); font-size: 11px; }
+.breadcrumb a { color: var(--text-muted); text-decoration: none; }
+.breadcrumb a:hover { color: var(--accent-strong); }
 
 .detail-header {
   margin-bottom: 24px;
@@ -300,11 +328,21 @@ function copyContent(text) {
   font-size: 13px;
   color: var(--accent);
 }
+.file-content { padding: 14px 17px; white-space: pre; }
+.related-plugins { padding-top: 25px; border-top: 1px solid var(--border); }
+.related-plugins h2 { margin-bottom: 12px; font-size: 14px; }
+.related-plugins > div { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.related-plugins a { min-width: 0; display: flex; flex-direction: column; gap: 5px; padding: 12px; border: 1px solid var(--border); border-radius: 4px; text-decoration: none; }
+.related-plugins a span { color: var(--accent-strong); font-size: 9px; }
+.related-plugins a b { color: var(--text-primary); font-size: 12px; }
+.related-plugins a small { overflow: hidden; color: var(--text-muted); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.related-plugins a:hover { border-color: var(--accent-strong); }
 
 @media (max-width: 768px) {
   .plugin-detail {
     padding: 16px;
   }
+  .breadcrumb { margin-bottom: 22px; flex-wrap: wrap; }
   .header-info {
     flex-direction: column;
     gap: 12px;
@@ -314,5 +352,6 @@ function copyContent(text) {
     height: 48px;
     font-size: 20px;
   }
+  .related-plugins > div { grid-template-columns: 1fr; }
 }
 </style>

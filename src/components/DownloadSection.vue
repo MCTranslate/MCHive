@@ -14,25 +14,19 @@ const downloading = ref(null)
 
 function handleDownload(item, index) {
   downloading.value = index
-
-  if (item.path) {
-    const a = document.createElement('a')
-    a.href = item.path
-    a.download = item.name || item.path.split('/').pop()
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-  }
-
   setTimeout(function() {
     downloading.value = null
   }, 1500)
+}
+
+function downloadHref(path) {
+  return import.meta.env.BASE_URL + String(path || '').replace(/^\/+/, '')
 }
 </script>
 
 <template>
   <footer class="download-section" v-if="downloads && downloads.length > 0">
-    <h3 class="download-title">下载汉化文件</h3>
+    <h3 class="download-title">可用文件</h3>
     <div class="download-list">
       <div
         v-for="(item, index) in downloads"
@@ -46,9 +40,11 @@ function handleDownload(item, index) {
             <span class="download-desc">{{ item.description }}</span>
           </div>
         </div>
-        <button
+        <a
           class="btn btn-primary download-btn"
           :class="{ loading: downloading === index }"
+          :href="downloadHref(item.path)"
+          :download="item.name || item.path.split('/').pop()"
           @click="handleDownload(item, index)"
         >
           <svg v-if="downloading !== index" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -60,7 +56,7 @@ function handleDownload(item, index) {
             <path d="M21 12a9 9 0 11-6.219-8.56"/>
           </svg>
           <span>{{ downloading === index ? '下载中...' : '下载' }}</span>
-        </button>
+        </a>
       </div>
     </div>
 

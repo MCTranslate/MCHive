@@ -1,6 +1,6 @@
-# MC 插件汉化站
+# MCHive
 
-> Minecraft 服务端插件汉化教程网站 — 收录主流插件的语言文件、配置讲解与安装教程。
+> Minecraft 服务器知识平台 — 从零开服指南、服务端教程、插件资料与配置说明。
 
 ## 在线访问
 
@@ -10,7 +10,7 @@
 
 - Vue 3 + Vite（单页应用）
 - Vue Router（Hash 模式，兼容 GitHub Pages）
-- 无额外依赖 — Markdown 解析器为手写子集
+- 无额外依赖 — Markdown 解析器为轻量手写子集，渲染前会转义原始 HTML
 - GitHub Actions 自动部署
 
 ## 本地开发
@@ -21,7 +21,11 @@ npm run dev      # http://localhost:5173
 npm run build    # 构建到 dist/
 ```
 
-## 如何添加新插件（贡献指南）
+## 内容与贡献
+
+MCHive 现在同时维护开服指南与插件资料。新增教程只需在 `content/guides/` 添加 Markdown 并在 `data/guides.json` 注册；新增插件仍沿用下面的兼容流程，不需要修改页面组件。
+
+### 如何添加新插件（贡献指南）
 
 添加新插件**不需要修改任何前端代码**，只需三步：
 
