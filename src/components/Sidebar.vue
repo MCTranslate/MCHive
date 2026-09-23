@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import pluginIndex from '../../data/plugins.json'
+import guideIndex from '../../data/guides.json'
 
 const route = useRoute()
 const router = useRouter()
@@ -24,6 +25,18 @@ const categories = computed(() => {
   return list
 })
 
+// 教程也支持搜索过滤
+const filteredGuides = computed(() => {
+  if (!searchQuery.value.trim()) return guideIndex
+  const q = searchQuery.value.toLowerCase()
+  return guideIndex.filter(
+    g =>
+      g.name.toLowerCase().includes(q) ||
+      (g.description || '').toLowerCase().includes(q) ||
+      (g.tags || []).some(t => t.includes(q))
+  )
+})
+
 const filteredPlugins = computed(() => {
   let result = pluginIndex
   if (activeCategory.value !== 'all') {
@@ -41,12 +54,20 @@ const filteredPlugins = computed(() => {
   return result
 })
 
-function isActive(id) {
-  return route.params.id === id
+function isPluginActive(id) {
+  return route.name === 'PluginDetail' && route.params.id === id
+}
+
+function isGuideActive(id) {
+  return route.name === 'GuideDetail' && route.params.id === id
 }
 
 function goToPlugin(id) {
   router.push('/plugin/' + id)
+}
+
+function goToGuide(id) {
+  router.push('/guide/' + id)
 }
 </script>
 
@@ -94,11 +115,31 @@ function goToPlugin(id) {
       </div>
 
       <div class="plugin-list">
+        <!-- 快速开始 / 教程区块 -->
+        <div class="section-label" v-if="filteredGuides.length">📖 快速开始</div>
+        <div
+          v-for="guide in filteredGuides"
+          :key="guide.id"
+          class="plugin-item guide-item"
+          :class="{ active: isGuideActive(guide.id) }"
+          @click="goToGuide(guide.id)"
+        >
+          <div class="plugin-icon guide-icon">
+            <span>{{ guide.icon }}</span>
+          </div>
+          <div class="plugin-info">
+            <span class="plugin-name">{{ guide.name }}</span>
+            <span class="plugin-desc">{{ guide.description }}</span>
+          </div>
+        </div>
+
+        <!-- 插件库区块 -->
+        <div class="section-label" v-if="filteredPlugins.length">🔌 插件库</div>
         <div
           v-for="plugin in filteredPlugins"
           :key="plugin.id"
           class="plugin-item"
-          :class="{ active: isActive(plugin.id) }"
+          :class="{ active: isPluginActive(plugin.id) }"
           @click="goToPlugin(plugin.id)"
         >
           <div class="plugin-icon">
@@ -110,18 +151,28 @@ function goToPlugin(id) {
           </div>
         </div>
 
-        <div v-if="filteredPlugins.length === 0" class="no-result">
-          没有找到匹配的插件
+        <div v-if="filteredPlugins.length === 0 && filteredGuides.length === 0" class="no-result">
+          没有找到匹配的内容
         </div>
       </div>
     </div>
 
     <div class="sidebar-icons" v-if="collapsed">
       <button
+        v-for="guide in guideIndex"
+        :key="'g-' + guide.id"
+        class="icon-item guide-icon"
+        :class="{ active: isGuideActive(guide.id) }"
+        :title="guide.name"
+        @click="goToGuide(guide.id)"
+      >
+        {{ guide.icon }}
+      </button>
+      <button
         v-for="plugin in pluginIndex"
-        :key="plugin.id"
+        :key="'p-' + plugin.id"
         class="icon-item"
-        :class="{ active: isActive(plugin.id) }"
+        :class="{ active: isPluginActive(plugin.id) }"
         :title="plugin.name"
         @click="goToPlugin(plugin.id)"
       >
@@ -267,6 +318,21 @@ function goToPlugin(id) {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 10px 4px 4px;
+  user-select: none;
+}
+
+.guide-icon {
+  background: rgba(96, 165, 250, 0.12);
+  border-color: rgba(96, 165, 250, 0.3);
 }
 
 .plugin-item {

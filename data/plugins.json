@@ -4,7 +4,7 @@
     "name": "EssentialsX",
     "description": "最基础的全能插件 — 家、传送、经济、飞行等必备功能",
     "category": "基础工具",
-    "version": "1.13 - 1.21+",
+    "version": "1.13 - 26.x",
     "tags": ["基础", "经济", "传送", "家"],
     "sections": [
       { "id": "tutorial", "name": "安装教程", "file": "tutorial.md" },
@@ -24,7 +24,7 @@
     "name": "WorldGuard",
     "description": "区域保护插件，支持自定义区域权限、方块保护、游戏规则微调",
     "category": "保护/管理",
-    "version": "1.14 - 1.21+",
+    "version": "1.14 - 26.x",
     "tags": ["保护", "区域", "领地", "权限"],
     "sections": [
       { "id": "tutorial", "name": "安装教程", "file": "tutorial.md" },
@@ -44,7 +44,7 @@
     "name": "LuckPerms",
     "description": "权限管理插件，轻量高性能，支持分组、继承、临时权限",
     "category": "管理/权限",
-    "version": "1.14 - 1.21+",
+    "version": "1.14 - 26.x",
     "tags": ["权限", "分组", "管理"],
     "sections": [
       { "id": "tutorial", "name": "安装教程", "file": "tutorial.md" },

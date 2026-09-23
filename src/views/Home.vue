@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import pluginIndex from '../../data/plugins.json'
+import guideIndex from '../../data/guides.json'
 
 const router = useRouter()
 
@@ -13,42 +14,77 @@ const totalDownloads = pluginIndex.reduce(function(sum, p) {
 function goToPlugin(id) {
   router.push('/plugin/' + id)
 }
+
+function goToGuide(id) {
+  router.push('/guide/' + id)
+}
 </script>
 
 <template>
   <div class="home">
     <section class="hero">
       <h1>MC 插件汉化教程站</h1>
-      <p>收录主流 Minecraft 服务端插件的 <strong>lang 语言文件</strong>、<strong>config 配置讲解</strong> 与 <strong>安装使用教程</strong>，方便服主快速上手。</p>
+      <p>不止教你开服，更教你把服务器开好。主流插件的 <strong>lang 语言文件</strong>、<strong>config 配置逐项讲解</strong>与<strong>开箱即用的汉化下载</strong>，全在这里。</p>
       <div class="stats">
         <div class="stat">
           <span class="stat-num">{{ totalPlugins }}</span>
           <span class="stat-label">已收录插件</span>
         </div>
         <div class="stat">
+          <span class="stat-num">{{ guideIndex.length }}</span>
+          <span class="stat-label">系列教程</span>
+        </div>
+        <div class="stat">
           <span class="stat-num">{{ totalDownloads }}</span>
-          <span class="stat-label">可下载文件</span>
+          <span class="stat-label">可下载汉化</span>
         </div>
       </div>
     </section>
 
-    <section class="quick-start">
-      <h2>使用指南</h2>
-      <div class="guide-cards">
-        <div class="guide-card">
-          <span class="guide-num">1</span>
-          <h3>选择插件</h3>
-          <p>从左侧导航栏选择你想查看的插件，支持搜索和分类筛选。</p>
+    <section class="why-us">
+      <div class="why-card">
+        <h2>已经在看笨蛋开服？我们也尊重它，但——</h2>
+        <p>笨蛋开服教你怎么把服务器<strong>开起来</strong>，我们教你怎么<strong>开好</strong>。它的插件章节止步于「装上能用」，而这里每个插件都有逐项配置讲解和成品汉化。</p>
+        <div class="why-points">
+          <div class="why-point">
+            <span class="point-icon">📥</span>
+            <div>
+              <strong>汉化开箱即用</strong>
+              <span>告别网盘瞎找，每个插件页面底部一键下载与教程版本严格对应的汉化文件</span>
+            </div>
+          </div>
+          <div class="why-point">
+            <span class="point-icon">📝</span>
+            <div>
+              <strong>配置逐项讲人话</strong>
+              <span>不丢给你一句「改这里就行」，每个参数是干嘛的、推荐值多少都写清楚</span>
+            </div>
+          </div>
+          <div class="why-point">
+            <span class="point-icon">🎁</span>
+            <div>
+              <strong>全家桶直接抄</strong>
+              <span>生存服/RPG服/小游戏服的插件组合方案，权限模板、加载顺序全给齐</span>
+            </div>
+          </div>
         </div>
-        <div class="guide-card">
-          <span class="guide-num">2</span>
-          <h3>阅读教程</h3>
-          <p>每个插件包含教程、Lang 汉化、Config 配置讲解三个 Tab。</p>
-        </div>
-        <div class="guide-card">
-          <span class="guide-num">3</span>
-          <h3>下载使用</h3>
-          <p>页面底部提供一键下载汉化文件，可直接替换使用。</p>
+      </div>
+    </section>
+
+    <section class="guides-section">
+      <h2>从这篇开始</h2>
+      <div class="guide-grid">
+        <div
+          v-for="guide in guideIndex"
+          :key="guide.id"
+          class="guide-entry"
+          @click="goToGuide(guide.id)"
+        >
+          <span class="guide-entry-icon">{{ guide.icon }}</span>
+          <div>
+            <h3>{{ guide.name }}</h3>
+            <p>{{ guide.description }}</p>
+          </div>
         </div>
       </div>
     </section>
@@ -146,7 +182,77 @@ function goToPlugin(id) {
   margin-top: 48px;
 }
 
-.quick-start h2,
+.why-us {
+  margin-top: 40px;
+}
+
+.why-card {
+  background: linear-gradient(135deg, rgba(74, 222, 128, 0.06), rgba(96, 165, 250, 0.05));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+}
+
+.why-card h2 {
+  font-size: 1.2em;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+}
+
+.why-card > p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.why-card strong {
+  color: var(--accent);
+}
+
+.why-points {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.why-point {
+  display: flex;
+  gap: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+}
+
+.point-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.why-point > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.why-point strong {
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.why-point span {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.guides-section {
+  margin-top: 48px;
+}
+
+.guides-section h2,
 .popular h2,
 .contribute h2 {
   font-size: 1.4em;
@@ -155,44 +261,44 @@ function goToPlugin(id) {
   color: var(--text-primary);
 }
 
-.guide-cards {
+.guide-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
 }
 
-.guide-card {
+.guide-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 24px;
-  position: relative;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.guide-num {
-  position: absolute;
-  top: -12px;
-  left: 16px;
-  background: var(--accent);
-  color: var(--bg-primary);
-  font-size: 12px;
-  font-weight: 700;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.guide-entry:hover {
+  border-color: var(--info);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
 }
 
-.guide-card h3 {
+.guide-entry-icon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.guide-entry h3 {
   font-size: 15px;
   font-weight: 600;
-  margin: 8px 0 6px;
+  margin-bottom: 4px;
+  color: var(--text-primary);
 }
 
-.guide-card p {
-  font-size: 13px;
+.guide-entry p {
+  font-size: 12px;
   color: var(--text-secondary);
   line-height: 1.6;
 }
