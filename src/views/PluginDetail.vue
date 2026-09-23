@@ -1,9 +1,12 @@
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import pluginIndex from '../../data/plugins.json'
 import DownloadSection from '../components/DownloadSection.vue'
 import { parseMarkdown } from '../composables/markdown.js'
+
+// 构建时静态扫描所有插件 Markdown，必须在模块顶层调用才能被 Vite 识别
+const mdModules = import.meta.glob('/content/plugins/**/*.md', { query: '?raw', import: 'default' })
 
 const route = useRoute()
 const router = useRouter()
@@ -13,7 +16,8 @@ const sectionContents = ref({})
 const loading = ref(false)
 const error = ref(null)
 
-var mdModules
+// 竟态保护：快速切换插件时，丢弃过期的加载结果
+let loadToken = 0
 
 const plugin = computed(function() {
   return pluginIndex.find(function(p) { return p.id === route.params.id })
@@ -30,12 +34,13 @@ function findSection(id) {
   return tabs.value.find(function(t) { return t.id === id })
 }
 
-onMounted(function() {
-  mdModules = import.meta.glob('/content/plugins/**/*.md', { query: '?raw', import: 'default' })
-})
-
 function loadSections() {
   if (!plugin.value) return
+
+  // 递增 token，使之前未完成的加载结果作废
+  const token = ++loadToken
+  const pluginId = plugin.value.id
+
   loading.value = true
   error.value = null
   sectionContents.value = {}
@@ -43,33 +48,43 @@ function loadSections() {
   var sections = tabs.value
   var pending = sections.length
 
+  const finish = function() {
+    // 只有最新一次加载才能收尾，避免旧请求覆盖新状态
+    if (token !== loadToken) return
+    if (pending === 0) {
+      loading.value = false
+      if (!activeTab.value && sections.length > 0) {
+        activeTab.value = sections[0].id
+      }
+    }
+  }
+
   if (pending === 0) {
-    loading.value = false
+    finish()
     return
   }
 
   sections.forEach(function(section) {
-    var filePath = '/content/plugins/' + plugin.value.id + '/' + section.file
+    var filePath = '/content/plugins/' + pluginId + '/' + section.file
+    var loader = mdModules[filePath]
 
-    if (mdModules && mdModules[filePath]) {
-      mdModules[filePath]().then(function(raw) {
+    if (loader) {
+      loader().then(function(raw) {
+        if (token !== loadToken) return
         sectionContents.value[section.id] = raw || ''
         pending--
-        if (pending === 0) {
-          loading.value = false
-          if (!activeTab.value && sections.length > 0) {
-            activeTab.value = sections[0].id
-          }
-        }
+        finish()
       }).catch(function(err) {
+        if (token !== loadToken) return
         error.value = '加载失败：' + (err.message || '未知错误')
         pending--
-        if (pending === 0) loading.value = false
+        finish()
       })
     } else {
+      if (token !== loadToken) return
       error.value = '文件不存在：' + section.file
       pending--
-      if (pending === 0) loading.value = false
+      finish()
     }
   })
 }
