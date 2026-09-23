@@ -4,7 +4,7 @@
 
 ## 在线访问
 
-通过 GitHub Pages 自动部署。推送代码到 `main` 分支后，Actions 会自动构建并上线。
+通过 GitHub Pages 自动部署。推送代码到 `master` 分支后，Actions 会自动构建并上线。
 
 ## 技术栈
 
