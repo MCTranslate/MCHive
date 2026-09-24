@@ -1,9 +1,9 @@
 ---
 id: worldguard
 name: WorldGuard
-description: 区域保护插件 — 给主城、玩家领地划定不可建造/不可破坏的安全区
-category: 基础工具
-tags: [保护, 区域, 编辑]
+description: 区域保护 — 给主城、资源区、玩家领地划定不可建造/不可破坏的安全区，防熊与领地管理的核心插件。
+category: 安全管理
+tags: [保护, 区域, 领地, 防熊, 编辑]
 sections:
   - id: tutorial
     name: 安装教程

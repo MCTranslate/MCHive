@@ -1,9 +1,9 @@
 ---
 id: luckperms
 name: LuckPerms
-description: 主流的权限管理插件 — 分组、继承、跨服同步与可视化编辑器一应俱全
-category: 基础工具
-tags: [权限, 分组, 管理]
+description: 主流权限管理 — 分组、继承、前缀后缀、跨服同步与可视化编辑器一应俱全，让你精确控制每个玩家能做什么。
+category: 权限管理
+tags: [权限, 分组, 前缀, 管理, 必备]
 sections:
   - id: tutorial
     name: 安装教程

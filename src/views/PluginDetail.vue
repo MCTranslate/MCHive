@@ -438,11 +438,12 @@ const relatedPlugins = computed(function() {
   top: 64px;
   z-index: 10;
   padding: 6px 0;
-  background: rgba(8, 9, 11, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   margin-inline: -8px;
   padding-inline: 8px;
+  border-bottom: 1px solid var(--glass-border);
 }
 
 @media (max-width: 768px) {

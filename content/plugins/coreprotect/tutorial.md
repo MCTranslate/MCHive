@@ -1,9 +1,9 @@
 ---
 id: coreprotect
 name: CoreProtect
-description: 谁动了你的服务器 — 记录所有方块与箱子操作，被熊了能一键查凶手并回滚
+description: 回滚与日志神器 — 记录所有方块与容器操作，被熊了能一键查凶手、一键回滚，也能查谁偷了箱子的东西。
 category: 安全管理
-tags: [查询, 回滚, 防熊, 日志]
+tags: [查询, 回滚, 防熊, 日志, 监控]
 sections:
   - id: tutorial
     name: 安装教程

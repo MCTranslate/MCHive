@@ -1,9 +1,9 @@
 ---
 id: essentialsx
 name: EssentialsX
-description: 最基础的全能插件 — 家、传送、经济、飞行、昵称等必备功能，生存服必装
-category: 基础工具
-tags: [基础, 经济, 传送, 家]
+description: 全能基础功能 — 家、传送、经济、飞行、昵称、邮件、天气与时间控制，生存服必装的瑞士军刀。
+category: 功能插件
+tags: [经济, 传送, 家, 基础, 必备]
 sections:
   - id: tutorial
     name: 安装教程

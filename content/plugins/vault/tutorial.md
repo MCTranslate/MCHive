@@ -1,9 +1,9 @@
 ---
 id: vault
 name: Vault
-description: 经济与权限的统一 API 桥梁 — EssentialsX、ChestShop、Jobs 等插件能互通的前提
-category: 基础工具
-tags: [经济, 权限, 桥接, 前置]
+description: 经济与权限的 API 桥梁 — EssentialsX、ChestShop、Jobs 等插件能互通的前提，权限/经济/聊天三合一中间件。
+category: 权限管理
+tags: [经济, 权限, 桥接, 前置, API]
 sections:
   - id: tutorial
     name: 安装教程

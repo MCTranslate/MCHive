@@ -1,9 +1,9 @@
 ---
 id: placeholderapi
 name: PlaceholderAPI
-description: 服务器变量的统一接口 — 记分板、Tab 列表、聊天栏里的 %player_name% 这类变量都靠它
-category: 开发基础
-tags: [变量, 占位符, 记分板, 美化]
+description: 变量统一接口 — 记分板、Tab 列表、聊天栏里的 %player_name% 这类变量都靠它，几乎所有插件的前置依赖。
+category: 开发前置
+tags: [变量, 占位符, 记分板, 前置, 美化]
 sections:
   - id: tutorial
     name: 安装教程
