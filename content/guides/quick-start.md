@@ -17,7 +17,7 @@ order: 3
 
 ## 第 1 步：装 Java（3 分钟）
 
-Paper 26.x 需要 **Java 21 或更高**（新版核心已支持 Java 25 LTS）。
+Paper 26.x 需要 **Java 25 也可以更高**（新版核心已支持 Java 25 LTS）。
 
 ```bash
 # Ubuntu / Debian

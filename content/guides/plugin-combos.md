@@ -27,7 +27,7 @@ order: 4
 |------|------|------|
 | EssentialsX ✅ | 家/传送/昵称/基础命令 | 生存服的半条命 |
 | LuckPerms ✅ | 权限分组 | 默认玩家/会员/管理员 |
-| Vault | 经济权限 API 桥梁 | 装了它经济插件才能互通 |
+| Vault ✅ | 经济权限 API 桥梁 | 装了它经济插件才能互通，[教程已上线](#/plugin/vault) |
 | DecentHolograms | 全息图 | 公告、排行榜展示 |
 
 ### 保护层（强烈推荐）
@@ -36,7 +36,7 @@ order: 4
 |------|------|------|
 | WorldGuard ✅ | 区域保护 | 主城/出生点保护 |
 | WorldEdit ✅ | 地图编辑 | WorldGuard 的前置 |
-| CoreProtect | 方块操作记录/回滚 | 被熊了能查谁干的 |
+| CoreProtect ✅ | 方块操作记录/回滚 | 被熊了能查谁干的，含消息中文对照 |
 | GriefPrevention | 玩家自领地 | 让玩家自己圈地，减少管理负担 |
 
 ### 经济层
@@ -71,11 +71,11 @@ order: 4
 
 | 插件 | 作用 | 备注 |
 |------|------|------|
-| Multiverse-Core | 多世界管理 | 免费开源，v5 已重构支持新版本 |
+| Multiverse-Core ✅ | 多世界管理 | 免费开源，v5 自带简体中文 |
 | BedWars2023 | 起床战争 | 免费开源（BedWars1058 的社区分支），持续维护 |
 | ScreamingSandals BedWars | 起床战争备选 | 免费开源，支持 1.8.8 - 26.x，新旧版本通吃 |
 | TAB | Tab 列表美化 | 免费，显示排名/段位 |
-| PlaceholderAPI | 变量占位符 | 免费，其他插件的美化基础 |
+| PlaceholderAPI ✅ | 变量占位符 | 免费，其他插件的美化基础，含变量中文速查 |
 
 > 老牌的 BedWars1058 是付费插件，本站不推荐——社区分支 BedWars2023 免费开源且继承了它的玩法体系。另一个选择是 ScreamingSandals 团队的开源 BedWars，版本兼容性做得最好（从远古 1.8 一路支持到 2026 年的 26.x）。
 >

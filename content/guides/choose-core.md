@@ -30,7 +30,7 @@ order: 2
 
 选 **Paper**（关闭部分优化）或 **Leaves**。
 
-Paper 为了性能会阉改一些原版行为，某些红石装置会失效。Leaves（叶子服）在 Paper 基础上做了「原版兼容修复」，国内生电圈用得比较多。红石党的完整方案：
+Paper 为了性能会阉改一些原版行为，某些红石装置会失效。Leaves在 Paper 基础上做了「原版兼容修复」，国内生电圈用得比较多。红石党的完整方案：
 
 - 先装 Paper 或 Leaves
 - 在配置里关闭 `redstone-implementation` 相关优化
@@ -51,7 +51,7 @@ Paper 为了性能会阉改一些原版行为，某些红石装置会失效。Le
 
 ### 你就是想折腾、想尝鲜
 
-选 **Folia**、**Leaves** 或 **Luminol**。折腾精神值得鼓励，但请先在本站的 [避坑指南](#/guide/faq) 里确认你用的插件有没有 Folia 适配版。
+选 **Folia**、**Leaves** 或 **Mili**还有**arbor**跟**Lophine**。折腾精神值得鼓励，但请先在本站的 [避坑指南](#/guide/faq) 里确认你用的插件有没有 Folia 适配版。
 
 ## 核心版本怎么挑
 
@@ -74,7 +74,7 @@ Paper 为了性能会阉改一些原版行为，某些红石装置会失效。Le
 
 ```
 核心：Paper（26.x 最新稳定版）
-Java：Java 21+（Temurin 发行版）
+Java：Java 25
 内存：8GB 起（10 人以内生存服足够）
 系统：Linux 优先（Ubuntu / Debian），Windows 也行
 ```
