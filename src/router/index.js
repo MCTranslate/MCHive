@@ -4,6 +4,8 @@ import PluginDetail from '../views/PluginDetail.vue'
 import GuideDetail from '../views/GuideDetail.vue'
 import ContentIndex from '../views/ContentIndex.vue'
 import SearchResults from '../views/SearchResults.vue'
+import Contribute from '../views/Contribute.vue'
+import NotFound from '../views/NotFound.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -12,8 +14,10 @@ const routes = [
   { path: '/plugins', name: 'Plugins', component: ContentIndex, props: { kind: 'plugins' } },
   { path: '/tools', name: 'Tools', component: ContentIndex, props: { kind: 'tools' } },
   { path: '/search', name: 'Search', component: SearchResults },
+  { path: '/contribute', name: 'Contribute', component: Contribute },
   { path: '/plugin/:id', name: 'PluginDetail', component: PluginDetail },
-  { path: '/guide/:id', name: 'GuideDetail', component: GuideDetail }
+  { path: '/guide/:id', name: 'GuideDetail', component: GuideDetail },
+  { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound }
 ]
 
 const router = createRouter({

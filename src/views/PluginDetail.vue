@@ -379,4 +379,16 @@ const relatedPlugins = computed(function() {
   }
   .related-plugins > div { grid-template-columns: 1fr; }
 }
+
+.plugin-detail { --detail-width: 920px; max-width: var(--detail-width); }
+.detail-header { padding: 22px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+.tabs { position: sticky; top: 68px; z-index: 10; padding-top: 2px; background: var(--bg-primary); }
+@media (max-width: 700px) {
+  .plugin-detail { width: 100%; overflow: hidden; }
+  .detail-header { padding: 16px; }
+  .header-info h1 { font-size: 25px; }
+  .tabs { top: 58px; margin-inline: -16px; padding-inline: 16px; }
+  .meta { gap: 6px; }
+  .meta-item { max-width: 100%; overflow-wrap: anywhere; }
+}
 </style>

@@ -8,11 +8,12 @@ const router = useRouter()
 const search = ref('')
 const totalDownloads = computed(() => pluginIndex.reduce((sum, plugin) => sum + (plugin.downloads || []).length, 0))
 const launchSteps = [
-  { number: '01', title: '准备环境', detail: '硬件、系统与网络', guide: 'quick-start' },
-  { number: '02', title: '安装 Java', detail: '匹配服务端版本', guide: 'quick-start' },
-  { number: '03', title: '选择核心', detail: 'Paper、Folia 等', guide: 'choose-core' },
-  { number: '04', title: '首次启动', detail: '完成基础配置', guide: 'quick-start' },
-  { number: '05', title: '完善服务器', detail: '插件、权限与玩法', guide: 'plugin-combos' }
+  { number: '01', title: '准备环境', detail: 'Java、系统与网络', guide: 'quick-start' },
+  { number: '02', title: '选择服务端', detail: 'Paper、Purpur、Leaves', guide: 'choose-core' },
+  { number: '03', title: '启动服务器', detail: '完成首次配置', guide: 'quick-start' },
+  { number: '04', title: '安装插件', detail: '权限、经济与保护', guide: 'plugin-combos' },
+  { number: '05', title: '开放服务器', detail: '端口、域名与跨服', guide: 'quick-start' },
+  { number: '06', title: '开始运营', detail: '备份、日志与维护', guide: 'faq' }
 ]
 const categories = [
   { name: '基础入门', detail: '从第一次启动开始', icon: '01', guide: 'quick-start' },
@@ -32,17 +33,17 @@ function submitSearch() {
       <div class="hero-grid" aria-hidden="true"></div>
       <div class="hero-inner">
         <div class="hero-copy">
-          <div class="eyebrow"><span class="status-dot"></span> MINECRAFT SERVER KNOWLEDGE PLATFORM</div>
-          <h1>从零开始，<br /><span>搭建好你的服务器。</span></h1>
-          <p class="hero-description">面向 Minecraft 服主的一站式开服指南、实用教程与技术资料库。准备环境、配置插件、排查问题，每一步都有答案。</p>
+          <div class="eyebrow"><span class="status-dot"></span> MCHIVE / SERVER KNOWLEDGE BASE</div>
+          <h1>从零开始，<br /><span>学会搭建你的 Minecraft 服务器。</span></h1>
+          <p class="hero-description">MCHive 是面向 Minecraft 新手服主的中文开服知识库。从服务端选择、插件安装，到配置、运维与问题排查，一步一步完成自己的服务器。</p>
           <form class="hero-search" role="search" @submit.prevent="submitSearch">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
-            <input v-model="search" aria-label="搜索教程、插件、配置" placeholder="搜索教程、插件、配置或问题..." />
+            <input v-model="search" aria-label="搜索教程、插件、配置" placeholder="搜索“如何开服”、EssentialsX、Java、权限..." />
             <button type="submit" aria-label="开始搜索"><span>搜索</span><b aria-hidden="true">→</b></button>
           </form>
           <div class="hero-actions">
-            <RouterLink class="button-primary" to="/guides">开始开服 <span aria-hidden="true">→</span></RouterLink>
-            <RouterLink class="button-text" to="/tutorials">浏览全部教程 <span aria-hidden="true">↗</span></RouterLink>
+            <RouterLink class="button-primary" to="/guides">开始第一次开服 <span aria-hidden="true">→</span></RouterLink>
+            <RouterLink class="button-text" to="/tutorials">浏览知识库 <span aria-hidden="true">↗</span></RouterLink>
           </div>
           <div class="hero-metrics">
             <span><strong>{{ guideIndex.length }}</strong> 篇实用指南</span><i></i><span><strong>{{ pluginIndex.length }}</strong> 个插件资料</span><i></i><span><strong>{{ totalDownloads }}</strong> 个可用文件</span>
@@ -65,29 +66,29 @@ function submitSearch() {
     </section>
 
     <section class="audience-section content-width" aria-labelledby="audience-heading">
-      <div class="section-heading split-heading"><div><span class="section-kicker">FIND YOUR NEXT STEP</span><h2 id="audience-heading">现在，你想做什么？</h2></div><p>从清晰的入口开始，直接抵达你需要的知识。</p></div>
+      <div class="section-heading split-heading"><div><span class="section-kicker">FIND YOUR NEXT STEP</span><h2 id="audience-heading">你现在需要什么？</h2></div><p>不用猜分类，从你的当前状态直接开始。</p></div>
       <div class="audience-grid">
-        <RouterLink class="audience-item beginner" to="/guides"><span class="audience-icon">01</span><span class="audience-copy"><b>我是新手服主</b><small>跟着路线，从零完成第一次开服</small></span><span class="audience-arrow">→</span></RouterLink>
-        <RouterLink class="audience-item" to="/tutorials"><span class="audience-icon">02</span><span class="audience-copy"><b>我在找一个答案</b><small>查教程、配置和常见故障</small></span><span class="audience-arrow">→</span></RouterLink>
-        <RouterLink class="audience-item" to="/plugins"><span class="audience-icon">03</span><span class="audience-copy"><b>我需要插件资料</b><small>安装说明、配置讲解和语言文件</small></span><span class="audience-arrow">→</span></RouterLink>
-        <RouterLink class="audience-item" to="/tools"><span class="audience-icon">04</span><span class="audience-copy"><b>我想用服主工具</b><small>常用检查器与配置辅助入口</small></span><span class="audience-arrow">→</span></RouterLink>
+        <RouterLink class="audience-item beginner" to="/guides"><span class="audience-icon">01</span><span class="audience-copy"><b>我还没有服务器</b><small>从 Java、服务端到第一次启动，一步一步开始。</small></span><span class="audience-arrow">→</span></RouterLink>
+        <RouterLink class="audience-item" to="/tutorials"><span class="audience-icon">02</span><span class="audience-copy"><b>我已经有服务器</b><small>继续学习插件、权限、配置与日常维护。</small></span><span class="audience-arrow">→</span></RouterLink>
+        <RouterLink class="audience-item" to="/plugins"><span class="audience-icon">03</span><span class="audience-copy"><b>我的服务器遇到了问题</b><small>从日志、报错、网络和性能方向快速排查。</small></span><span class="audience-arrow">→</span></RouterLink>
+        <RouterLink class="audience-item" to="/tools"><span class="audience-icon">04</span><span class="audience-copy"><b>浏览知识库</b><small>教程、插件资料与常见问题都在这里。</small></span><span class="audience-arrow">→</span></RouterLink>
       </div>
     </section>
 
     <section class="path-section">
       <div class="content-width path-inner">
-        <div class="section-heading path-heading"><div><span class="section-kicker">THE SERVER-BUILDING PATH</span><h2>从一台空机器，到一个可玩的世界。</h2></div><RouterLink to="/guides" class="inline-link">查看完整路线 <span>→</span></RouterLink></div>
+        <div class="section-heading path-heading"><div><span class="section-kicker">FROM ZERO TO ONLINE</span><h2>从 0 到服务器上线。</h2></div><RouterLink to="/guides" class="inline-link">查看完整路线 <span>→</span></RouterLink></div>
         <div class="path-track">
           <RouterLink v-for="(step, index) in launchSteps" :key="step.number" class="path-step" :to="`/guide/${step.guide}`">
             <div class="step-top"><span>{{ step.number }}</span><i v-if="index < launchSteps.length - 1"></i></div><b>{{ step.title }}</b><small>{{ step.detail }}</small>
           </RouterLink>
         </div>
-        <div class="path-foot"><span>路线基于现有教程内容整理</span><span>读完一步，继续下一步 <b>→</b></span></div>
+        <div class="path-foot"><span>路线基于仓库中的真实教程内容整理</span><span>读完一步，继续下一步 <b>→</b></span></div>
       </div>
     </section>
 
     <section class="knowledge-section content-width">
-      <div class="section-heading split-heading"><div><span class="section-kicker">KNOWLEDGE AREAS</span><h2>一座服务器，需要这些知识。</h2></div><RouterLink to="/tutorials" class="inline-link">进入教程中心 <span>→</span></RouterLink></div>
+      <div class="section-heading split-heading"><div><span class="section-kicker">THE KNOWLEDGE MAP</span><h2>一座服务器，需要这些知识。</h2></div><RouterLink to="/tutorials" class="inline-link">进入教程中心 <span>→</span></RouterLink></div>
       <div class="knowledge-layout">
         <div class="knowledge-intro"><span class="knowledge-index">MCHIVE / LIBRARY</span><h3>从基础部署，<br />到稳定运营。</h3><p>把分散的配置说明、插件资料和实战经验，整理成能查找、能跟进的知识体系。</p><RouterLink to="/tutorials">探索知识库 <span>↗</span></RouterLink></div>
         <div class="category-list"><RouterLink v-for="item in categories" :key="item.name" class="category-row" :to="item.path || `/guide/${item.guide}`"><span class="category-num">{{ item.icon }}</span><span class="category-copy"><b>{{ item.name }}</b><small>{{ item.detail }}</small></span><span class="category-count">{{ item.path ? `${pluginIndex.length} 个资料` : '查看指南' }}</span><span class="category-arrow">↗</span></RouterLink></div>
@@ -95,7 +96,7 @@ function submitSearch() {
     </section>
 
     <section class="latest-section content-width">
-      <div class="section-heading split-heading"><div><span class="section-kicker">START READING</span><h2>从这些内容开始。</h2></div><RouterLink to="/tutorials" class="inline-link">所有教程 <span>→</span></RouterLink></div>
+      <div class="section-heading split-heading"><div><span class="section-kicker">START READING</span><h2>从这些真实内容开始。</h2></div><RouterLink to="/tutorials" class="inline-link">所有教程 <span>→</span></RouterLink></div>
       <div class="latest-list"><RouterLink v-for="(guide, index) in guideIndex.slice(0, 3)" :key="guide.id" class="latest-row" :to="`/guide/${guide.id}`"><span class="latest-number">0{{ index + 1 }}</span><span class="latest-main"><b>{{ guide.name }}</b><small>{{ guide.description }}</small></span><span class="latest-tags"><i v-for="tag in (guide.tags || []).slice(0, 2)" :key="tag">{{ tag }}</i></span><span class="latest-arrow">↗</span></RouterLink></div>
     </section>
 

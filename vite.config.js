@@ -5,7 +5,7 @@ import { resolve } from 'path'
 // GitHub Actions 自动注入 GITHUB_REPOSITORY = "owner/repo"
 // 在 GitHub Pages 上会用 /repo/ 作为子路径；本地开发直接用 /
 const githubRepo = process.env.GITHUB_REPOSITORY
-const base = githubRepo ? '/' + githubRepo.split('/')[1] + '/' : './'
+const base = githubRepo ? '/' + githubRepo.split('/')[1] + '/' : '/'
 
 export default defineConfig({
   plugins: [vue()],

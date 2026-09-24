@@ -22,6 +22,10 @@ function handleDownload(item, index) {
 function downloadHref(path) {
   return import.meta.env.BASE_URL + String(path || '').replace(/^\/+/, '')
 }
+
+function downloadName(item) {
+  return item.name || String(item.path || '').split('/').pop() || 'download'
+}
 </script>
 
 <template>
@@ -44,7 +48,7 @@ function downloadHref(path) {
           class="btn btn-primary download-btn"
           :class="{ loading: downloading === index }"
           :href="downloadHref(item.path)"
-          :download="item.name || item.path.split('/').pop()"
+          :download="downloadName(item)"
           @click="handleDownload(item, index)"
         >
           <svg v-if="downloading !== index" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">

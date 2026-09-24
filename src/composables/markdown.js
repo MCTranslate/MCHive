@@ -50,9 +50,11 @@ export function parseMarkdown(markdown) {
     return `<table><thead><tr>${header}</tr></thead><tbody>${body}</tbody></table>`
   })
 
+  html = html.replace(/^[-*] \[ \] (.+)$/gm, '<label class=\"task-item\"><input type=\"checkbox\" disabled> $1</label>')
+  html = html.replace(/^[-*] \[x\] (.+)$/gim, '<label class=\"task-item\"><input type=\"checkbox\" checked disabled> $1</label>')
   html = html.replace(/(^[\s]*[-*]\s+[^\n]+\n?)+/gm, match => `<ul>${match.trim().split('\n').map(item => `<li>${item.replace(/^\s*[-*]\s+/, '')}</li>`).join('')}</ul>`)
   html = html.replace(/(^[\s]*\d+\.\s+[^\n]+\n?)+/gm, match => `<ol>${match.trim().split('\n').map(item => `<li>${item.replace(/^\s*\d+\.\s+/, '')}</li>`).join('')}</ol>`)
-  html = html.replace(/^---+[\s]*$/gm, '<hr>')
+  html = html.replace(/^[-*_]{3,}[\s]*$/gm, '<hr>')
   html = html.replace(/^((?!<[a-z/]).+)$/gm, match => {
     const trimmed = match.trim()
     if (!trimmed) return ''

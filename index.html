@@ -5,6 +5,14 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#182820" />
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('mchive-theme')
+        if (saved === 'dark' || (saved !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.dataset.theme = saved || 'system'
+      } catch (error) {}
+    })()
+  </script>
   <meta name="description" content="MCHive 面向 Minecraft 服务器服主，提供从零开服路线、服务端与插件教程、配置资料和故障排查指引。" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="MCHive — Minecraft 服务器知识平台" />
