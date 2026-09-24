@@ -25,9 +25,34 @@ const plugin = computed(function() {
 
 const tabs = computed(function() {
   if (!plugin.value) return []
-  var sections = plugin.value.sections || []
+  var sections = plugin.value.sections
+  // 约定优于配置：frontmatter 未声明 sections 时，按插件目录下全部 .md 自动派生
+  //   tutorial.md → { id: 'tutorial', name: '安装教程' }
+  //   lang.md / config.md / <其它>.md → { id: '<basename>', name: '<basename> 汉化' }
+  // 这样未来即使有人绕过 build-index 直接编辑 data/plugins.json 也能正常渲染。
+  if (!sections || !sections.length) {
+    sections = deriveSections(plugin.value.id)
+  }
   return sections.filter(function(s) { return s.id && s.name && s.file })
 })
+
+function deriveSections(pluginId) {
+  var prefix = '/content/plugins/' + pluginId + '/'
+  var files = Object.keys(mdModules)
+    .filter(function(path) { return path.startsWith(prefix) && path.endsWith('.md') })
+    .map(function(path) { return path.slice(prefix.length) })
+    .sort()
+  // tutorial.md 始终排在第一位（默认 tab），其余保持字典序
+  var tutorialIdx = files.indexOf('tutorial.md')
+  if (tutorialIdx > 0) {
+    files = [files[tutorialIdx]].concat(files.slice(0, tutorialIdx), files.slice(tutorialIdx + 1))
+  }
+  return files.map(function(file) {
+    var base = file.replace(/\.md$/, '')
+    if (base === 'tutorial') return { id: 'tutorial', name: '安装教程', file: file }
+    return { id: base, name: base + ' 汉化', file: file }
+  })
+}
 
 function findSection(id) {
   if (!tabs.value) return null

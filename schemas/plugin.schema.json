@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mchive.local/schemas/plugin.schema.json",
+  "title": "Plugin frontmatter",
+  "description": "Schema for the YAML frontmatter at the top of content/plugins/<id>/tutorial.md.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["id", "name", "description", "category"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "description": "Unique plugin id, must equal the directory name (lowercase letters, digits and hyphens; must start with a letter or digit)."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Display name shown in the UI."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "One-sentence description of what the plugin does."
+    },
+    "category": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Sidebar category bucket (e.g. \"基础工具\"). Unknown categories auto-create new sidebar buttons."
+    },
+    "version": {
+      "type": "string",
+      "description": "Supported Minecraft version range (free-form, e.g. \"1.13 - 26.x\")."
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Searchable keywords."
+    },
+    "sections": {
+      "type": "array",
+      "description": "Optional explicit tab configuration. If omitted, sections are derived from .md files in the plugin folder (tutorial.md renders as markdown; the rest render as code blocks).",
+      "items": { "$ref": "./section.schema.json" }
+    },
+    "downloads": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "path"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "description": { "type": "string" },
+          "path": {
+            "type": "string",
+            "pattern": "^/",
+            "description": "Absolute public path (starting with /), e.g. /downloads/plugins/<id>/lang_zh.yml."
+          }
+        }
+      }
+    }
+  }
+}

@@ -9,7 +9,7 @@ essentials:
   insufficientFunds: "&c余额不足。"
   permissionDenied: "&c你没有权限执行此命令。"
   selfTeleport: "&c不能传送到你自己！"
-  muted: "&c你已被禁默。"
+  muted: "&c你已被禁言。"
   spawn: "&a已传送至出生点。"
   alreadyTeleporting: "&c你已经在传送中了！"
 

@@ -1,3 +1,12 @@
+---
+id: choose-core
+title: 核心怎么选：决策树版
+description: 不堆术语、不罗列特性 — 说需求，给答案。Paper/Purpur/Folia/Leaves 一次性理清
+icon: 🎯
+tags: [核心, 选型]
+order: 2
+---
+
 # 核心怎么选：决策树版
 
 网上的核心选择教程喜欢把 Paper、Purpur、Pufferfish、Folia、Leaves 全部列出来讲一遍特性，看完你还是不知道选哪个。本站换个思路：**先说你的需求，直接给答案。**

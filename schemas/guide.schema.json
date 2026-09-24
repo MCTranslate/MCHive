@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mchive.local/schemas/guide.schema.json",
+  "title": "Guide frontmatter",
+  "description": "Schema for the YAML frontmatter at the top of content/guides/<id>.md.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["id", "title", "description"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "description": "Unique guide id, must equal the file name without the .md extension."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Display title shown in the UI."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Short summary shown in cards and search results."
+    },
+    "icon": {
+      "type": "string",
+      "description": "Optional emoji or short symbol used as a decorative icon."
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Searchable keywords."
+    },
+    "order": {
+      "type": "number",
+      "description": "Optional ascending sort key. Guides without order fall back to alphabetical id order."
+    }
+  }
+}

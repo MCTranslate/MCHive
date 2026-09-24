@@ -1,3 +1,28 @@
+---
+id: essentialsx
+name: EssentialsX
+description: 最基础的全能插件 — 家、传送、经济、飞行、昵称等必备功能，生存服必装
+category: 基础工具
+version: 1.13 - 26.x
+tags: [基础, 经济, 传送, 家]
+sections:
+  - id: tutorial
+    name: 安装教程
+    file: tutorial.md
+  - id: lang
+    name: Lang 汉化
+    file: lang.md
+    description: EssentialsX 中文语言文件，替换后界面文字将全部变为中文
+  - id: config
+    name: Config 汉化
+    file: config.md
+    description: EssentialsX 配置文件中文注释版，逐项解释参数含义与推荐值
+downloads:
+  - name: lang_zh.yml
+    description: EssentialsX 中文语言文件
+    path: /downloads/plugins/essentialsx/lang_zh.yml
+---
+
 ## EssentialsX 安装教程
 
 ### 1. 下载插件

@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mchive.local/schemas/section.schema.json",
+  "title": "Plugin section",
+  "description": "Describes one tab on the plugin detail page; references a markdown file under content/plugins/<id>/.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["id", "name", "file"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "description": "Stable tab identifier used for routing/anchors."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Tab label shown in the UI."
+    },
+    "file": {
+      "type": "string",
+      "pattern": "\\.md$",
+      "description": "Markdown file under the plugin folder (e.g. \"tutorial.md\")."
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional helper text shown above the section content."
+    }
+  }
+}

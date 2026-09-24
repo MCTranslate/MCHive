@@ -1,11 +1,18 @@
 /**
  * Small dependency-free Markdown subset for repository-authored content.
  * Raw HTML is escaped before markup is generated; links are restricted to safe schemes.
+ *
+ * The optional YAML frontmatter block at the very top of the input
+ * (delimited by `---` fences) is stripped before markdown parsing so it never
+ * leaks into the rendered HTML. See `./frontmatter.js` for the parser.
  */
+import { parseFrontmatter } from './frontmatter.js'
+
 export function parseMarkdown(markdown) {
   if (!markdown) return ''
 
-  let html = escapeHtml(markdown)
+  const { content } = parseFrontmatter(markdown)
+  let html = escapeHtml(content)
   const codeBlocks = []
   html = html.replace(/```([\w-]*)\n([\s\S]*?)```/g, (_, language, code) => {
     const index = codeBlocks.length

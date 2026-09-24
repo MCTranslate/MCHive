@@ -1,3 +1,28 @@
+---
+id: worldguard
+name: WorldGuard
+description: 区域保护插件 — 给主城、玩家领地划定不可建造/不可破坏的安全区
+category: 基础工具
+version: 1.14 - 26.x
+tags: [保护, 区域, 编辑]
+sections:
+  - id: tutorial
+    name: 安装教程
+    file: tutorial.md
+  - id: lang
+    name: Lang 汉化
+    file: lang.md
+    description: WorldGuard 提示信息中文语言文件
+  - id: config
+    name: Config 汉化
+    file: config.md
+    description: WorldGuard 配置文件中文注释版，重点解释玩家圈地数量与面积限制
+downloads:
+  - name: lang_zh.yml
+    description: WorldGuard 中文语言文件
+    path: /downloads/plugins/worldguard/lang_zh.yml
+---
+
 ## WorldGuard 安装与教程
 
 ### 1. 前置依赖

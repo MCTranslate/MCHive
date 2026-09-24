@@ -8,131 +8,121 @@
 
 ## 技术栈
 
-- Vue 3 + Vite（单页应用）
-- Vue Router（Hash 模式，兼容 GitHub Pages）
-- 无额外依赖 — Markdown 解析器为轻量手写子集，渲染前会转义原始 HTML
+- Vue 3 + Vite（单页应用，Hash 路由兼容 GitHub Pages）
+- 无第三方依赖：Markdown / YAML frontmatter 解析器均为轻量手写子集
+- 渲染前会转义原始 HTML，链接限制为安全协议
 - GitHub Actions 自动部署
 
 ## 本地开发
 
 ```bash
 npm install
-npm run dev      # http://localhost:5173
-npm run build    # 构建到 dist/
+npm run dev          # http://localhost:5173；启动前会自动 validate + build:index
+npm run build        # 构建到 dist/；同样先校验与生成索引
+npm run validate     # 仅校验 content/ 下所有 frontmatter
+npm run build:index  # 仅从 content/ 聚合生成 data/*.json
 ```
+
+`npm run dev` 与 `npm run build` 都会先跑 `validate`（schema + 命名 + 引用一致性）和 `build:index`（从 markdown frontmatter 生成 JSON 索引）。任何校验失败都会阻断 dev / build。
 
 ## 内容与贡献
 
-MCHive 现在同时维护开服指南与插件资料。新增教程只需在 `content/guides/` 添加 Markdown 并在 `data/guides.json` 注册；新增插件仍沿用下面的兼容流程，不需要修改页面组件。
+MCHive 同时维护开服指南与插件资料。所有内容都以 Markdown 形式存放在 `content/`，元数据写在每个 md 文件顶部的 YAML frontmatter 里。**不再需要手抄 JSON 索引**，启动 / 构建时由脚本自动聚合。
 
-### 如何添加新插件（贡献指南）
-
-添加新插件**不需要修改任何前端代码**，只需三步：
-
-### 第一步：创建 Markdown 内容文件
-
-在 `content/plugins/` 下新建一个属于你的插件的文件夹：
+### 目录约定
 
 ```
-content/plugins/你的插件id/
-├── tutorial.md    # 安装教程（必须）
-├── lang.md        # Lang 汉化说明/内容（必须）
-└── config.md      # Config 配置讲解（必须）
+content/
+├── guides/<id>.md             # 开服教程（每个 md 顶部带 frontmatter）
+└── plugins/
+    ├── <id>/                  # 每个插件一个目录
+    │   ├── tutorial.md        # 必填；含 frontmatter 元数据 + 教程正文
+    │   ├── lang.md            # 可选；展示为代码块
+    │   └── config.md          # 可选；展示为代码块
+    └── _template/             # 贡献模板（贡献时复制整个目录）
 ```
 
-每个文件都支持 Markdown 语法。`lang.md` 和 `config.md` 内容会直接在页面上展示，可以贴完整的 YML 文件内容。
+### 如何添加新插件
 
-> 可参考 `content/plugins/_template/` 中的模板。
+只需新增一个目录并写好 frontmatter，无需修改任何 JSON 或前端代码：
 
-### 第二步：在索引中注册插件
+1. **复制模板**：把 `content/plugins/_template/` 整个目录复制一份，重命名为你的插件 id（必须与目录名一致、只含 `a-z 0-9 -`）。
+2. **改 frontmatter**：在新的 `tutorial.md` 顶部 `---` 块里填：
+   - `id` — 必须等于目录名
+   - `name` / `description` — 必填，用于卡片与搜索
+   - `category` — 左侧分组；已有「基础工具」；新增分类会自动建分组
+   - `tags` / `version` — 可选，搜索关键字与版本区间
+   - `sections` — 可省略；省略时自动扫描本目录下所有 `.md`（`tutorial.md` 走 markdown 渲染，其余走代码块）
+   - `downloads` — 列出可下载文件路径，文件必须放在 `public/downloads/plugins/<id>/` 下
+3. **写正文**：`tutorial.md` 写 Markdown 教程正文；`lang.md` / `config.md` 粘贴 YML 或 properties 等「纯文本文件」原文（页面会自动以代码块渲染，可一键复制）。
+4. **放置下载文件**（可选）：如果有可下载的 YML 等，放到 `public/downloads/plugins/<id>/`。
+5. **跑起来**：`npm run dev` — predev 钩子会自动校验 frontmatter 与引用一致性，发现错误立刻报错；通过后再生成 `data/plugins.json`，无需手动维护。
 
-编辑 `data/plugins.json`，在数组末尾追加一项：
+### 如何添加新教程
 
-```json
-{
-  "id": "你的插件id",
-  "name": "插件显示名",
-  "description": "一句话描述插件功能",
-  "category": "分类名（如 基础工具、保护/管理等）",
-  "version": "1.14 - 1.21+",
-  "tags": ["标签1", "标签2"],
-  "sections": [
-    { "id": "tutorial", "name": "安装教程", "file": "tutorial.md" },
-    { "id": "lang", "name": "Lang 汉化", "file": "lang.md", "description": "这个语言文件的作用说明" },
-    { "id": "config", "name": "Config 汉化", "file": "config.md", "description": "配置文件讲解说明" }
-  ],
-  "downloads": [
-    {
-      "name": "lang_zh.yml",
-      "description": "语言文件说明",
-      "path": "/downloads/plugins/你的插件id/lang_zh.yml"
-    }
-  ]
-}
+直接新建 `content/guides/<id>.md`（id 即文件名去后缀），顶部 frontmatter：
+
+```yaml
+---
+id: my-guide
+title: 教程展示标题
+description: 一句话讲清楚这篇教程解决什么问题
+icon: 📖
+tags: [标签1, 标签2]
+order: 6
+---
 ```
 
-字段说明：
+`order` 控制侧边栏顺序（升序），省略则按文件名字典序。文件下方写 Markdown 正文即可。
 
-| 字段 | 说明 |
-|------|------|
-| `id` | 唯一标识，英文短横线，必须与目录名一致 |
-| `sections` | Tab 配置 — 每个 Tab 对应一个 Markdown 文件 |
-| `downloads` | 下载列表 — 没有可下载文件就写 `[]` |
-| `category` | 侧边栏分组的依据 |
-| `tags` | 搜索关键字 |
+### 字段契约
 
-### 第三步：放置下载文件（可选）
+完整契约见 `schemas/` 目录：
 
-如果有可下载的文件（如 YML），放到 `public/downloads/plugins/你的插件id/` 目录：
+- `schemas/plugin.schema.json` — 插件 frontmatter 必填字段、类型、命名约束
+- `schemas/guide.schema.json` — 教程 frontmatter 契约
+- `schemas/section.schema.json` — sections 配置契约
 
-```
-public/downloads/plugins/你的插件id/
-└── lang_zh.yml
-```
-
-这样构建时会自动拷贝到 `dist/downloads/plugins/...`，用户可通过 `path` 字段中对应的路径下载。
+校验器会在 `predev` / `prebuild` 钩子中加载这些 schema 阻断违例内容进入构建产物。
 
 ### 发起 PR
 
-完成上述三步后，提交并发起 Pull Request 即可。代码合并后 Actions 会自动部署。
-
-> **提示：** 分类名如果不存在也没关系，前端会根据所有插件的 category 自动生成分类按钮。
-
-## 自定义页面
-
-如果你想让某个插件页面有特别的布局和交互（比如两个并排的代码块），可以在 `sections` 里加一个 `type: "raw"` 自定义字段，然后在 `PluginDetail.vue` 中扩展对应渲染逻辑。框架已预留好了 `section.description` 字段用于说明。
+完成上述步骤后提交并发起 Pull Request。代码合并后 Actions 会自动部署。
 
 ## 目录结构
 
 ```
 .
-├── content/plugins/              ← Markdown 内容
-│   ├── _template/                ← 添加新插件模板
-│   ├── essentialsx/
-│   ├── worldguard/
-│   └── luckperms/
-├── data/
-│   └── plugins.json              ← 插件索引（在此注册）
-├── public/
-│   ├── downloads/plugins/        ← 可下载文件
-│   └── favicon.svg
+├── content/                   ← Markdown 内容（唯一真实源）
+│   ├── guides/                ← 开服教程
+│   └── plugins/               ← 插件资料
+│       ├── _template/         ← 贡献模板
+│       ├── essentialsx/
+│       ├── luckperms/
+│       └── worldguard/
+├── data/                      ← 构建产物（由 build:index 自动生成，可读）
+│   ├── plugins.json
+│   └── guides.json
+├── schemas/                   ← JSON Schema 契约
+├── scripts/                   ← Node 脚本
+│   ├── parse-frontmatter.mjs  ← 共享 frontmatter 解析（Vue 与脚本共用）
+│   ├── build-index.mjs        ← 扫描 content/ → data/*.json
+│   └── validate-content.mjs   ← schema 校验 + 命名/引用一致性
+├── public/downloads/plugins/  ← 可下载文件（按 <id> 子目录组织）
 ├── src/
-│   ├── components/
-│   │   ├── Sidebar.vue           # 侧边栏（自动生成分类+列表）
-│   │   └── DownloadSection.vue   # 下载区
-│   ├── views/
-│   │   ├── Home.vue              # 首页
-│   │   └── PluginDetail.vue      # 详情（自动加载 Markdown）
+│   ├── components/            ← Sidebar / DownloadSection
+│   ├── views/                 ← Home / PluginDetail / GuideDetail / ...
 │   ├── composables/
-│   │   └── markdown.js           # Markdown 解析
+│   │   ├── markdown.js        ← Markdown 解析（顶部自动剥离 frontmatter）
+│   │   └── frontmatter.js     ← YAML 解析器
 │   ├── router/index.js
 │   ├── styles/main.css
 │   ├── App.vue
 │   └── main.js
-├── .github/workflows/deploy.yml  # GitHub Actions
+├── .github/workflows/deploy.yml
 ├── index.html
-├── package.json
-└── vite.config.js                # base: './' 兼容 GitHub Pages
+├── package.json               ← scripts: dev/build 串联 validate + build:index
+└── vite.config.js             ← base: './' 兼容 GitHub Pages
 ```
 
 ## 部署配置

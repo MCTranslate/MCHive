@@ -1,3 +1,25 @@
+---
+id: luckperms
+name: LuckPerms
+description: 主流的权限管理插件 — 分组、继承、跨服同步与可视化编辑器一应俱全
+category: 基础工具
+version: 1.14 - 26.x
+tags: [权限, 分组, 管理]
+sections:
+  - id: tutorial
+    name: 安装教程
+    file: tutorial.md
+  - id: lang
+    name: Lang 汉化
+    file: lang.md
+    description: LuckPerms 自带完整多语言系统，一行命令即可安装中文语言包
+  - id: config
+    name: Config 汉化
+    file: config.md
+    description: LuckPerms 配置文件中文注释版，涵盖存储方式与多服务器同步
+downloads: []
+---
+
 ## LuckPerms 安装与基础教程
 
 ### 1. 安装
