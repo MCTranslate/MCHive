@@ -1,8 +1,33 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import pluginIndex from '../data/plugins.json'
-import guideIndex from '../data/guides.json'
+import { searchContent } from './data/content.js'
+
+const themeModes = ['system', 'light', 'dark']
+const theme = ref('system')
+const themeOpen = ref(false)
+
+function applyTheme(value) {
+  theme.value = value
+  const root = document.documentElement
+  root.dataset.theme = value
+  root.style.colorScheme = value === 'system' ? '' : value
+  window.localStorage.setItem('mchive-theme', value)
+  themeOpen.value = false
+}
+
+function cycleTheme() {
+  const index = themeModes.indexOf(theme.value)
+  applyTheme(themeModes[(index + 1) % themeModes.length])
+}
+
+function themeLabel(value) {
+  return { system: '跟随系统', light: '浅色模式', dark: '深色模式' }[value]
+}
+
+onMounted(() => {
+  applyTheme(window.localStorage.getItem('mchive-theme') || 'system')
+})
 
 const route = useRoute()
 const router = useRouter()
@@ -11,24 +36,13 @@ const menuOpen = ref(false)
 const query = ref('')
 
 const navigation = [
-  { label: '开服指南', to: '/guides' },
-  { label: '教程中心', to: '/tutorials' },
-  { label: '插件中心', to: '/plugins' },
-  { label: '工具箱', to: '/tools' }
+  { label: '开始开服', to: '/guides' },
+  { label: '知识库', to: '/tutorials' },
+  { label: '插件', to: '/plugins' },
+  { label: '贡献', to: '/contribute' }
 ]
 
-const searchItems = computed(() => {
-  const tokens = query.value.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean)
-  const entries = [
-    ...guideIndex.map(item => ({ ...item, type: '教程', to: `/guide/${item.id}`, keywords: (item.tags || []).join(' ') })),
-    ...pluginIndex.map(item => ({ ...item, type: '插件', to: `/plugin/${item.id}`, keywords: `${item.category || ''} ${(item.tags || []).join(' ')} ${(item.sections || []).map(section => section.name).join(' ')}` }))
-  ]
-  if (!tokens.length) return entries.slice(0, 6)
-  return entries.filter(item => {
-    const haystack = `${item.name} ${item.description} ${item.keywords}`.toLocaleLowerCase()
-    return tokens.every(token => haystack.includes(token))
-  }).slice(0, 8)
-})
+const searchItems = computed(() => searchContent(query.value).slice(0, query.value.trim() ? 8 : 6))
 
 function openSearch() {
   searchOpen.value = true
@@ -60,6 +74,7 @@ function onKeydown(event) {
 watch(() => route.fullPath, () => {
   searchOpen.value = false
   menuOpen.value = false
+  themeOpen.value = false
 })
 </script>
 
@@ -79,6 +94,16 @@ watch(() => route.fullPath, () => {
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
             <span>搜索教程、插件、配置</span><kbd>⌘ K</kbd>
           </button>
+          <div class="theme-control">
+            <button class="theme-trigger" type="button" :aria-label="`当前主题：${themeLabel(theme)}`" :aria-expanded="themeOpen" @click="themeOpen = !themeOpen">
+              <svg v-if="theme === 'dark'" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.7 15.4A8.9 8.9 0 0 1 8.6 3.3 9 9 0 1 0 20.7 15.4Z"/></svg>
+              <svg v-else-if="theme === 'light'" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+              <svg v-else viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 20v-2M16 20v-2M8 8h8M8 12h5"/></svg>
+            </button>
+            <div v-if="themeOpen" class="theme-menu" role="menu">
+              <button v-for="mode in themeModes" :key="mode" type="button" :class="{ active: theme === mode }" role="menuitem" @click="applyTheme(mode)">{{ themeLabel(mode) }}</button>
+            </div>
+          </div>
           <a class="github-link" href="https://github.com/MCTranslate/MCHive" target="_blank" rel="noreferrer" aria-label="在 GitHub 查看 MCHive">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-4.3 1.4-4.3-2.1-6-2.5M15 21v-3.9a3.4 3.4 0 0 0-.9-2.7c3-.3 6.1-1.5 6.1-6.7a5.2 5.2 0 0 0-1.4-3.6 4.8 4.8 0 0 0-.1-3.6S17.5.2 15 2.3a13.4 13.4 0 0 0-7 0C5.5.2 4.3.5 4.3.5a4.8 4.8 0 0 0-.1 3.6 5.2 5.2 0 0 0-1.4 3.6c0 5.2 3.1 6.4 6.1 6.7A3.4 3.4 0 0 0 8 17.1V21"/></svg>
           </a>
@@ -89,17 +114,18 @@ watch(() => route.fullPath, () => {
       </div>
       <nav v-if="menuOpen" class="mobile-nav" aria-label="移动主导航">
         <RouterLink v-for="item in navigation" :key="item.to" :to="item.to">{{ item.label }}<span aria-hidden="true">→</span></RouterLink>
+        <button class="mobile-theme" type="button" @click="cycleTheme">主题：{{ themeLabel(theme) }}<span aria-hidden="true">↻</span></button>
         <a href="https://github.com/MCTranslate/MCHive" target="_blank" rel="noreferrer">GitHub<span aria-hidden="true">↗</span></a>
       </nav>
     </header>
 
-    <main id="main-content" class="main-content"><RouterView /></main>
+    <main id="main-content" class="main-content"><Transition name="page" mode="out-in"><RouterView /></Transition></main>
 
     <footer class="site-footer">
       <div class="footer-inner">
         <div class="footer-brand"><RouterLink class="brand" to="/"><span class="brand-mark">M</span><span class="brand-word">MCHive</span></RouterLink><p>让每一位服主，都能把服务器搭建好。</p></div>
-        <div class="footer-links"><span class="footer-label">探索</span><RouterLink to="/guides">开服指南</RouterLink><RouterLink to="/tutorials">教程中心</RouterLink><RouterLink to="/plugins">插件中心</RouterLink><RouterLink to="/tools">工具箱</RouterLink></div>
-        <div class="footer-links"><span class="footer-label">社区</span><a href="https://github.com/MCTranslate/MCHive" target="_blank" rel="noreferrer">GitHub 项目</a><a href="https://github.com/MCTranslate/MCHive/issues" target="_blank" rel="noreferrer">反馈与贡献</a><span>GPL-3.0 开源许可</span></div>
+        <div class="footer-links"><span class="footer-label">探索</span><RouterLink to="/guides">开服指南</RouterLink><RouterLink to="/tutorials">教程中心</RouterLink><RouterLink to="/plugins">插件中心</RouterLink><RouterLink to="/contribute">贡献指南</RouterLink></div>
+        <div class="footer-links"><span class="footer-label">社区</span><a href="https://github.com/MCTranslate/MCHive" target="_blank" rel="noreferrer">GitHub 项目</a><RouterLink to="/contribute">贡献指南</RouterLink><a href="https://github.com/MCTranslate/MCHive/issues" target="_blank" rel="noreferrer">反馈与贡献</a><span>GPL-3.0 开源许可</span></div>
       </div>
       <div class="footer-bottom"><span>© MCHive · Minecraft Server Knowledge Platform</span><span>由社区持续维护</span></div>
     </footer>
@@ -154,15 +180,15 @@ kbd { padding: 2px 5px; border: 1px solid var(--border); border-radius: 3px; fon
 .footer-links a:hover { color: var(--accent-strong); }
 .footer-label { color: var(--text-primary); font-weight: 650; margin-bottom: 3px; }
 .footer-bottom { min-height: 48px; padding: 12px 0; border-top: 1px solid var(--border); display: flex; justify-content: space-between; gap: 16px; color: var(--text-muted); font-size: 11px; }
-.search-backdrop { position: fixed; inset: 0; z-index: 100; display: flex; align-items: flex-start; justify-content: center; padding: min(18vh, 150px) 20px 24px; background: rgba(13, 20, 17, .56); backdrop-filter: blur(5px); }
-.search-dialog { width: min(600px, 100%); background: var(--bg-primary); border: 1px solid var(--border-strong); border-radius: 9px; box-shadow: 0 24px 90px rgba(0,0,0,.28); overflow: hidden; }
+.search-backdrop { animation: backdrop-in .18s ease-out; position: fixed; inset: 0; z-index: 100; display: flex; align-items: flex-start; justify-content: center; padding: min(18vh, 150px) 20px 24px; background: rgba(13, 20, 17, .56); backdrop-filter: blur(5px); }
+.search-dialog { animation: dialog-in .22s var(--ease-standard); width: min(600px, 100%); background: var(--bg-primary); border: 1px solid var(--border-strong); border-radius: 9px; box-shadow: 0 24px 90px rgba(0,0,0,.28); overflow: hidden; }
 .search-dialog-head { height: 58px; display: flex; align-items: center; padding: 0 18px; gap: 12px; border-bottom: 1px solid var(--border); color: var(--text-muted); }
 .search-dialog-head input { min-width: 0; flex: 1; border: 0; outline: 0; background: transparent; color: var(--text-primary); font: 15px var(--font-sans); }
 .close-search { border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); padding: 3px 7px; border-radius: 4px; font: 11px var(--font-mono); cursor: pointer; }
 .search-results { max-height: min(440px, 56vh); overflow-y: auto; padding: 12px; }
 .search-caption { padding: 5px 8px 8px; color: var(--text-muted); font-size: 11px; }
 .search-result { width: 100%; display: flex; align-items: center; gap: 12px; padding: 10px 9px; border: 0; border-radius: 5px; background: transparent; text-align: left; color: inherit; cursor: pointer; }
-.search-result:hover { background: var(--surface); }
+.search-result:hover { background: var(--surface); transform: translateX(3px); }
 .result-type { width: 48px; color: var(--accent-strong); font-size: 11px; flex: none; }
 .result-copy { display: flex; min-width: 0; flex-direction: column; gap: 2px; flex: 1; }
 .result-copy strong { font-size: 13px; font-weight: 600; }
@@ -171,6 +197,11 @@ kbd { padding: 2px 5px; border: 1px solid var(--border); border-radius: 3px; fon
 .search-empty { padding: 36px 20px; text-align: center; color: var(--text-muted); font-size: 13px; }
 .search-dialog-foot { border-top: 1px solid var(--border); padding: 10px 16px; display: flex; justify-content: space-between; color: var(--text-muted); font-size: 11px; }
 .search-dialog-foot button { border: 0; background: transparent; color: var(--accent-strong); font: inherit; cursor: pointer; }
+@keyframes backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes dialog-in { from { opacity: 0; transform: translateY(-8px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.page-enter-active, .page-leave-active { transition: opacity .22s var(--ease-standard), transform .22s var(--ease-standard); }
+.page-enter-from { opacity: 0; transform: translateY(7px); }
+.page-leave-to { opacity: 0; transform: translateY(-3px); }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 @media (max-width: 900px) { .header-inner { gap: 26px; } .primary-nav { gap: 20px; } .search-trigger { width: 190px; } }
 @media (max-width: 700px) {

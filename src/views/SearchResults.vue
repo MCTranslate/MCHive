@@ -1,21 +1,11 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import pluginIndex from '../../data/plugins.json'
-import guideIndex from '../../data/guides.json'
+import { searchContent } from '../data/content.js'
 
 const route = useRoute()
 const query = computed(() => String(route.query.q || '').trim())
-const results = computed(() => {
-  const tokens = query.value.toLocaleLowerCase().split(/\s+/).filter(Boolean)
-  if (!tokens.length) return []
-  const guides = guideIndex.map(item => ({ ...item, type: '教程', to: `/guide/${item.id}`, keywords: (item.tags || []).join(' ') }))
-  const plugins = pluginIndex.map(item => ({ ...item, type: '插件', to: `/plugin/${item.id}`, keywords: `${item.category || ''} ${(item.tags || []).join(' ')} ${(item.sections || []).map(section => section.name).join(' ')}` }))
-  return [...guides, ...plugins].filter(item => {
-    const haystack = `${item.name} ${item.description} ${item.keywords}`.toLocaleLowerCase()
-    return tokens.every(token => haystack.includes(token))
-  })
-})
+const results = computed(() => searchContent(query.value))
 </script>
 
 <template>

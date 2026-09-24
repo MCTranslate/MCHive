@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import guideIndex from '../../data/guides.json'
 import { parseMarkdown } from '../composables/markdown.js'
@@ -13,6 +13,7 @@ const router = useRouter()
 const html = ref('')
 const loading = ref(false)
 const error = ref(null)
+const activeHeading = ref('')
 let loadToken = 0
 
 const guide = computed(function() {
@@ -85,12 +86,23 @@ function headingId(title, index) {
   return 'section-' + index + '-' + title.toLowerCase().replace(/[^\w\u4e00-\u9fa5]+/g, '-')
 }
 
+function updateActiveHeading() {
+  const rendered = Array.from(document.querySelectorAll('.guide-content .markdown-body h2, .guide-content .markdown-body h3, .guide-content .markdown-body h4'))
+  if (!rendered.length) { activeHeading.value = ''; return }
+  const marker = 132
+  const current = rendered.reduce(function(found, element) {
+    return element.getBoundingClientRect().top <= marker ? element : found
+  }, rendered[0])
+  activeHeading.value = current.id
+}
+
 function setHeadingIds() {
   nextTick(function() {
     const rendered = document.querySelectorAll('.guide-content .markdown-body h2, .guide-content .markdown-body h3, .guide-content .markdown-body h4')
     rendered.forEach(function(element, index) {
       element.id = headings.value[index] ? headings.value[index].id : headingId(element.textContent, index)
     })
+    updateActiveHeading()
   })
 }
 
@@ -112,6 +124,14 @@ function copyCode(event) {
 }
 
 watch(html, setHeadingIds)
+
+onMounted(function() {
+  window.addEventListener('scroll', updateActiveHeading, { passive: true })
+})
+
+onBeforeUnmount(function() {
+  window.removeEventListener('scroll', updateActiveHeading)
+})
 </script>
 
 <template>
@@ -126,24 +146,35 @@ watch(html, setHeadingIds)
     </header>
 
     <div class="guide-layout">
+      <aside class="guide-sidebar" aria-label="教程导航">
+        <span class="sidebar-title">开服指南</span>
+        <RouterLink v-for="item in guideIndex" :key="item.id" :to="'/guide/' + item.id" :class="{ active: item.id === guide.id }">
+          <span>{{ item.name }}</span>
+          <small>{{ item.tags && item.tags[0] || '指南' }}</small>
+        </RouterLink>
+      </aside>
+
+      <main class="article-column">
+        <article class="article-content">
+          <div v-if="loading" class="empty-state">
+            <span class="icon">⚙️</span>
+            <h3>正在加载内容...</h3>
+          </div>
+
+          <div v-else-if="error" class="empty-state">
+            <span class="icon">⚠️</span>
+            <h3>{{ error }}</h3>
+            <p>请检查 content/guides/ 目录下是否存在对应文件</p>
+          </div>
+
+          <div v-else class="markdown-body" v-html="html" @click="copyCode"></div>
+        </article>
+      </main>
+
       <aside class="guide-toc" v-if="headings.length">
         <span class="toc-title">本页目录</span>
-        <a v-for="heading in headings" :key="heading.id" :href="`#${heading.id}`" :class="'toc-level-' + heading.level" @click.prevent="scrollToHeading(heading.id)">{{ heading.title }}</a>
+        <a v-for="heading in headings" :key="heading.id" :href="`#${heading.id}`" :class="['toc-level-' + heading.level, { active: activeHeading === heading.id }]" @click.prevent="scrollToHeading(heading.id)">{{ heading.title }}</a>
       </aside>
-      <div class="guide-content">
-      <div v-if="loading" class="empty-state">
-        <span class="icon">⚙️</span>
-        <h3>正在加载内容...</h3>
-      </div>
-
-      <div v-else-if="error" class="empty-state">
-        <span class="icon">⚠️</span>
-        <h3>{{ error }}</h3>
-        <p>请检查 content/guides/ 目录下是否存在对应文件</p>
-      </div>
-
-      <div v-else class="markdown-body" v-html="html" @click="copyCode"></div>
-      </div>
     </div>
 
     <footer class="related">
@@ -219,13 +250,15 @@ watch(html, setHeadingIds)
   min-height: 300px;
 }
 
-.guide-layout { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 36px; align-items: start; }
-.guide-toc { position: sticky; top: 92px; display: flex; flex-direction: column; gap: 8px; max-height: calc(100vh - 120px); overflow-y: auto; padding-left: 12px; border-left: 1px solid var(--border); }
-.toc-title { margin-bottom: 5px; color: var(--text-primary); font-size: 11px; font-weight: 650; }
-.guide-toc a { color: var(--text-muted); text-decoration: none; font-size: 10px; line-height: 1.5; }
-.guide-toc a:hover { color: var(--accent-strong); }
-.guide-toc .toc-level-3 { padding-left: 8px; }
-.guide-toc .toc-level-4 { padding-left: 16px; }
+.guide-layout { display: grid; grid-template-columns: 240px minmax(0, 720px); gap: 44px; align-items: start; }
+.guide-toc { position: sticky; top: 92px; display: flex; flex-direction: column; gap: 3px; max-height: calc(100vh - 120px); overflow-y: auto; padding: 14px 10px 14px 12px; border: 1px solid var(--border); border-radius: 12px; background: color-mix(in srgb, var(--surface) 72%, transparent); }
+.toc-title { margin: 0 0 7px; padding: 0 10px; color: var(--text-primary); font-size: 15px; font-weight: 650; line-height: 1.5; }
+.guide-toc a { position: relative; display: block; padding: 6px 10px; border-radius: 8px; color: var(--text-secondary); text-decoration: none; font-size: 14px; line-height: 1.75; overflow-wrap: anywhere; transition: color .18s ease, background .18s ease, padding-left .18s ease; }
+.guide-toc a:hover { color: var(--accent-strong); background: var(--surface-accent); }
+.guide-toc a.active { color: var(--accent-strong); background: var(--accent-dim); font-weight: 600; }
+.guide-toc a.active::before { content: ''; position: absolute; top: 6px; bottom: 6px; left: 0; width: 3px; border-radius: 3px; background: var(--accent-strong); }
+.guide-toc .toc-level-3 { padding-left: 22px; }
+.guide-toc .toc-level-4 { padding-left: 32px; font-size: 13px; }
 
 .related {
   border-top: 1px solid var(--border);
@@ -302,8 +335,122 @@ watch(html, setHeadingIds)
     gap: 8px;
   }
   .guide-layout { display: block; }
-  .guide-toc { position: static; max-height: 180px; margin: 0 0 24px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 4px; }
+  .guide-toc { position: static; max-height: none; margin: 0 0 24px; padding: 12px 10px; border: 1px solid var(--border); border-radius: 12px; }
   .guide-sequence { gap: 8px; }
   .sequence-item { padding: 9px; }
+}
+
+/* The reading column remains narrow while the navigation stays visible on wide screens. */
+.markdown-body { max-width: 720px; }
+.guide-content { padding: 0 0 8px; }
+@media (max-width: 768px) {
+  .guide-detail { width: 100%; overflow: hidden; }
+  .guide-content { margin-bottom: 28px; }
+  .markdown-body { max-width: none; }
+  .guide-toc a { min-height: 40px; display: flex; align-items: center; font-size: 14px; line-height: 1.7; }
+  .toc-title { font-size: 15px; }
+  .guide-toc .toc-level-3 { padding-left: 22px; }
+  .guide-toc .toc-level-4 { padding-left: 32px; font-size: 13px; }
+  .guide-sequence { grid-template-columns: 1fr; }
+  .sequence-item.next { text-align: left; }
+  .related-list { grid-template-columns: 1fr; }
+}
+
+/* Desktop docs shell: use the viewport while keeping the reading measure comfortable. */
+.guide-detail {
+  width: min(1440px, calc(100% - 64px));
+  max-width: none;
+  margin: 0 auto;
+  padding: 32px 0 48px;
+}
+.guide-header, .guide-detail > .breadcrumb { width: 100%; }
+.guide-layout {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr) 260px;
+  column-gap: 32px;
+  align-items: start;
+}
+.guide-sidebar {
+  position: sticky;
+  top: 92px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding: 14px 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+}
+.sidebar-title {
+  margin: 0 0 7px;
+  padding: 0 10px;
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.5;
+}
+.guide-sidebar a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  padding: 9px 10px;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 13px;
+  line-height: 1.55;
+  transition: color .18s ease, background .18s ease;
+}
+.guide-sidebar a span { min-width: 0; overflow-wrap: anywhere; }
+.guide-sidebar a small { flex: none; color: var(--text-muted); font-size: 10px; }
+.guide-sidebar a:hover { color: var(--accent-strong); background: var(--surface-accent); }
+.guide-sidebar a.active { color: var(--accent-strong); background: var(--accent-dim); font-weight: 600; }
+.guide-content { min-width: 0; margin-bottom: 40px; }
+.guide-content .markdown-body { width: 100%; max-width: 820px; }
+.guide-toc { grid-column: 3; min-width: 0; }
+@media (max-width: 1199px) {
+  .guide-detail { width: min(1120px, calc(100% - 48px)); }
+  .guide-layout { grid-template-columns: 220px minmax(0, 1fr); column-gap: 28px; }
+  .guide-toc { grid-column: 1 / -1; grid-row: 1; position: static; max-height: none; margin-bottom: 24px; }
+  .guide-sidebar { grid-column: 1; grid-row: 2; }
+  .guide-content { grid-column: 2; grid-row: 2; }
+}
+@media (max-width: 768px) {
+  .guide-detail { width: 100%; padding: 18px; }
+  .guide-layout { display: block; }
+  .guide-sidebar { display: none; }
+  .guide-toc { margin: 0 0 24px; }
+  .guide-content .markdown-body { max-width: none; }
+}
+
+/* Keep the grid item and the readable article measure as separate layers. */
+.article-column {
+  min-width: 0;
+  width: 100%;
+  grid-column: 2;
+  grid-row: 1;
+}
+.article-content {
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+}
+.article-content .markdown-body {
+  min-width: 0;
+  width: min(100%, 820px);
+  max-width: 820px;
+}
+@media (max-width: 1199px) {
+  .article-column { grid-column: 2; grid-row: 2; }
+  .article-content, .article-content .markdown-body { width: 100%; max-width: none; }
+}
+@media (max-width: 768px) {
+  .article-column { display: block; width: 100%; }
+  .article-content, .article-content .markdown-body { width: 100%; max-width: none; }
 }
 </style>
