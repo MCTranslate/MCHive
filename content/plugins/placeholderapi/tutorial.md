@@ -3,7 +3,6 @@ id: placeholderapi
 name: PlaceholderAPI
 description: 服务器变量的统一接口 — 记分板、Tab 列表、聊天栏里的 %player_name% 这类变量都靠它
 category: 开发基础
-version: 1.13 - 26.x
 tags: [变量, 占位符, 记分板, 美化]
 sections:
   - id: tutorial

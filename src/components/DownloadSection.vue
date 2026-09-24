@@ -82,7 +82,7 @@ function downloadName(item) {
 
 <style scoped>
 .download-section {
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--glass-border);
   padding-top: 28px;
   margin-top: 48px;
 }
@@ -104,25 +104,35 @@ function downloadName(item) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius);
-  padding: 14px 20px;
-  transition: all 0.2s;
+  padding: 16px 20px;
+  transition: all 0.3s var(--ease-standard);
+  backdrop-filter: blur(8px);
 }
 
 .download-item:hover {
   border-color: var(--accent);
+  box-shadow: var(--shadow), inset 0 1px 0 var(--glass-highlight);
+  transform: translateY(-2px);
 }
 
 .download-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 .download-icon {
-  font-size: 20px;
+  font-size: 22px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  background: var(--accent-dim);
+  border-radius: 10px;
+  border: 1px solid var(--glass-border);
 }
 
 .download-info > div {
@@ -146,7 +156,7 @@ function downloadName(item) {
 }
 
 .download-btn.loading {
-  opacity: 0.7;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
@@ -160,37 +170,40 @@ function downloadName(item) {
 }
 
 .download-tip {
-  margin-top: 16px;
-  padding: 12px 16px;
+  margin-top: 18px;
+  padding: 14px 18px;
   background: var(--accent-dim);
   border-radius: var(--radius-sm);
   font-size: 12px;
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.7;
+  border: 1px solid var(--glass-border);
 }
 
 .download-tip code {
-  background: rgba(74, 222, 128, 0.15);
+  background: rgba(110, 231, 183, 0.12);
   color: var(--accent);
-  padding: 1px 6px;
-  border-radius: 4px;
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-size: 11px;
+  border: 1px solid var(--glass-border);
 }
 
 .download-section.empty {
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--glass-border);
 }
 
 .empty-download {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   padding: 20px;
   color: var(--text-muted);
 }
 
 .empty-download p {
   font-size: 14px;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
 
 .empty-download .note {

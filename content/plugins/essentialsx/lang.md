@@ -1,6 +1,6 @@
 # === EssentialsX 中文语言文件 ===
-# 版本: 2.20.1
-# 将此文件放入 plugins/Essentials/ 并将 config.yml 中 locale 设为 zh
+# 版本: 2.20.x
+# 将此文件放入 plugins/EssentialsX/ 并将 config.yml 中 locale 设为 zh
 # 提示：网页上可直接复制以下内容保存为 lang_zh.yml
 
 essentials:

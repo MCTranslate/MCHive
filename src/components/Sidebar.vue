@@ -190,32 +190,28 @@ function goToGuide(id) {
   width: var(--sidebar-width);
   height: 100vh;
   background: var(--bg-secondary);
-  border-right: 1px solid var(--border);
+  border-right: 1px solid var(--glass-border);
   display: flex;
   flex-direction: column;
   z-index: 100;
-  transition: width 0.3s ease;
+  transition: width 0.3s var(--ease-standard);
   overflow: hidden;
+  backdrop-filter: blur(20px);
 }
 
-.sidebar.collapsed {
-  width: 60px;
-}
+.sidebar.collapsed { width: 64px; }
 
 .sidebar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: var(--header-height);
-  padding: 0 16px;
-  border-bottom: 1px solid var(--border);
+  height: 64px;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--glass-border);
   flex-shrink: 0;
 }
 
-.logo-area {
-  display: flex;
-  flex-direction: column;
-}
+.logo-area { display: flex; flex-direction: column; }
 
 .logo {
   font-size: 16px;
@@ -231,22 +227,24 @@ function goToGuide(id) {
 }
 
 .toggle-btn {
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--border);
-  background: transparent;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
   color: var(--text-secondary);
   border-radius: var(--radius-sm);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: all 0.2s var(--ease-standard);
+  backdrop-filter: blur(8px);
   flex-shrink: 0;
 }
 .toggle-btn:hover {
-  background: var(--bg-tertiary);
+  background: var(--surface-hover);
   color: var(--text-primary);
+  border-color: var(--accent);
 }
 
 .sidebar-body {
@@ -254,19 +252,25 @@ function goToGuide(id) {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 12px;
+  padding: 14px 12px;
   gap: 12px;
 }
 
 .search-box {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
   color: var(--text-muted);
+  backdrop-filter: blur(8px);
+  transition: all 0.2s;
+}
+.search-box:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
 }
 
 .search-input {
@@ -278,9 +282,7 @@ function goToGuide(id) {
   outline: none;
   font-family: inherit;
 }
-.search-input::placeholder {
-  color: var(--text-muted);
-}
+.search-input::placeholder { color: var(--text-muted); }
 
 .categories {
   display: flex;
@@ -291,20 +293,22 @@ function goToGuide(id) {
 .cat-btn {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border: 1px solid var(--border);
-  background: transparent;
+  gap: 5px;
+  padding: 5px 12px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
   color: var(--text-secondary);
-  border-radius: 20px;
-  font-size: 12px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s var(--ease-standard);
   white-space: nowrap;
   font-family: inherit;
+  backdrop-filter: blur(8px);
 }
 .cat-btn:hover {
-  background: var(--bg-tertiary);
+  background: var(--surface-hover);
+  border-color: var(--accent);
 }
 .cat-btn.active {
   background: var(--accent-dim);
@@ -321,18 +325,18 @@ function goToGuide(id) {
 }
 
 .section-label {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 10px 4px 4px;
+  letter-spacing: 1px;
+  padding: 12px 6px 6px;
   user-select: none;
 }
 
 .guide-icon {
-  background: rgba(96, 165, 250, 0.12);
-  border-color: rgba(96, 165, 250, 0.3);
+  background: var(--accent-dim);
+  border-color: var(--accent);
 }
 
 .plugin-item {
@@ -342,26 +346,29 @@ function goToGuide(id) {
   padding: 10px 12px;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s var(--ease-standard);
+  border: 1px solid transparent;
 }
 .plugin-item:hover {
-  background: var(--bg-tertiary);
+  background: var(--surface-hover);
+  border-color: var(--glass-border);
 }
 .plugin-item.active {
   background: var(--accent-dim);
-  border: 1px solid rgba(74, 222, 128, 0.3);
+  border-color: var(--accent);
 }
 
 .plugin-icon {
   width: 36px;
   height: 36px;
   border-radius: var(--radius-sm);
-  background: var(--bg-card);
+  background: var(--glass-bg);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(8px);
 }
 
 .default-icon {
@@ -378,7 +385,7 @@ function goToGuide(id) {
 }
 
 .plugin-name {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-primary);
   white-space: nowrap;
@@ -387,7 +394,7 @@ function goToGuide(id) {
 }
 
 .plugin-desc {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -406,17 +413,17 @@ function goToGuide(id) {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 12px 0;
+  gap: 8px;
+  padding: 14px 0;
   overflow-y: auto;
 }
 
 .icon-item {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: var(--radius-sm);
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
   color: var(--text-secondary);
   font-size: 15px;
   font-weight: 700;
@@ -424,16 +431,19 @@ function goToGuide(id) {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: all 0.2s var(--ease-standard);
   font-family: inherit;
+  backdrop-filter: blur(8px);
 }
 .icon-item:hover {
-  background: var(--border);
+  background: var(--surface-hover);
+  border-color: var(--accent);
 }
 .icon-item.active {
   background: var(--accent-dim);
   border-color: var(--accent);
   color: var(--accent);
+  box-shadow: 0 2px 12px rgba(110, 231, 183, 0.15);
 }
 
 @media (max-width: 768px) {
@@ -442,11 +452,7 @@ function goToGuide(id) {
     height: auto;
     position: relative;
   }
-  .sidebar.collapsed {
-    width: 100%;
-  }
-  .plugin-list {
-    max-height: 300px;
-  }
+  .sidebar.collapsed { width: 100%; }
+  .plugin-list { max-height: 300px; }
 }
 </style>

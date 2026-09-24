@@ -3,7 +3,6 @@ id: worldguard
 name: WorldGuard
 description: 区域保护插件 — 给主城、玩家领地划定不可建造/不可破坏的安全区
 category: 基础工具
-version: 1.14 - 26.x
 tags: [保护, 区域, 编辑]
 sections:
   - id: tutorial

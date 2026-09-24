@@ -3,7 +3,6 @@ id: vault
 name: Vault
 description: 经济与权限的统一 API 桥梁 — EssentialsX、ChestShop、Jobs 等插件能互通的前提
 category: 基础工具
-version: 1.13 - 26.x
 tags: [经济, 权限, 桥接, 前置]
 sections:
   - id: tutorial

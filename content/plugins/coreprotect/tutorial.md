@@ -3,7 +3,6 @@ id: coreprotect
 name: CoreProtect
 description: 谁动了你的服务器 — 记录所有方块与箱子操作，被熊了能一键查凶手并回滚
 category: 安全管理
-version: 1.13 - 26.x
 tags: [查询, 回滚, 防熊, 日志]
 sections:
   - id: tutorial

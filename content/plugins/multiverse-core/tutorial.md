@@ -3,7 +3,6 @@ id: multiverse-core
 name: Multiverse-Core
 description: 一条命令创建 / 导入 / 管理多个世界 — 主城、资源世界、地皮世界管理必备，5.x 已全面重构
 category: 世界管理
-version: 1.13 - 26.x
 tags: [多世界, 出生点, 传送门, 维度]
 sections:
   - id: tutorial

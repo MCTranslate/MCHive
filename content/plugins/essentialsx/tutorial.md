@@ -3,7 +3,6 @@ id: essentialsx
 name: EssentialsX
 description: 最基础的全能插件 — 家、传送、经济、飞行、昵称等必备功能，生存服必装
 category: 基础工具
-version: 1.13 - 26.x
 tags: [基础, 经济, 传送, 家]
 sections:
   - id: tutorial
@@ -36,7 +35,7 @@ downloads:
 ### 3. 安装汉化
 
 1. 从下方「Lang 汉化」Tab 下载 `lang_zh.yml`
-2. 将其放入 `plugins/Essentials/` 目录
+2. 将其放入 `plugins/EssentialsX/` 目录
 3. 在 `config.yml` 中找到 `locale: english` 改为 `locale: zh`
 4. 执行 `/ess reload` 或重启服务器
 

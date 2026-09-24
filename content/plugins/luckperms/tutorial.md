@@ -3,7 +3,6 @@ id: luckperms
 name: LuckPerms
 description: 主流的权限管理插件 — 分组、继承、跨服同步与可视化编辑器一应俱全
 category: 基础工具
-version: 1.14 - 26.x
 tags: [权限, 分组, 管理]
 sections:
   - id: tutorial

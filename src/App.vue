@@ -80,20 +80,29 @@ watch(() => route.fullPath, () => {
 
 <template>
   <div class="app-shell" @keydown="onKeydown">
+    <!-- ===== Header ===== -->
     <header class="site-header">
       <div class="header-inner">
         <RouterLink class="brand" to="/" aria-label="MCHive 首页">
-          <span class="brand-mark" aria-hidden="true">M</span>
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="var(--button-text)"><path d="M4 2h16l-2 5H6L4 2zm1 6h14l-1.5 14H6.5L5 8zm3 2v10h2v-3h6v3h2V10h-2v5h-6v-5H8z"/></svg>
+          </span>
           <span class="brand-word">MCHive</span>
         </RouterLink>
+
         <nav class="primary-nav" aria-label="主导航">
-          <RouterLink v-for="item in navigation" :key="item.to" :to="item.to" active-class="active">{{ item.label }}</RouterLink>
+          <RouterLink v-for="item in navigation" :key="item.to" :to="item.to" active-class="active">
+            <span>{{ item.label }}</span>
+          </RouterLink>
         </nav>
+
         <div class="header-actions">
           <button class="search-trigger" aria-label="搜索 MCHive" @click="openSearch">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
-            <span>搜索教程、插件、配置</span><kbd>⌘ K</kbd>
+            <span>搜索教程、插件、配置</span>
+            <kbd>⌘ K</kbd>
           </button>
+
           <div class="theme-control">
             <button class="theme-trigger" type="button" :aria-label="`当前主题：${themeLabel(theme)}`" :aria-expanded="themeOpen" @click="themeOpen = !themeOpen">
               <svg v-if="theme === 'dark'" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.7 15.4A8.9 8.9 0 0 1 8.6 3.3 9 9 0 1 0 20.7 15.4Z"/></svg>
@@ -104,14 +113,17 @@ watch(() => route.fullPath, () => {
               <button v-for="mode in themeModes" :key="mode" type="button" :class="{ active: theme === mode }" role="menuitem" @click="applyTheme(mode)">{{ themeLabel(mode) }}</button>
             </div>
           </div>
+
           <a class="github-link" href="https://github.com/MCTranslate/MCHive" target="_blank" rel="noreferrer" aria-label="在 GitHub 查看 MCHive">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-4.3 1.4-4.3-2.1-6-2.5M15 21v-3.9a3.4 3.4 0 0 0-.9-2.7c3-.3 6.1-1.5 6.1-6.7a5.2 5.2 0 0 0-1.4-3.6 4.8 4.8 0 0 0-.1-3.6S17.5.2 15 2.3a13.4 13.4 0 0 0-7 0C5.5.2 4.3.5 4.3.5a4.8 4.8 0 0 0-.1 3.6 5.2 5.2 0 0 0-1.4 3.6c0 5.2 3.1 6.4 6.1 6.7A3.4 3.4 0 0 0 8 17.1V21"/></svg>
           </a>
+
           <button class="menu-trigger" aria-label="打开导航菜单" :aria-expanded="menuOpen" @click="menuOpen = !menuOpen">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
           </button>
         </div>
       </div>
+
       <nav v-if="menuOpen" class="mobile-nav" aria-label="移动主导航">
         <RouterLink v-for="item in navigation" :key="item.to" :to="item.to">{{ item.label }}<span aria-hidden="true">→</span></RouterLink>
         <button class="mobile-theme" type="button" @click="cycleTheme">主题：{{ themeLabel(theme) }}<span aria-hidden="true">↻</span></button>
@@ -119,109 +131,412 @@ watch(() => route.fullPath, () => {
       </nav>
     </header>
 
-    <main id="main-content" class="main-content"><Transition name="page" mode="out-in"><RouterView /></Transition></main>
+    <!-- ===== Main ===== -->
+    <main id="main-content" class="main-content">
+      <Transition name="page" mode="out-in">
+        <RouterView />
+      </Transition>
+    </main>
 
+    <!-- ===== Footer ===== -->
     <footer class="site-footer">
       <div class="footer-inner">
-        <div class="footer-brand"><RouterLink class="brand" to="/"><span class="brand-mark">M</span><span class="brand-word">MCHive</span></RouterLink><p>让每一位服主，都能把服务器搭建好。</p></div>
-        <div class="footer-links"><span class="footer-label">探索</span><RouterLink to="/guides">开服指南</RouterLink><RouterLink to="/tutorials">教程中心</RouterLink><RouterLink to="/plugins">插件中心</RouterLink><RouterLink to="/contribute">贡献指南</RouterLink></div>
-        <div class="footer-links"><span class="footer-label">社区</span><a href="https://github.com/MCTranslate/MCHive" target="_blank" rel="noreferrer">GitHub 项目</a><RouterLink to="/contribute">贡献指南</RouterLink><a href="https://github.com/MCTranslate/MCHive/issues" target="_blank" rel="noreferrer">反馈与贡献</a><span>GPL-3.0 开源许可</span></div>
+        <div class="footer-brand">
+          <RouterLink class="brand" to="/"><span class="brand-mark">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="var(--button-text)"><path d="M4 2h16l-2 5H6L4 2zm1 6h14l-1.5 14H6.5L5 8zm3 2v10h2v-3h6v3h2V10h-2v5h-6v-5H8z"/></svg>
+          </span><span class="brand-word">MCHive</span></RouterLink>
+          <p>让每一位服主，都能把服务器搭建好。</p>
+        </div>
+        <div class="footer-links">
+          <span class="footer-label">探索</span>
+          <RouterLink to="/guides">开服指南</RouterLink>
+          <RouterLink to="/tutorials">教程中心</RouterLink>
+          <RouterLink to="/plugins">插件中心</RouterLink>
+          <RouterLink to="/contribute">贡献指南</RouterLink>
+        </div>
+        <div class="footer-links">
+          <span class="footer-label">社区</span>
+          <a href="https://github.com/MCTranslate/MCHive" target="_blank" rel="noreferrer">GitHub 项目</a>
+          <RouterLink to="/contribute">贡献指南</RouterLink>
+          <a href="https://github.com/MCTranslate/MCHive/issues" target="_blank" rel="noreferrer">反馈与贡献</a>
+          <span>GPL-3.0 开源许可</span>
+        </div>
       </div>
-      <div class="footer-bottom"><span>© MCHive · Minecraft Server Knowledge Platform</span><span>由社区持续维护</span></div>
+      <div class="footer-bottom">
+        <span>© MCHive · Minecraft Server Knowledge Platform</span>
+        <span>由社区持续维护</span>
+      </div>
     </footer>
 
-    <div v-if="searchOpen" class="search-backdrop" @click.self="searchOpen = false">
-      <section class="search-dialog" role="dialog" aria-modal="true" aria-labelledby="search-title">
-        <div class="search-dialog-head">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
-          <label id="search-title" class="sr-only" for="global-search">搜索 MCHive</label>
-          <input id="global-search" v-model="query" autofocus placeholder="搜索教程、插件、关键词..." @keydown.enter="submitSearch" />
-          <button class="close-search" aria-label="关闭搜索" @click="searchOpen = false">Esc</button>
-        </div>
-        <div class="search-results">
-          <p class="search-caption">{{ query ? '匹配内容' : '快速访问' }}</p>
-          <button v-for="item in searchItems" :key="item.type + item.id" class="search-result" @click="go(item.to)">
-            <span class="result-type">{{ item.type }}</span><span class="result-copy"><strong>{{ item.name }}</strong><small>{{ item.description }}</small></span><span class="result-arrow" aria-hidden="true">↗</span>
-          </button>
-          <div v-if="!searchItems.length" class="search-empty">没有找到相关内容，试试插件名、关键词或问题描述。</div>
-        </div>
-        <div class="search-dialog-foot"><span>按 Enter 搜索全部内容</span><button @click="submitSearch">查看全部结果 <span aria-hidden="true">→</span></button></div>
-      </section>
-    </div>
+    <!-- ===== Search Dialog ===== -->
+    <Transition name="search">
+      <div v-if="searchOpen" class="search-backdrop" @click.self="searchOpen = false">
+        <section class="search-dialog" role="dialog" aria-modal="true" aria-labelledby="search-title">
+          <div class="search-dialog-head">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
+            <label id="search-title" class="sr-only" for="global-search">搜索 MCHive</label>
+            <input id="global-search" v-model="query" autofocus placeholder="搜索教程、插件、关键词..." @keydown.enter="submitSearch" />
+            <button class="close-search" aria-label="关闭搜索" @click="searchOpen = false">Esc</button>
+          </div>
+          <div class="search-results">
+            <p class="search-caption">{{ query ? '匹配内容' : '快速访问' }}</p>
+            <button v-for="item in searchItems" :key="item.type + item.id" class="search-result" @click="go(item.to)">
+              <span class="result-type">{{ item.type }}</span>
+              <span class="result-copy"><strong>{{ item.name }}</strong><small>{{ item.description }}</small></span>
+              <span class="result-arrow" aria-hidden="true">↗</span>
+            </button>
+            <div v-if="!searchItems.length" class="search-empty">没有找到相关内容，试试插件名、关键词或问题描述。</div>
+          </div>
+          <div class="search-dialog-foot">
+            <span>按 Enter 搜索全部内容</span>
+            <button @click="submitSearch">查看全部结果 <span aria-hidden="true">→</span></button>
+          </div>
+        </section>
+      </div>
+    </Transition>
   </div>
 </template>
 
 <style scoped>
-.app-shell { min-height: 100vh; display: flex; flex-direction: column; }
-.site-header { position: sticky; top: 0; z-index: 50; height: 68px; border-bottom: 1px solid var(--border); background: color-mix(in srgb, var(--bg-primary) 94%, transparent); backdrop-filter: blur(14px); }
-.header-inner { width: min(1200px, calc(100% - 64px)); height: 100%; margin: 0 auto; display: flex; align-items: center; gap: 44px; }
-.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--text-primary); text-decoration: none; flex: none; }
-.brand-mark { display: grid; place-items: center; width: 30px; height: 30px; background: var(--accent); color: #102318; font: 800 17px/1 ui-monospace, monospace; border-radius: 6px 6px 6px 2px; }
-.brand-word { font-size: 17px; line-height: 1; font-weight: 750; letter-spacing: 0; }
-.primary-nav { display: flex; align-items: center; gap: 30px; height: 100%; flex: 1; }
-.primary-nav a, .mobile-nav a { color: var(--text-secondary); text-decoration: none; font-size: 14px; transition: color .18s; }
-.primary-nav a:hover, .primary-nav a.active { color: var(--text-primary); }
-.primary-nav a.active { box-shadow: inset 0 -2px var(--accent); height: 100%; display: inline-flex; align-items: center; }
-.header-actions { display: flex; align-items: center; gap: 16px; }
-.search-trigger { width: 250px; height: 36px; border: 1px solid var(--border); border-radius: 6px; color: var(--text-muted); background: var(--surface); display: flex; align-items: center; gap: 9px; padding: 0 10px; text-align: left; font: inherit; cursor: pointer; }
-.search-trigger svg, .github-link svg, .menu-trigger svg, .search-dialog-head svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
-.search-trigger span { flex: 1; font-size: 12px; white-space: nowrap; overflow: hidden; }
-kbd { padding: 2px 5px; border: 1px solid var(--border); border-radius: 3px; font: 10px var(--font-mono); color: var(--text-muted); }
-.github-link { color: var(--text-secondary); display: grid; place-items: center; }
-.github-link svg { width: 19px; height: 19px; }
-.menu-trigger, .mobile-nav { display: none; }
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+}
+
+/* ---------- Header Glass Bar ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: 64px;
+  border-bottom: 1px solid var(--glass-border);
+  background: rgba(8, 9, 11, 0.7);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+.header-inner {
+  width: min(1200px, calc(100% - 48px));
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
+/* ---------- Brand ---------- */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-primary);
+  text-decoration: none;
+  flex: none;
+  transition: transform 0.2s var(--ease-standard);
+}
+.brand:hover { transform: scale(1.02); }
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+  color: var(--button-text);
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(110, 231, 183, 0.25);
+  transition: box-shadow 0.25s var(--ease-standard);
+}
+.brand-mark svg { width: 18px; height: 18px; }
+.brand:hover .brand-mark { box-shadow: 0 4px 20px rgba(110, 231, 183, 0.4); }
+.brand-word {
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 750;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, var(--text-primary) 30%, var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ---------- Navigation ---------- */
+.primary-nav {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  flex: 1;
+}
+.primary-nav a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 18px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: color 0.2s var(--ease-standard);
+}
+.primary-nav a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 18px;
+  right: 18px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+  transform: scaleX(0);
+  transition: transform 0.25s var(--ease-standard);
+}
+.primary-nav a:hover { color: var(--text-primary); }
+.primary-nav a.active { color: var(--accent); }
+.primary-nav a.active::after { transform: scaleX(1); }
+
+/* ---------- Header Actions ---------- */
+.header-actions { display: flex; align-items: center; gap: 10px; }
+
+.search-trigger {
+  width: 220px;
+  height: 38px;
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  color: var(--text-muted);
+  background: var(--glass-bg);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: all 0.25s var(--ease-standard);
+}
+.search-trigger:hover {
+  border-color: var(--accent);
+  background: var(--surface-hover);
+  box-shadow: 0 2px 12px rgba(110, 231, 183, 0.1);
+}
+.search-trigger svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; flex: none; }
+.search-trigger span { flex: 1; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+kbd {
+  padding: 3px 6px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  font: 10px var(--font-mono);
+  color: var(--text-muted);
+  background: var(--surface);
+}
+
+.github-link {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  background: var(--glass-bg);
+  transition: all 0.2s var(--ease-standard);
+  backdrop-filter: blur(12px);
+}
+.github-link:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.github-link svg { width: 18px; height: 18px; fill: currentColor; }
+
+.menu-trigger { display: none; width: 38px; height: 38px; place-items: center; border: 1px solid var(--glass-border); border-radius: 10px; color: var(--text-secondary); background: var(--glass-bg); cursor: pointer; }
+.menu-trigger svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+
+/* ---------- Mobile Nav ---------- */
+.mobile-nav {
+  display: none;
+  position: absolute;
+  top: 63px;
+  left: 0;
+  right: 0;
+  flex-direction: column;
+  padding: 8px 16px 16px;
+  background: rgba(8, 9, 11, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  animation: dialog-in 0.2s var(--ease-standard);
+}
+.mobile-nav a, .mobile-nav button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 4px;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+.mobile-nav a:last-child, .mobile-nav button { border-bottom: 0; }
+
+/* ---------- Main Content ---------- */
 .main-content { flex: 1; width: 100%; }
-.site-footer { border-top: 1px solid var(--border); margin-top: 72px; background: var(--surface); }
-.footer-inner, .footer-bottom { width: min(1200px, calc(100% - 64px)); margin: auto; }
-.footer-inner { min-height: 182px; padding: 38px 0; display: grid; grid-template-columns: 1fr 170px 190px; gap: 36px; }
-.footer-brand p { margin-top: 12px; color: var(--text-muted); font-size: 13px; }
-.footer-links { display: flex; flex-direction: column; align-items: flex-start; gap: 9px; color: var(--text-muted); font-size: 12px; }
-.footer-links a { color: var(--text-secondary); text-decoration: none; }
-.footer-links a:hover { color: var(--accent-strong); }
-.footer-label { color: var(--text-primary); font-weight: 650; margin-bottom: 3px; }
-.footer-bottom { min-height: 48px; padding: 12px 0; border-top: 1px solid var(--border); display: flex; justify-content: space-between; gap: 16px; color: var(--text-muted); font-size: 11px; }
-.search-backdrop { animation: backdrop-in .18s ease-out; position: fixed; inset: 0; z-index: 100; display: flex; align-items: flex-start; justify-content: center; padding: min(18vh, 150px) 20px 24px; background: rgba(13, 20, 17, .56); backdrop-filter: blur(5px); }
-.search-dialog { animation: dialog-in .22s var(--ease-standard); width: min(600px, 100%); background: var(--bg-primary); border: 1px solid var(--border-strong); border-radius: 9px; box-shadow: 0 24px 90px rgba(0,0,0,.28); overflow: hidden; }
-.search-dialog-head { height: 58px; display: flex; align-items: center; padding: 0 18px; gap: 12px; border-bottom: 1px solid var(--border); color: var(--text-muted); }
-.search-dialog-head input { min-width: 0; flex: 1; border: 0; outline: 0; background: transparent; color: var(--text-primary); font: 15px var(--font-sans); }
-.close-search { border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); padding: 3px 7px; border-radius: 4px; font: 11px var(--font-mono); cursor: pointer; }
-.search-results { max-height: min(440px, 56vh); overflow-y: auto; padding: 12px; }
-.search-caption { padding: 5px 8px 8px; color: var(--text-muted); font-size: 11px; }
-.search-result { width: 100%; display: flex; align-items: center; gap: 12px; padding: 10px 9px; border: 0; border-radius: 5px; background: transparent; text-align: left; color: inherit; cursor: pointer; }
-.search-result:hover { background: var(--surface); transform: translateX(3px); }
-.result-type { width: 48px; color: var(--accent-strong); font-size: 11px; flex: none; }
-.result-copy { display: flex; min-width: 0; flex-direction: column; gap: 2px; flex: 1; }
+
+/* ---------- Footer ---------- */
+.site-footer {
+  margin-top: 80px;
+  border-top: 1px solid var(--glass-border);
+  background: var(--bg-secondary);
+  backdrop-filter: blur(20px);
+}
+.footer-inner, .footer-bottom { width: min(1200px, calc(100% - 48px)); margin: auto; }
+.footer-inner {
+  min-height: 180px;
+  padding: 44px 0;
+  display: grid;
+  grid-template-columns: 1fr 160px 180px;
+  gap: 40px;
+}
+.footer-brand p { margin-top: 14px; color: var(--text-muted); font-size: 13px; line-height: 1.7; }
+.footer-links { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; color: var(--text-muted); font-size: 12px; }
+.footer-links a { color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+.footer-links a:hover { color: var(--accent); }
+.footer-label { color: var(--text-primary); font-weight: 650; margin-bottom: 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+.footer-bottom {
+  min-height: 48px;
+  padding: 14px 0;
+  border-top: 1px solid var(--glass-border);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+/* ---------- Search ---------- */
+.search-backdrop {
+  animation: backdrop-in 0.18s ease-out;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: min(18vh, 150px) 20px 24px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.search-dialog {
+  animation: dialog-in 0.25s var(--ease-spring);
+  width: min(600px, 100%);
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg), inset 0 1px 0 var(--glass-highlight);
+  overflow: hidden;
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+}
+.search-dialog-head {
+  height: 58px;
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  gap: 12px;
+  border-bottom: 1px solid var(--glass-border);
+  color: var(--text-muted);
+}
+.search-dialog-head svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; flex: none; }
+.search-dialog-head input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font: 15px var(--font-sans);
+}
+.close-search {
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-muted);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font: 11px var(--font-mono);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.close-search:hover { border-color: var(--accent); color: var(--accent); }
+.search-results { max-height: min(440px, 56vh); overflow-y: auto; padding: 10px 12px; }
+.search-caption { padding: 4px 10px 10px; color: var(--text-muted); font-size: 11px; font-weight: 500; }
+.search-result {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  transition: all 0.18s var(--ease-standard);
+}
+.search-result:hover { background: var(--surface-hover); transform: translateX(4px); }
+.result-type { width: 48px; color: var(--accent); font-size: 10px; font-weight: 600; flex: none; text-transform: uppercase; letter-spacing: 0.5px; }
+.result-copy { display: flex; min-width: 0; flex-direction: column; gap: 3px; flex: 1; }
 .result-copy strong { font-size: 13px; font-weight: 600; }
 .result-copy small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-muted); font-size: 11px; }
-.result-arrow { color: var(--text-muted); }
+.result-arrow { color: var(--text-muted); transition: transform 0.18s; }
+.search-result:hover .result-arrow { transform: translateX(3px); }
 .search-empty { padding: 36px 20px; text-align: center; color: var(--text-muted); font-size: 13px; }
-.search-dialog-foot { border-top: 1px solid var(--border); padding: 10px 16px; display: flex; justify-content: space-between; color: var(--text-muted); font-size: 11px; }
-.search-dialog-foot button { border: 0; background: transparent; color: var(--accent-strong); font: inherit; cursor: pointer; }
-@keyframes backdrop-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes dialog-in { from { opacity: 0; transform: translateY(-8px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
-.page-enter-active, .page-leave-active { transition: opacity .22s var(--ease-standard), transform .22s var(--ease-standard); }
-.page-enter-from { opacity: 0; transform: translateY(7px); }
-.page-leave-to { opacity: 0; transform: translateY(-3px); }
-.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-@media (max-width: 900px) { .header-inner { gap: 26px; } .primary-nav { gap: 20px; } .search-trigger { width: 190px; } }
+.search-dialog-foot {
+  border-top: 1px solid var(--glass-border);
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+.search-dialog-foot button {
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  cursor: pointer;
+  transition: color 0.18s;
+}
+.search-dialog-foot button:hover { color: var(--accent-hover); }
+
+/* ---------- Search transition ---------- */
+.search-enter-active { transition: opacity 0.2s ease; }
+.search-leave-active { transition: opacity 0.15s ease; }
+.search-enter-from, .search-leave-to { opacity: 0; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .header-inner { gap: 20px; }
+  .search-trigger { width: 160px; }
+}
 @media (max-width: 700px) {
-  .site-header { height: 58px; }
-  .header-inner { width: calc(100% - 32px); justify-content: space-between; gap: 10px; }
+  .site-header { height: 56px; }
+  .header-inner { width: calc(100% - 28px); justify-content: space-between; gap: 8px; }
   .primary-nav, .github-link { display: none; }
-  .header-actions { gap: 12px; }
-  .search-trigger { width: 36px; height: 36px; justify-content: center; padding: 0; }
+  .search-trigger { width: 38px; height: 38px; justify-content: center; padding: 0; }
   .search-trigger span, .search-trigger kbd { display: none; }
-  .menu-trigger { width: 36px; height: 36px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 5px; color: var(--text-secondary); background: transparent; }
-  .mobile-nav { display: flex; position: absolute; top: 57px; left: 0; right: 0; flex-direction: column; padding: 8px 16px 14px; background: var(--bg-primary); border-bottom: 1px solid var(--border); box-shadow: 0 12px 24px rgba(0,0,0,.08); }
-  .mobile-nav a { display: flex; justify-content: space-between; padding: 12px 4px; border-bottom: 1px solid var(--border); }
-  .mobile-nav a:last-child { border-bottom: 0; }
-  .footer-inner, .footer-bottom { width: calc(100% - 32px); }
-  .footer-inner { grid-template-columns: 1fr 1fr; gap: 26px 14px; padding: 28px 0; }
+  .menu-trigger { display: grid; }
+  .mobile-nav { display: flex; }
+  .footer-inner, .footer-bottom { width: calc(100% - 28px); }
+  .footer-inner { grid-template-columns: 1fr 1fr; gap: 24px; padding: 28px 0; }
   .footer-brand { grid-column: 1 / -1; }
   .footer-bottom { flex-direction: column; gap: 4px; }
   .site-footer { margin-top: 48px; }
-  .search-backdrop { padding: 12px; align-items: flex-start; }
-  .search-dialog { margin-top: 58px; max-height: calc(100dvh - 82px); display: flex; flex-direction: column; }
+  .search-backdrop { padding: 12px; }
+  .search-dialog { margin-top: 48px; max-height: calc(100dvh - 72px); display: flex; flex-direction: column; }
   .search-results { max-height: none; }
 }
 </style>

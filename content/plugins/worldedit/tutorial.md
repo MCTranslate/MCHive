@@ -3,7 +3,6 @@ id: worldedit
 name: WorldEdit
 description: 建筑与地形编辑神器 — 选区、批量填充、复制粘贴建筑，也是 WorldGuard 的前置插件
 category: 建筑管理
-version: 1.13 - 26.x
 tags: [建筑, 选区, 地形, 修复]
 sections:
   - id: tutorial

@@ -3,8 +3,8 @@
 #
 # 每个选项后面有用 # 开头的解释行，用于帮助理解
 
-# 语言设置 — 设为 zh 启用中文
-locale: zh
+# 语言设置 — 默认 english，改为 zh 启用中文（需配合 lang_zh.yml）
+locale: english
 
 # ========= 经济系统 =========
 currency-symbol: '$'              # 显示在经济金额前的符号
