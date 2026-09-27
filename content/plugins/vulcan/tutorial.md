@@ -20,7 +20,7 @@ sections:
 downloads:
   - name: config_zh_CN.yml
     description: 完整 config.yml 中文注释版（4193 行，与官方原版逐键对应，注释与 46 条消息全部汉化，可直接覆盖使用）
-    path: /downloads/plugins/vulcan/config_zh_CN.yml
+    path: /downloads/plugins/vulcan/config.yml
 ---
 
 ## Vulcan 安装教程
