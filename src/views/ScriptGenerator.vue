@@ -82,9 +82,22 @@ const gcFlags = computed(() => {
       f.push('-XX:+ZGenerational')
     }
     f.push('-XX:+UnlockExperimentalVMOptions')
+    // SoftMaxHeapSize：ZGC 会尽量保持堆在此值以下，超过则提前触发 GC
+    // 设为 Xmx 的 75-80% 可以让 ZGC 更早开始回收，减少到达硬上限时的停顿
+    f.push(`-XX:SoftMaxHeapSize=${Math.round(memoryGB.value * 0.75)}G`)
+    // 分配突增容忍度：值越大越能容忍短暂的分配暴增而不触发 GC
+    f.push('-XX:ZAllocationSpikeTolerance=2.0')
+    // 并发 GC 线程数：留空则 JVM 自动调优（默认 = CPU 核数的 25%）
+    // f.push('-XX:ConcGCThreads=2')
   } else if (gcMode.value === 'shenandoah') {
     f.push('-XX:+UseShenandoahGC')
     f.push('-XX:+UnlockExperimentalVMOptions')
+    // 自适应策略：根据实际分配速率动态调整 GC 频率
+    f.push('-XX:ShenandoahGCHeuristics=adaptive')
+    // 保底 GC 间隔：即使没有内存压力也会定期触发（毫秒），防止长时间不 GC
+    f.push('-XX:ShenandoahGuaranteedGCInterval=300000')
+    // 内存归还延迟：Shenandoah 会将闲置内存归还给操作系统（毫秒）
+    f.push('-XX:ShenandoahUncommitDelay=300000')
   }
 
   return f
@@ -110,9 +123,10 @@ const batScript = computed(() => {
     `rem Java ${javaVersion.value} | GC: ${gcLabel.value} | 内存: ${memoryGB.value} GB`,
     '',
     'java ^',
-    ...allFlags.value.map((f, i) => `  ${f} ^`),
-    `  ${jarArg.value} ^`,
-    `  --nogui`,
+    ...allFlags.value.map(f => `  ${f} ^`),
+    ...(useNogui.value
+      ? [`  ${jarArg.value} ^`, '  --nogui']
+      : [`  ${jarArg.value}`]),
     '',
     'pause'
   ]
@@ -129,8 +143,9 @@ const shScript = computed(() => {
     '',
     'java \\',
     ...allFlags.value.map(f => `  ${f} \\`),
-    `  ${jarArg.value} \\`,
-    `  --nogui`
+    ...(useNogui.value
+      ? [`  ${jarArg.value} \\`, '  --nogui']
+      : [`  ${jarArg.value}`])
   ]
   return lines.join('\n')
 })
