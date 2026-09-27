@@ -29,7 +29,7 @@
     },
     "version": {
       "type": "string",
-      "description": "Supported Minecraft version range (free-form, e.g. \"1.13 - 26.x\")."
+      "description": "Timeliness field shown in the UI. Convention: plugin release number first, then the supported Minecraft range in parentheses — e.g. \"24.1（MC 1.16.5 - 26.2）\". Keep it in sync whenever the plugin is updated."
     },
     "tags": {
       "type": "array",

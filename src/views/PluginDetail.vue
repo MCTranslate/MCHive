@@ -59,6 +59,12 @@ function findSection(id) {
   return tabs.value.find(function(t) { return t.id === id })
 }
 
+// 兜底渲染任意 section（build-index 会按插件目录下的 .md 文件名派生 id，
+// 例如 commands.md → id 'commands'）。没有它，这类标签点开就是一片空白。
+const activeSection = computed(function() {
+  return activeTab.value ? findSection(activeTab.value) : null
+})
+
 function loadSections() {
   if (!plugin.value) return
 
@@ -235,6 +241,20 @@ const relatedPlugins = computed(function() {
           </button>
         </div>
         <pre class="file-content"><code>{{ sectionContents['config'] }}</code></pre>
+      </section>
+
+      <section v-else-if="activeSection">
+        <div class="section-desc">
+          <h3>{{ activeSection.name }}</h3>
+          <p v-if="activeSection.description">{{ activeSection.description }}</p>
+        </div>
+        <div class="file-toolbar">
+          <span class="file-name">{{ activeSection.file }}</span>
+          <button class="btn btn-secondary" @click="copyContent(sectionContents[activeSection.id])">
+            {{ copied ? '已复制' : '复制内容' }}
+          </button>
+        </div>
+        <pre class="file-content"><code>{{ sectionContents[activeSection.id] }}</code></pre>
       </section>
     </div>
 

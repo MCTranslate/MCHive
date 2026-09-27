@@ -24,6 +24,9 @@
   --text-secondary: #4a5568;
   --text-muted: #8896a6;
 
+  /* 代码块文字色必须按主题定义：浅色下用浅绿会在白底上完全不可读 */
+  --code-text: #24313f;
+
   --accent: #10b981;
   --accent-hover: #059669;
   --accent-strong: #047857;
@@ -77,6 +80,9 @@
   --text-secondary: #a8b3c4;
   --text-muted: #6b7a8d;
 
+  /* 保持深色模式既有的浅绿代码文字观感 */
+  --code-text: #d1fae5;
+
   --accent: #6ee7b7;
   --accent-hover: #86efac;
   --accent-strong: #4ade80;
@@ -115,6 +121,7 @@
     --text-primary: #f0f2f5;
     --text-secondary: #a8b3c4;
     --text-muted: #6b7a8d;
+    --code-text: #d1fae5;
     --accent: #6ee7b7;
     --accent-hover: #86efac;
     --accent-strong: #4ade80;
@@ -214,7 +221,8 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   border: 1px solid var(--border);
   border-radius: 6px;
   background: var(--surface);
-  color: var(--accent);
+  /* 用 accent-strong（浅色 #047857 / 深色 #4ade80）保证行内码在两种主题下都可读 */
+  color: var(--accent-strong);
   font: .9em var(--font-mono);
 }
 pre.code-block, .file-content {
@@ -224,14 +232,10 @@ pre.code-block, .file-content {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--bg-secondary);
-  color: #d1fae5;
+  color: var(--code-text);
   font: 12px/1.75 var(--font-mono);
   tab-size: 2;
 }
-[data-theme='dark'] pre.code-block,
-[data-theme='dark'] .file-content,
-:root[data-theme='system'] pre.code-block,
-:root[data-theme='system'] .file-content { color: #d1fae5; }
 .code-toolbar {
   position: sticky;
   left: 0;
@@ -243,7 +247,7 @@ pre.code-block, .file-content {
   padding: 8px 14px;
   border-bottom: 1px solid var(--border);
   background: var(--surface);
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font: 10px var(--font-mono);
   text-transform: uppercase;
   letter-spacing: .5px;

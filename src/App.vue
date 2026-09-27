@@ -12,8 +12,22 @@ function applyTheme(value) {
   const root = document.documentElement
   root.dataset.theme = value
   root.style.colorScheme = value === 'system' ? '' : value
-  window.localStorage.setItem('mchive-theme', value)
+  try {
+    window.localStorage.setItem('mchive-theme', value)
+  } catch (error) {
+    // 隐私模式 / 禁用本地存储时静默忽略，不影响主题本身生效
+  }
   themeOpen.value = false
+}
+
+// localStorage 在隐私模式或被策略禁用时会直接抛错，这里统一兜底并校验取值
+function readStoredTheme() {
+  try {
+    const saved = window.localStorage.getItem('mchive-theme')
+    return themeModes.includes(saved) ? saved : 'system'
+  } catch (error) {
+    return 'system'
+  }
 }
 
 function cycleTheme() {
@@ -30,7 +44,7 @@ function themeIcon(mode) {
 }
 
 onMounted(() => {
-  applyTheme(window.localStorage.getItem('mchive-theme') || 'system')
+  applyTheme(readStoredTheme())
 })
 
 const route = useRoute()

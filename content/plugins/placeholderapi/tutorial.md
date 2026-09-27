@@ -3,6 +3,7 @@ id: placeholderapi
 name: PlaceholderAPI
 description: 变量统一接口 — 记分板、Tab 列表、聊天栏里的 %player_name% 这类变量都靠它，几乎所有插件的前置依赖。
 category: 开发前置
+version: 2.12.3（MC 1.8 - 26.3）
 tags: [变量, 占位符, 记分板, 前置, 美化]
 sections:
   - id: tutorial
@@ -24,7 +25,11 @@ sections:
 
 ### 2. 安装
 
+当前最新版是 **2.12.3**（2026-07-03 发布，官方标注支持 MC 1.8 – 26.3），Paper 26.x（26.2 / 26.3）直接装它即可。
+
 前往 [Modrinth](https://modrinth.com/plugin/placeholderapi) 或 [SpigotMC](https://www.spigotmc.org/resources/placeholderapi.6245/) 下载，放入 `plugins/` 重启。
+
+> 首次启动会在 `plugins/PlaceholderAPI/` 生成 `config.yml`，常用开关有 `check_updates`（更新提示）、`cloud_enabled`（eCloud 开关），保持默认即可。
 
 ### 3. 安装扩展（关键步骤）
 
@@ -51,10 +56,10 @@ sections:
 
 ```
 # parse 命令会把变量替换成实际内容，是调试利器
-/papi parse me 余额: %vault_balance%
+/papi parse me 余额: %vault_eco_balance%
 ```
 
-发出来是 `余额: 12345.0` 就说明变量链路通了；如果原样输出 `%vault_balance%`，说明对应扩展没装。
+发出来是 `余额: 12345.0` 就说明变量链路通了；如果原样输出 `%vault_eco_balance%`，说明对应扩展没装。
 
 ### 5. 使用场景
 
@@ -75,5 +80,7 @@ sections:
 > **变量装对服**：群组服架构下，变量在「显示它的那台服务器」上生效。大厅显示在线人数，扩展和 PAPI 就要装在大厅服。
 
 > **依赖前置**：vault 变量需要 Vault，luckperms 变量需要 LuckPerms，缺前置时变量不生效且通常原样输出。
+
+> **扩展放在哪**：eCloud 下载的扩展保存在 `plugins/PlaceholderAPI/expansions/`，手动下载的扩展 jar 也放这里，放好后记得 `/papi reload`。
 
 > **变量名区分大小写**，且左右两个 `%` 缺一不可——写错时最常见现象就是「变量原样显示」。

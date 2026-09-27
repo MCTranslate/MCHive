@@ -206,30 +206,40 @@ java -Dfile.encoding=UTF-8 -Xms4G -Xmx4G -jar server.jar --nogui
    → Beta 使用 Unicode UTF-8 提供全球语言支持 → 重启
 ```
 
-### 2.5 装了汉化文件但不生效
+### 2.5 装了汉化但不生效
 
 有 4 个常见问题，**按顺序**逐个排查：
 
 ```
-❶ 文件名不对 → 参考下表确认每个插件要求的语言文件名称
+❶ 汉化方式搞错了 → 先看下表：多数插件的汉化根本不是「放一个语言文件」
 
-| 插件 | 要求文件名 | config 里配的字段 |
-|------|-----------|-----------------|
-| EssentialsX | lang_zh.yml | locale: zh |
-| LuckPerms | messages_zh.yml | 内置locale，用 /lp editor 改 |
-| WorldGuard | 不需要语言文件 | — |
-| PlaceholderAPI | 不需要语言文件 | — |
-| WorldEdit | 内置多语言 | 自动跟随客户端 |
+| 插件 | 真实汉化方式 | 关键一步 |
+|------|--------------|----------|
+| EssentialsX | 内置 messages_zh.properties | config.yml 里改为 locale: zh |
+| CoreProtect | 官方语言包 | config.yml 里改为 language: zh-CN |
+| LuckPerms | 内置多语言系统 | 控制台执行 /lp translations install |
+| Multiverse-Core | 内置 multiverse-core_zh.properties | 无需操作，跟随客户端语言 |
+| WorldEdit | 内置 zh-CN 语言包 | 无需操作，跟随客户端语言 |
+| WorldGuard | 无语言文件机制 | 用 deny-message / greeting 等 flag 写中文 |
+| PlaceholderAPI / Vault | 无语言文件 | 无需汉化 |
 
-❷ 目录放错 → 应该放在 plugins/插件名/，不是 plugins/ 根目录
-    正确路径举例：plugins/Essentials/lang_zh.yml
-    错误路径举例：plugins/lang_zh.yml
+  最容易踩的坑：网上流传的通用 lang_zh.yml 对上述任何插件都不适用
+  —— 文件名和格式都对不上（EssentialsX 用 .properties、WorldEdit 用 .json），
+  放进去不会报错，但也完全不会生效，于是你以为「汉化装了却没效果」。
 
-❸ 没重启服务端 → 大部分插件的语言文件只在启动时读取
+❷ 配置项没生效 → 语言开关大多写在 config.yml 里且常被注释掉
+    常见形态是「#locale: en」或「#locale: zh」，必须去掉行首的 #
+    改完记得执行插件自带的重载命令（如 /ess reload、/co reload），
+    或重启服务器
 
-❹ YAML 格式错误 → 比如此时你复制的是网页上的字符，中文引号「"
-    要和英文引号 " 一模一样。验证方法：
-    打开 https://www.yamllint.com/ → 粘贴你的文件 → 有红色报错就是格式错
+❸ 文件放错位置 → 插件配置和数据都放在 plugins/插件名/ 下，不是 plugins/ 根目录
+    正确：plugins/Essentials/config.yml
+    错误：plugins/config.yml
+    特别提醒 EssentialsX 的目录名是 Essentials，不是 EssentialsX
+
+❹ YAML 格式错误（只对 config.yml 这类 YAML 文件） → 常见于手写配置
+    中文全角引号「」“” 必须改成英文引号 " "，缩进必须用空格不能用 Tab
+    验证方法：打开 https://www.yamllint.com/ → 粘贴你的文件 → 有红色报错就是格式错
 ```
 
 ### 2.6 插件在新版本里字段失效（控制台输出 `Unknown config option`）

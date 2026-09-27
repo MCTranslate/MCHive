@@ -32,7 +32,6 @@ const results = computed(() => searchContent(query.value))
         <span class="result-copy">
           <b>{{ item.name }}</b>
           <small>{{ item.description }}</small>
-          <i>{{ item.keywords }}</i>
         </span>
         <span class="result-arrow">↗</span>
       </RouterLink>
@@ -76,7 +75,6 @@ const results = computed(() => searchContent(query.value))
 .result-copy { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 5px; }
 .result-copy b { font-size: 14px; font-weight: 630; }
 .result-copy small { color: var(--text-muted); font-size: 11px; }
-.result-copy i { color: var(--text-muted); font: 9px var(--font-mono); font-style: normal; opacity: .6; }
 .result-arrow { color: var(--text-muted); transition: transform .2s var(--ease-spring); }
 .result-row:hover .result-arrow { transform: translateX(4px); color: var(--accent); }
 

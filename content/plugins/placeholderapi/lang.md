@@ -14,14 +14,14 @@ PlaceholderAPI 不向玩家说任何话：它只做一件事——把 `%变量%`
 | %player_x% / %player_y% / %player_z% | 三轴坐标 | 常用于任务提示、导航全息 |
 | %player_health% | 当前生命值 | 记分板血量显示 |
 | %player_ping% | 延迟(ms) | Tab 列表显示延迟 |
-| %player_online_time% | 在线时长 | 公益服活跃度展示 |
+| %player_first_join_date% | 首次进服日期 | 区分新老玩家、活跃度参考 |
 
 ## 经济与权限类（vault / luckperms 扩展）
 
 | 变量 | 显示内容 | 注解 |
 |------|----------|------|
-| %vault_balance% | 余额 | 数值原样显示，格式化用 %vault_balance_fixed% |
-| %vault_rank% | 权限组名 | 显示主权限组的小写名（member / vip） |
+| %vault_eco_balance% | 余额 | 数值原样显示；另有 %vault_eco_balance_fixed%、%vault_eco_balance_commas% 等等价格式化变体 |
+| %vault_group% | 权限组名 | 显示玩家所在权限组名；前缀 / 后缀用 %vault_prefix% / %vault_suffix% |
 | %luckperms_prefix% | 权限组前缀 | 聊天栏美化核心变量，需下载 luckperms 扩展 |
 | %luckperms_suffix% | 权限组后缀 | 同上，显示称号后缀 |
 
