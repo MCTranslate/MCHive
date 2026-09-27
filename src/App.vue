@@ -1,23 +1,88 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, nextTick, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { searchContent } from './data/content.js'
 
 const themeModes = ['system', 'light', 'dark']
 const theme = ref('system')
 const themeOpen = ref(false)
+const themeTriggerRef = ref(null)
 
-function applyTheme(value) {
-  theme.value = value
+// 圆形扩散的起点：优先取可见的主题按钮中心，保证「从深浅切换的那个地方」向外蔓延。
+// 移动端桌面按钮是隐藏的（getBoundingClientRect 全为 0），此时退回到实际被点击的元素，
+// 避免圆心跑到视口左上角。
+function originOf(el) {
+  if (!el) return null
+  const rect = el.getBoundingClientRect()
+  if (!rect.width && !rect.height) return null
+  return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+}
+
+function themeOrigin(options) {
+  const picked = originOf(themeTriggerRef.value) ||
+    originOf(options && options.event && options.event.currentTarget)
+  if (picked) return picked
+  return { x: window.innerWidth - 96, y: 40 }
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
+function applyTheme(value, options) {
+  const animate = !options || options.animate !== false
   const root = document.documentElement
-  root.dataset.theme = value
-  root.style.colorScheme = value === 'system' ? '' : value
-  try {
-    window.localStorage.setItem('mchive-theme', value)
-  } catch (error) {
-    // 隐私模式 / 禁用本地存储时静默忽略，不影响主题本身生效
+
+  // 真正落地主题：只改属性，不走响应式，确保在快照前就已经生效
+  const commit = function() {
+    theme.value = value
+    root.dataset.theme = value
+    root.style.colorScheme = value === 'system' ? '' : value
+    try {
+      window.localStorage.setItem('mchive-theme', value)
+    } catch (error) {
+      // 隐私模式 / 禁用本地存储时静默忽略，不影响主题本身生效
+    }
+    themeOpen.value = false
   }
-  themeOpen.value = false
+
+  // 首次进入页面时直接应用，不播放动画；不支持 View Transitions 或用户要求减少动效时同样降级
+  if (!animate || typeof document.startViewTransition !== 'function' || prefersReducedMotion()) {
+    commit()
+    return
+  }
+
+  const origin = themeOrigin(options)
+  // 半径取到视口最远的那个角，保证圆形能覆盖整屏
+  const radius = Math.hypot(
+    Math.max(origin.x, window.innerWidth - origin.x),
+    Math.max(origin.y, window.innerHeight - origin.y)
+  )
+
+  const transition = document.startViewTransition(async function() {
+    commit()
+    await nextTick() // 等菜单收起等 DOM 变更一起进入新快照，避免动画结束后才突兀消失
+  })
+
+  transition.ready.then(function() {
+    root.animate(
+      {
+        clipPath: [
+          'circle(0px at ' + origin.x + 'px ' + origin.y + 'px)',
+          'circle(' + radius + 'px at ' + origin.x + 'px ' + origin.y + 'px)'
+        ]
+      },
+      {
+        duration: 560,
+        easing: 'cubic-bezier(.22,.61,.36,1)',
+        pseudoElement: '::view-transition-new(root)'
+      }
+    )
+  }).catch(function() {
+    // 过渡被中断（例如用户连续切换）时忽略，主题已由 commit 生效
+  })
+
+  transition.finished.catch(function() {})
 }
 
 // localStorage 在隐私模式或被策略禁用时会直接抛错，这里统一兜底并校验取值
@@ -30,9 +95,9 @@ function readStoredTheme() {
   }
 }
 
-function cycleTheme() {
+function cycleTheme(event) {
   const index = themeModes.indexOf(theme.value)
-  applyTheme(themeModes[(index + 1) % themeModes.length])
+  applyTheme(themeModes[(index + 1) % themeModes.length], { event })
 }
 
 function themeLabel(value) {
@@ -44,7 +109,8 @@ function themeIcon(mode) {
 }
 
 onMounted(() => {
-  applyTheme(readStoredTheme())
+  // 首屏沿用内联脚本已设好的主题，不播放切换动画
+  applyTheme(readStoredTheme(), { animate: false })
 })
 
 const route = useRoute()
@@ -128,13 +194,13 @@ watch(() => route.fullPath, () => {
           </button>
 
           <div class="theme-control">
-            <button class="theme-trigger" type="button" :aria-label="`当前主题：${themeLabel(theme)}`" :aria-expanded="themeOpen" @click.stop="themeOpen = !themeOpen">
+            <button ref="themeTriggerRef" class="theme-trigger" type="button" :aria-label="`当前主题：${themeLabel(theme)}`" :aria-expanded="themeOpen" @click.stop="themeOpen = !themeOpen">
               <svg v-if="theme === 'dark'" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.7 15.4A8.9 8.9 0 0 1 8.6 3.3 9 9 0 1 0 20.7 15.4Z"/></svg>
               <svg v-else-if="theme === 'light'" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
               <svg v-else viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 20v-2M16 20v-2M8 8h8M8 12h5"/></svg>
             </button>
             <div v-if="themeOpen" class="theme-menu" role="menu">
-              <button v-for="mode in themeModes" :key="mode" type="button" :class="{ active: theme === mode }" role="menuitem" @click="applyTheme(mode)">
+              <button v-for="mode in themeModes" :key="mode" type="button" :class="{ active: theme === mode }" role="menuitem" @click="applyTheme(mode, { event: $event })">
                 <span class="menu-icon" aria-hidden="true">{{ themeIcon(mode) }}</span>
                 {{ themeLabel(mode) }}
               </button>
@@ -162,7 +228,7 @@ watch(() => route.fullPath, () => {
             <span>GitHub</span>
             <small aria-hidden="true">↗</small>
           </a>
-          <button class="mobile-theme" type="button" @click="cycleTheme">
+          <button class="mobile-theme" type="button" @click="cycleTheme($event)">
             <span>切换主题</span>
             <small>{{ themeLabel(theme) }} ↻</small>
           </button>

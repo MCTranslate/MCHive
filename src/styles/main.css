@@ -172,6 +172,20 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
+/* ---------- Theme switch: circular reveal ----------
+   切换主题时用 View Transitions 把「新主题」当作顶层快照，
+   再用 clip-path 从切换按钮位置向外画圆扩散。JS 侧负责驱动动画
+   （见 App.vue 的 applyTheme），这里只关掉默认的整屏交叉淡入。 */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+  ::view-transition-old(root) { z-index: 1; }
+  ::view-transition-new(root) { z-index: 2; }
+}
+
 /* ---------- Liquid Glass Component ---------- */
 .glass-card {
   background: var(--glass-bg);

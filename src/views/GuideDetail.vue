@@ -14,6 +14,7 @@ const html = ref('')
 const loading = ref(false)
 const error = ref(null)
 const activeHeading = ref('')
+const contentRef = ref(null)
 let loadToken = 0
 
 const guide = computed(function() {
@@ -86,8 +87,18 @@ function headingId(title, index) {
   return 'section-' + index + '-' + title.toLowerCase().replace(/[^\w\u4e00-\u9fa5]+/g, '-')
 }
 
+// 正文渲染容器（模板 ref）。标题 id 必须在这一层内查找：
+// 之前这里用的是 `.guide-content .markdown-body`，但模板早已改用
+// `.article-column > .article-content > .markdown-body`，`.guide-content` 只剩死 CSS，
+// 于是查询恒为空 → 标题从未拿到 id → 目录点击和滚动高亮全部失效。
+function renderedHeadings() {
+  const root = contentRef.value
+  if (!root) return []
+  return Array.from(root.querySelectorAll('h2, h3, h4'))
+}
+
 function updateActiveHeading() {
-  const rendered = Array.from(document.querySelectorAll('.guide-content .markdown-body h2, .guide-content .markdown-body h3, .guide-content .markdown-body h4'))
+  const rendered = renderedHeadings()
   if (!rendered.length) { activeHeading.value = ''; return }
   const marker = 132
   const current = rendered.reduce(function(found, element) {
@@ -98,16 +109,19 @@ function updateActiveHeading() {
 
 function setHeadingIds() {
   nextTick(function() {
-    const rendered = document.querySelectorAll('.guide-content .markdown-body h2, .guide-content .markdown-body h3, .guide-content .markdown-body h4')
-    rendered.forEach(function(element, index) {
+    renderedHeadings().forEach(function(element, index) {
       element.id = headings.value[index] ? headings.value[index].id : headingId(element.textContent, index)
     })
     updateActiveHeading()
   })
 }
 
-function scrollToHeading(id) {
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+function scrollToHeading(id, index) {
+  // 优先按 id 找；若 id 因故未能写入，退回到「按目录顺序取第 index 个标题」，
+  // 保证目录在任何情况下都点得动。
+  const target = document.getElementById(id) || renderedHeadings()[index]
+  if (!target) return
+  target.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
 function copyCode(event) {
@@ -167,13 +181,13 @@ onBeforeUnmount(function() {
             <p>请检查 content/guides/ 目录下是否存在对应文件</p>
           </div>
 
-          <div v-else class="markdown-body" v-html="html" @click="copyCode"></div>
+          <div v-else class="markdown-body" ref="contentRef" v-html="html" @click="copyCode"></div>
         </article>
       </main>
 
       <aside class="guide-toc" v-if="headings.length">
         <span class="toc-title">本页目录</span>
-        <a v-for="heading in headings" :key="heading.id" :href="`#${heading.id}`" :class="['toc-level-' + heading.level, { active: activeHeading === heading.id }]" @click.prevent="scrollToHeading(heading.id)">{{ heading.title }}</a>
+        <a v-for="(heading, index) in headings" :key="heading.id" :href="`#${heading.id}`" :class="['toc-level-' + heading.level, { active: activeHeading === heading.id }]" @click.prevent="scrollToHeading(heading.id, index)">{{ heading.title }}</a>
       </aside>
     </div>
 
@@ -411,8 +425,6 @@ onBeforeUnmount(function() {
 .guide-sidebar a small { flex: none; color: var(--text-muted); font-size: 10px; }
 .guide-sidebar a:hover { color: var(--accent); background: var(--surface-hover); }
 .guide-sidebar a.active { color: var(--accent); background: var(--accent-dim); font-weight: 600; }
-.guide-content { min-width: 0; margin-bottom: 40px; }
-.guide-content .markdown-body { width: 100%; max-width: 820px; }
 .guide-toc { grid-column: 3; min-width: 0; }
 
 @media (max-width: 1199px) {
@@ -420,14 +432,12 @@ onBeforeUnmount(function() {
   .guide-layout { grid-template-columns: 220px minmax(0, 1fr); column-gap: 28px; }
   .guide-toc { grid-column: 1 / -1; grid-row: 1; position: static; max-height: none; margin-bottom: 24px; }
   .guide-sidebar { grid-column: 1; grid-row: 2; }
-  .guide-content { grid-column: 2; grid-row: 2; }
 }
 @media (max-width: 768px) {
   .guide-detail { width: 100%; padding: 18px; }
   .guide-layout { display: block; }
   .guide-sidebar { display: none; }
   .guide-toc { margin: 0 0 24px; }
-  .guide-content .markdown-body { max-width: none; }
 }
 
 /* Article column */
