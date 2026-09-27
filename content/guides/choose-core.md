@@ -4,7 +4,7 @@ title: 核心怎么选：决策树版
 description: 不堆术语、不罗列特性 — 说需求给答案。从 Paper / Purpur / Folia / Leaves / Mili 等主流核心中，通过决策树帮你锁定唯一选择。
 icon: 🎯
 tags: [核心, 选型, 版本]
-order: 2
+order: 3
 ---
 
 # 核心怎么选：决策树版
@@ -134,8 +134,8 @@ order: 2
 |----------|---------|------|
 | 权限插件 | ✅ 基本兼容 | LuckPerms、Vault |
 | 经济插件 | ✅ 基本兼容 | EssentialsX Economy |
-| 世界保护 | ✅ 基本兼容 | WorldGuard（8.0+ 已适配） |
-| 多世界管理 | ⚠️ 部分兼容 | Multiverse 5.x 未适配 ❌ |
+| 世界保护 | ✅ 基本兼容 | WorldGuard 7.x（`plugin.yml` 已声明 `folia-supported: true`） |
+| 多世界管理 | ⚠️ 部分兼容 | Multiverse-Core 5.8.1 的 `plugin.yml` 未声明 `folia-supported` ❌ |
 | 实体/怪物相关 | ❌ 大量不兼容 | MythicMobs、Boss |
 | 跨服传送 | ❌ 基本不兼容 | BungeeCord 传送相关 |
 | 地图渲染 | ❌ 不兼容 | Dynmap |

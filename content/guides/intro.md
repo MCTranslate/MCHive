@@ -4,7 +4,7 @@ title: MCHive 是什么
 description: 从定位、差异、内容结构到共建形式的完整介绍
 icon: 📖
 tags: [入门, 定位, 关于]
-order: 8
+order: 18
 ---
 
 # 为什么是「MC 插件汉化站」

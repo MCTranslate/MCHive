@@ -53,12 +53,21 @@ EssentialsX 的语言文件不是 YAML，而是一份 **Java `.properties` 文�
 
 ## 想微调文案？
 
-EssentialsX 支持自定义语言文件：把修改后的 `messages_<语言码>.properties` 放进插件目录，并把 `locale` 指向它即可覆盖内置翻译。官方说明见 <https://essentialsx.net/wiki/Locale.html>（config.yml 里的注释也指向这一页）。
+官方支持自定义消息文件，**注意必须放在 `messages` 子目录里**（放插件根目录无效）：
+
+```
+plugins/Essentials/messages/messages_zh.properties
+```
+
+文件里**只写你要改的条目**即可，其余条目自动回退到内置翻译——这样升级 EssentialsX 时，其它条目的翻译改进你能自动享受到。
 
 改文案时有两条硬性要求，否则消息会出错：
 
 1. **保留 `{0}` `{1}` 这类占位符**，它们会被替换成玩家名、金额等数值
 2. **颜色用 MiniMessage 标签**（`<yellow>`、`<green>`、`<dark_purple>`），不要用 `&a`
+   也可以直接用 `config.yml` 里 `message-colors` 定义的 `<primary>` / `<secondary>` 标签统一配色
+
+把你不需要的消息设为空值即可隐藏它，例如 `noNewMail=`。
 
 真实样例（取自内置 `messages_zh.properties`）：
 
@@ -66,6 +75,8 @@ EssentialsX 支持自定义语言文件：把修改后的 `messages_<语言码>.
 addedToOthersAccount=已向<yellow>{1}<green>的账户充值<yellow>{0}<green>。目前余额：<yellow>{2}
 alphaNames=<dark_red>玩家名称只能包含字母、数字和下划线。
 ```
+
+> **不要直接修改 jar 内的消息文件**：升级插件时改动会全部丢失，而且不会自动转换到新的 MiniMessage 格式。官方完整说明见 <https://essentialsx.net/wiki/Locale.html>。
 
 > 小提示：内置中文文件里有个别错字（例如 `addedToAccount` 写成了「已向你的你的账户充值」），这属于上游翻译的小瑕疵，不影响使用；介意的话按上面的方式自定义一份覆盖即可。
 

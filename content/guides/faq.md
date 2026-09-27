@@ -4,7 +4,7 @@ title: 避坑与排错速查
 description: 从启动报错到游戏卡顿、从插件冲突到版本不兼容 — 按「症状→原因→解法」三段式速查，每条附详细注解和命令示例。
 icon: 🛟
 tags: [排错, FAQ, 避坑]
-order: 7
+order: 17
 ---
 
 # 避坑与排错速查
@@ -249,7 +249,7 @@ java -Dfile.encoding=UTF-8 -Xms4G -Xmx4G -jar server.jar --nogui
 **解决：**
 
 ```
-方法 1（推荐）：备份旧配置 → 删掉 → 让插件重新生成默认配置 → 参考[本站插件库](/plugins)重新配置
+方法 1（推荐）：备份旧配置 → 删掉 → 让插件重新生成默认配置 → 参考[本站插件库](#/plugins)重新配置
 
 方法 2：看插件 CHANGELOG（变更日志），搜索 "config" 关键字，找改名的字段
 ```
@@ -466,15 +466,15 @@ Caused by: java.lang.NullPointerException
 
 | 报错 | 一句话解法 |
 |------|-----------|
-| `UnsupportedClassVersionError` | Java 版本低了，装 Java 21+ |
+| `UnsupportedClassVersionError` | Java 版本比服务端要求低（Paper 26.x 需 **Java 25+**，1.21.x 需 21+），升级 Java 即可 |
 | `Invalid plugin.yml` | 删掉报错误的插件，重新下载 |
 | `Failed to bind to port` | 端口被占用，杀掉占用进程或换端口 |
-| `offline-mode` 提示登录失败 | online-mode=true 只允许正版；or 装 AuthMe 用离线模式 |
+| 玩家提示「无法验证用户名」`Failed to verify username` | 服务端开着正版验证（`online-mode=true`），非正版玩家进不来；要收非正版玩家请改 `online-mode=false` 并装 AuthMe，见 [账号安全](#/guide/account-security) |
 | 玩家权限 `/xxx` 没有 | 先用 OP 测试：`op 玩家名`；LP 用 `/lp user ... info` 查权限 |
 
 ## 下一步
 
-- 能解决但卡在某个配置上？→ 看对应插件的 [配置逐项解释](/plugins)
+- 能解决但卡在某个配置上？→ 看对应插件的 [配置逐项解释](#/plugins)
 - 服务器调完性能还是差？→ [性能调优从入门到精通](#/guide/performance-tuning)
-- 发现配置文件不会改了？→ [15 分钟极速开山](#/guide/quick-start) 的 server.properties 章节
+- 发现配置文件不会改了？→ [15 分钟极速开服](#/guide/quick-start) 的 server.properties 章节
 - 插件装了一半想知道加载顺序？→ [插件组合方案](#/guide/plugin-combos) 的安装顺序章节

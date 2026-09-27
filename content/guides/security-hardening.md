@@ -4,7 +4,7 @@ title: 安全加固：从裸奔到站稳
 description: 防崩、防爆、防注入 — 权限最小化、漏洞扫描、登录保护和常见攻击面梳理，把你的服务器从「筛子」变成「堡垒」。
 icon: 🛡️
 tags: [安全, 权限, 加固, 防攻击]
-order: 5
+order: 14
 ---
 
 # 安全加固：从裸奔到站穩
@@ -417,7 +417,7 @@ essentials.enchant          # 附魔
 │  ☐ WorldGuard 区域保护（出生点 + 主城）                                   │
 │  ☐ 防火墙只开放必须端口（25565 + 你 SSH 的端口）                         │
 │  ☐ 内网穿透通道绑定（如 frp token）                                      │
-│  ☐ AuthMe（如果 offline-mode=true 则必装）                               │
+│  ☐ AuthMe（离线模式 online-mode=false 时必装）                          │
 │  ☐ 反作弊插件（Grim/Vulcan 任选一）                                      │
 │  ☐ spark 性能分析（异常流量能快速定位）                                   │
 └────────────────────────────────────────────────────────────────────────┘
@@ -453,5 +453,5 @@ essentials.enchant          # 附魔
 ## 下一步
 
 - 配置文件改坏了怎么办？→ [15 分钟极速开服](#/guide/quick-start) 有覆盖重来的方法
-- 不知道怎么配权限分组？→ [插件组合方案](#/guide/plugin-combos) 有 LuckPerms 示例
+- 不知道怎么配权限分组？→ [权限系统设计：别让权限越用越乱](#/guide/permissions-design)（[插件组合方案](#/guide/plugin-combos) 里也有 LuckPerms 示例）
 - 服务器卡得不正常（不是配置，是有人在攻击）？→ [避坑与排错](#/guide/faq) 的网络故障章节

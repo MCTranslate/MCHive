@@ -4,7 +4,7 @@ title: 插件组合：按服务器类型直接抄
 description: 生存服 / RPG 服 / 小游戏服 / 公益服 / 生电服 — 每种方案都附完整插件清单、安装顺序、权限依赖和注意事项。
 icon: 🧩
 tags: [插件, 组合, 推荐]
-order: 3
+order: 4
 ---
 
 # 插件组合方案：按服务器类型直接抄
@@ -58,8 +58,8 @@ order: 3
 
 | 插件 | 作用 | 本站教程 | 下载地址 | 注意事项 |
 |------|------|---------|---------|---------|
-| **EssentialsX** | 家/传送/经济/基础命令 | [✅](#/plugin/essentialsx) | https://essentialsx.net/downloads.html | 必须同时装 EssentialsXChat 和 EssentialsXSpawn（它们是分开的 jar） |
-| **LuckPerms** | 权限分组/继承/可视化编辑器 | [✅](#/plugin/luckperms) | https://luckperms.net/downloads | 必须选对应核心的版本（Bukkit/Folia） |
+| **EssentialsX** | 家/传送/经济/基础命令 | [✅](#/plugin/essentialsx) | https://modrinth.com/plugin/essentialsx | 本体够用；聊天格式（Chat）与出生点（Spawn）是另外的 jar，按需另装 |
+| **LuckPerms** | 权限分组/继承/可视化编辑器 | [✅](#/plugin/luckperms) | https://luckperms.net/download | 选「Bukkit」版即可（已支持 Folia，无单独 Folia 包） |
 | **Vault** | 经济权限 API 桥梁 | [✅](#/plugin/vault) | https://www.spigotmc.org/resources/vault.34315/ | 不需要配置，装上就生效 |
 | **DecentHolograms** | 全息浮空文字 | ❌ | https://www.spigotmc.org/resources/decentholograms.25462/ | 可换 Holographic Displays（更老但稳定） |
 
@@ -67,7 +67,7 @@ order: 3
 
 | 插件 | 作用 | 本站教程 | 下载地址 | 注意事项 |
 |------|------|---------|---------|---------|
-| **WorldGuard** | 区域保护（设定谁能拆建） | [✅](#/plugin/worldguard) | https://enginehub.org/worldguard#downloads | 自动依赖 WorldEdit，单独装也能跑，但定义选区需要 WE |
+| **WorldGuard** | 区域保护（设定谁能拆建） | [✅](#/plugin/worldguard) | https://modrinth.com/plugin/worldguard | **硬依赖 WorldEdit**：plugin.yml 写的是 `depend`，不装 WE 它根本不会加载 |
 | **WorldEdit** | 地图编辑 + 选区工具 | [✅](#/plugin/worldedit) | https://enginehub.org/worldedit#downloads | 建筑师必备；服主必装（因为 WG 的选区要它） |
 | **CoreProtect** | 方块操作记录 + 回滚 | [✅](#/plugin/coreprotect) | https://www.spigotmc.org/resources/coreprotect.8631/ | MySQL 用于大服（100+人），小服用 SQLite 即可 |
 | **GriefPrevention** | 玩家自领地（砍木棍圈地） | ❌ | https://www.spigotmc.org/articles/griefprevention.28/ | 和 WorldGuard 任选一个或搭配使用 |
@@ -133,7 +133,7 @@ order: 3
 /lp group default permission set essentials.pay true
 /lp group default permission set essentials.warp true
 /lp group default permission set essentials.kit true
-/lp group default permission set essentials.kit.startup true
+/lp group default permission set essentials.kits.startup true
 /lp group default permission set chestshop.shop.create.* true
 /lp group default permission set jobs.join.* true
 /lp group default permission set jobs.leave.* true
@@ -141,13 +141,13 @@ order: 3
 
 # —— member 组（在 default 基础上加）
 /lp group member permission set essentials.sethome.multiple.3 true
-/lp group member permission set essentials.kit.stone true
-/lp group member permission set essentials.kit.iron true
+/lp group member permission set essentials.kits.stone true
+/lp group member permission set essentials.kits.iron true
 /lp group member permission set essentials.nick true
 
 # —— vip 组（在 member 基础上加）
 /lp group vip permission set essentials.sethome.multiple.5 true
-/lp group vip permission set essentials.kit.diamond true
+/lp group vip permission set essentials.kits.diamond true
 /lp group vip permission set essentials.fly true
 /lp group vip permission set essentials.heal true
 /lp group vip permission set essentials.nick.* true
@@ -269,7 +269,7 @@ experience:
 
 | 插件 | 作用 | 下载 | 注意事项 |
 |------|------|------|---------|
-| **AuthMeReloaded** | 登录注册（离线模式必装） | https://www.spigotmc.org/resources/authmereloaded.6269/ | offline-mode=false 时必装 |
+| **AuthMeReloaded** | 登录注册（离线模式必装） | https://www.spigotmc.org/resources/authmereloaded.6269/ | 服务端设为离线模式（`online-mode=false`）时必装，详见 [账号安全](#/guide/account-security) |
 | **BanManager** | 封禁系统（封人/禁言带记录） | https://www.spigotmc.org/articles/banmanager.75/ | LiteBans 的免费替代 |
 | **ChatControlRed** | 聊天管理（刷屏/广告过滤） | https://www.spigotmc.org/resources/chatcontrol-red.100581/ | 免费版即可做基本过滤 |
 | **Plan** | 服务器数据统计 | https://www.spigotmc.org/articles/plan.3280/ | 在线人数/玩家行为分析 |
@@ -432,7 +432,7 @@ lp group default permission set essentials.balance true
 lp group default permission set essentials.pay true
 lp group default permission set essentials.warp true
 lp group default permission set essentials.kit true
-lp group default permission set essentials.kit.startup true
+lp group default permission set essentials.kits.startup true
 lp group default permission set chestshop.shop.create.* true
 lp group default permission set jobs.join.* true
 
@@ -497,5 +497,5 @@ lp user 你的游戏名 parent add owner
 
 - 想知道每个插件的完整配置？→ 左侧插件中心「Config 逐项中文注释」
 - 插件之间打架了？→ [避坑与排错速查](#/guide/faq)
-- 汉化插件界面？→ 各插件页面底部下载成品汉化
+- 汉化插件界面？→ [插件汉化与本地化完全指南](#/guide/plugin-localization)（不同插件的机制完全不同，不要照搬某一种写法）
 - 服务器装完插件后卡了？→ [性能调优从入门到精通](#/guide/performance-tuning)

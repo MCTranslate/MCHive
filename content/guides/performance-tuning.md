@@ -1,10 +1,10 @@
 ---
 id: performance-tuning
 title: 性能调优从入门到精通
-description: JVM 参数怎么配、paper.yml 哪些项目该动、实体和区块调什么 — 每条参数附工作原理逐行注解，从「卡了怎么办」到「我全都要」。
+description: JVM 参数怎么配、paper-global.yml / paper-world-defaults.yml 哪些项目该动、实体和区块调什么 — 每条参数附工作原理逐行注解，从「卡了怎么办」到「我全都要」。
 icon: 🚀
 tags: [性能, JVM, 优化, 配置]
-order: 4
+order: 13
 ---
 
 # 性能调优从入门到精通
@@ -239,11 +239,11 @@ java -Dfile.encoding=UTF-8 -Xms8G -Xmx8G ...
 ```
 Paper 有四层配置文件，优先级从低到高：
 
-paper-global.yml         # 全局设置（所有世界共用）
+config/paper-global.yml         # 全局设置（所有世界共用）
   ↑ 覆盖
-paper-world-defaults.yml # 世界默认值（新建世界继承）
+config/paper-world-defaults.yml # 世界默认值（所有未单独覆盖的世界都继承它）
   ↑ 覆盖
-worlds/world/paper-world.yml  # 具体世界的独立配置
+world/dimensions/minecraft/overworld/paper-world.yml  # 具体世界的独立配置
   ↑ 覆盖
 bukkit.yml + spigot.yml  # 传统兼容层（仍有效）
 
@@ -252,6 +252,10 @@ bukkit.yml + spigot.yml  # 传统兼容层（仍有效）
         8% 在 paper-global.yml
         2% 需要动 spigot.yml
 ```
+
+> **路径别记错**：Paper 早已不用 `paper.yml` 这个单文件了，现在是 `config/` 目录下的两份文件。而**单个世界的覆盖项**放在世界文件夹里——**Paper 26.1 起是 `world/dimensions/<命名空间>/<世界键>/paper-world.yml`**（26.1 之前是 `world/paper-world.yml`）。不确定就用「打开世界文件夹看有没有 `dimensions/` 子目录」判断，详见 [服务器迁移与升级](#/guide/server-migration)。
+>
+> `paper-world.yml` 默认只有 `_version`，**要改哪项就手动从 defaults 里复制哪项**——官方明确说不要把整个 defaults 文件复制进去。
 
 **新手只需要关注 `paper-world-defaults.yml` 这一个文件，就把性能优化了 80%。**
 

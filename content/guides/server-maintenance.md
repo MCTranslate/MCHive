@@ -4,7 +4,7 @@ title: 服务器日常运维手册
 description: 备份、更新、日志与监控 — 把「服务器炸了没备份」的噩梦变成「有问题我能回滚」的安心。
 icon: 🔧
 tags: [运维, 备份, 监控, 维护]
-order: 6
+order: 16
 ---
 
 # 服务器日常运维手册
@@ -466,24 +466,24 @@ notify("🟢 服务器启动于 2026-09-24 14:23:05 CST")
 原因：服务端版本和客户端版本需要一致
 
 临时让旧版玩家也能进（不推荐长期使用）：
-❶ 在核心.yml 中设置「兼容模式」：
-   某些核心（Purpur/Mohist）支持 acceptance=old 
-   bungeecord 协议可以跨版本
-
-❷ 服务器端装 ViaVersion / ViaBackwards
-   这个插件让旧版客户端能连新版服务端
+❶ 服务器端装 ViaVersion / ViaBackwards
+   这两个插件让旧版客户端能连新版服务端
+   （注意：插件自身版本号与 MC 版本号是两回事，别被文件名里的数字误导）
    安装：
-   下载 ViaVersion-26.x.jar 和 ViaBackwards-26.x.jar
-   放到 plugins/
+   从 Hangar 或 Modrinth 下载对应 Release 的 jar
+   放到 plugins/（ViaBackwards 依赖 ViaVersion，两个要一起装）
    启动后检查是否绿色
    
    限制：
    - 某些新功能玩家体验不到
    - 性能略有下降（协议转换开销）
    - 与某些反作弊冲突
+   - 方向别搞反：老客户端进新服靠 ViaBackwards，只装 ViaVersion 没用
+     （完整对照见 [客户端版本兼容策略](#/guide/version-compat)）
 
-❸ 最佳方案：发布公告让玩家统一升级客户端版本
+❷ 最优解：发布公告让玩家统一升级客户端版本
    用官方启动器 → 新建配置 → 选目标版本 → 启动
+   （跨版本只是过渡手段，玩家升级完就该把它卸掉）
 ```
 
 ---

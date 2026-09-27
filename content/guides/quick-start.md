@@ -523,15 +523,16 @@ sudo ufw allow 25565/tcp
   它是「没有其他插件也能完整生存」的兜底。
 
 去哪下？
-  https://essentialsx.net/downloads.html
-  或搜索「EssentialsX SpigotMC」最新版
+  https://modrinth.com/plugin/essentialsx （或用 SpigotMC 资源页 9089）
+  或搜索「EssentialsX Modrinth」最新版
 
 装好后：
-  首次启动会自动生成 plugins/EssentialsX/ 目录
+  首次启动会自动生成 plugins/Essentials/ 目录
+  注意目录名是 Essentials，不是 EssentialsX —— 改错地方是新手最常见的「改了没生效」
   里面有很多配置文件（config.yml、worth.yml 等）
   新手阶段用默认值就行。
 
-汉化见：[本站 EssentialsX 教程](/plugin/essentialsx)
+汉化见：[本站 EssentialsX 教程](#/plugin/essentialsx)
 ```
 
 #### ❷ LuckPerms（权限分组）
@@ -541,38 +542,41 @@ sudo ufw allow 25565/tcp
   决定谁能用什么命令、不能用、属于哪个组（default / VIP / admin）
 
 去哪下？
-  https://luckperms.net/downloads
-  注意下载对应核心的版本：
+  https://luckperms.net/download
+  一定要选对应核心的版本：
   Paper / Spigot → 下载「Bukkit」版
-  Folia → 下载「Folia」版（2026 年后 LuckPerms 分开发布了）
+  Folia 服务端也用这个 Bukkit 版即可（jar 已声明支持 Folia，没有单独的 Folia 包）
 
 装好后：
-  启动服务器 → 马上提升权限生效
+  启动服务器 → 权限改动即时生效
   去控制台输入：
   lp creategroup admin
-  lp group admin permission set * true
+  lp group admin permission set * true      # * = 所有插件的所有权限，仅适合自用/测试服
   lp user 你的游戏名 parent add admin
+  （开放服请按「权限系统设计」那篇分层授权，别一上来就给 *）
 
-汉化：LuckPerms 自带简体中文！运行命令：
-  lp editor
-  （会生成一个网页编辑器链接，中文界面）
+汉化：LuckPerms 自带多语言系统，控制台执行一次即可下载语言包：
+  lp translations install
+  （玩家的界面语言跟随各自客户端设置，不需要手动放语言文件）
 ```
 
 #### ❸ Vault（桥接 API）
 
 ```
 什么是它？
-  不是功能插件，而是「桥梁插件」。
-  让经济插件（EssentialsX Economy）能和权限插件（LuckPerms）互通。
+  不是功能插件，而是「API 桥梁」。
+  让其他插件能读到服务器上的经济 / 权限 / 聊天数据 ——
+  比如商店插件想知道玩家余额，就得通过 Vault 拿到 EssentialsX 的经济实现。
 
-  比喻：Vault 就像编程里的「接口(interface)」—— 不实现任何功能，但让其他插件通过它互相交谈。
+  比喻：像编程里的「接口(interface)」—— 它自己不实现功能，只让插件之间能互相沟通。
 
 去哪下？
   https://www.spigotmc.org/resources/vault.34315/
 
 装好后：
-  无配置，纯粹是 API 提供层。
-  装了它之后装的经济插件才能读取权限信息（让你知道哪个玩家是 VIP）。
+  没有配置文件，装上就生效。
+  用 /vault-info 可以查看它当前桥接到了哪套经济/权限实现。
+  注意：只装 Vault 而没有经济插件时，它桥接不到任何东西（/vault-info 里对应项会显示 None）。
 ```
 
 #### ❹ WorldGuard + WorldEdit（区域保护 + 建造）
