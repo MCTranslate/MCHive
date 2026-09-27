@@ -4,7 +4,7 @@ title: 账号安全：正版验证、白名单与登录插件
 description: 服务器对外开放前必须做完的三件事 — online-mode 的取舍、白名单怎么用、离线服为什么必须配 AuthMe，以及换模式会导致玩家数据「消失」的原因。
 icon: 🔐
 tags: [账号, 正版, 白名单, AuthMe, 安全]
-order: 9
+order: 10
 ---
 
 > 本教程更新于 2026 年 9 月，适用 Paper 26.x（MC 26.3）。`server.properties` 键名与 `/whitelist` 命令对照官方文档核对，AuthMe 命令树取自其官方自动生成的命令文档，版本信息取自官方发布说明。

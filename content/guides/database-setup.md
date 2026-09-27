@@ -4,7 +4,7 @@ title: 数据库部署与插件接入：从 SQLite/H2 到 MySQL/MariaDB
 description: 单服用插件的内嵌库就够，什么时候才值得上 MySQL/MariaDB？附版本核实、可直接复制的落地流程、CoreProtect / LuckPerms / EssentialsX 三个插件的真实接入差异，以及备份与常见坑。
 icon: 🗄️
 tags: [数据库, MySQL, MariaDB, 备份, 安全]
-order: 12
+order: 13
 ---
 
 # 数据库部署与插件接入
