@@ -1,0 +1,4193 @@
+##############################################
+#      Vulcan 反作弊 配置文件（中文注释版）      #
+##############################################
+# ─────────────────────────────────────────────────────────────
+# 中文注释版说明：本文件基于 Vulcan 2.9.7.23 官方原版 config.yml 完整汉化。
+# 仅翻译了注释与玩家可见消息文本，所有配置键、结构与默认值与官方原版
+# 完全一致，可直接放入 plugins/Vulcan/ 目录覆盖，执行 /vulcan reload 生效。
+# 封禁/踢出理由中的 [Vulcan] Unfair Advantage 已统一译为 [Vulcan] 检测到作弊；
+# 各处的 ReadTimeoutException 踢出消息是官方故意伪装成原版超时，请勿翻译。
+# ─────────────────────────────────────────────────────────────
+# 以下前缀将用于插件中所有带 %prefix% 占位符的消息
+prefix: '&4&lVulcan &8»'
+
+alerts:
+  # 玩家触发检查项时聊天栏显示的警报格式。
+  # 可用占位符：%player%（玩家名）、%max-vl%（最大违规值）、%check%（检查项名称）、%description%（检查项描述）、
+  # %version%（玩家客户端版本）、%dev%（* 表示该检查项为实验性）、%vl%（违规值）、
+  # %ping%（玩家延迟）、%tps%（服务器 TPS）、%type%（检查项类型字母，A、B、C 等），
+  # %severity%（根据违规值变色，选项见下方 severity 配置）、%x%（玩家 X 坐标）、
+  # %y%（玩家 Y 坐标）、%z%（玩家 Z 坐标）、%world%（玩家所在世界）、%complex-type%（显示更详细的
+  # 检查项名称，例如显示 Speed (Ground) 而不是 Speed (Type B)）
+  format: '%prefix% &f%player% &7触发了 &f%check% %dev%&7(&f类型 %type%&7)%dev% &7[&4%vl%&7/&4%max-vl%&7]'
+  # 聊天中鼠标悬停警报消息时显示的悬浮文本。
+  # 可用占位符与上方 format 相同。
+  hover-message:
+    - '&7延迟: &c%ping% &8| &7TPS: &c%tps% &8| &7版本: &c%version% &8| &7客户端: &c%client-brand%'
+    - ''
+    - '&7检查说明：'
+    - '&7%description%'
+    - ''
+    - '&7详细信息：'
+    - '&7%info%'
+    - ''
+    - '&7点击传送到 &b%player%&7。'
+  # 点击警报消息时执行的命令。由于每个聊天组件只能绑定一条命令，
+  # 插件通过自定义中转命令实现了依次执行任意多条命令的小魔法。
+  # 可用占位符：%player%
+  click-commands:
+    - '/vulcan clickalert %player%'
+  # 使用 /vulcan clickalert %player% 时实际执行的命令（必须包含玩家参数）
+  click-alert-command-commands:
+    - 'tp %player%'
+  # 开启警报时发送的消息。可用占位符：%prefix%
+  toggled-on-message: '%prefix% &7Vulcan 警报已&a开启&7！'
+  # 关闭警报时发送的消息。可用占位符：%prefix%
+  toggled-off-message: '%prefix% &7Vulcan 警报已&c关闭&7！'
+  # 警报是否同时输出到控制台。
+  print-to-console: true
+  # 警报输出到控制台时使用的格式
+  console-format: '[Vulcan] %player% 触发了 %check% %dev%(类型 %type%)%dev% (%vl%/%max-vl%)'
+  # 每当玩家触发检查项时都会执行的命令列表，完全可自定义，方便你在不使用 API 的
+  # 情况下对触发行为做一些特殊处理。可用占位符与上方 format 列出的相同。
+  # as listed above once again.
+  custom-commands: []
+  # 你可以在这里按违规值给警报分档配色。
+  severity:
+    violations:
+      2: 4 # 低于此数值的违规将使用下方的颜色 '1'；大于等于此数值且小于 '3' 的使用颜色 '2'
+      3: 8 # 大于等于此数值且高于 '2' 的使用下方的颜色 '3'
+      4: 12 # 大于等于此数值且高于 '3' 的使用下方的颜色 '4'
+      5: 16 # 大于等于此数值且高于 '4' 的使用下方的颜色 '5'
+      6: 16 # 大于等于此数值且高于 '5' 的使用下方的颜色 '6'
+      7: 16 # 大于等于此数值且高于 '6' 的使用下方的颜色 '7'
+      8: 16 # 大于等于此数值且高于 '7' 的使用下方的颜色 '8'
+      9: 16 # 大于等于此数值且高于 '8' 的使用下方的颜色 '9'
+      10: 16 # 大于等于此数值且高于 '9' 的使用下方的颜色 '10'
+    colors: # 这里也支持 HEX 颜色代码（1.16 及以上版本）
+      1: '&a' # 该档位使用的颜色，对应上方小于 '2' 的情况
+      2: '&e' # 该档位使用的颜色，对应上方大于等于 '2' 且小于 '3' 的情况
+      3: '&6' # 该档位使用的颜色，对应上方大于等于 '3' 且小于 '4' 的情况
+      4: '&c' # 该档位使用的颜色，对应上方大于等于 '4' 且小于 '5' 的情况
+      5: '&4' # 该档位使用的颜色，对应上方大于等于 '5' 且小于 '6' 的情况
+      6: '&4' # 该档位使用的颜色，对应上方大于等于 '6' 且小于 '7' 的情况
+      7: '&4' # 该档位使用的颜色，对应上方大于等于 '7' 且小于 '8' 的情况
+      8: '&4' # 该档位使用的颜色，对应上方大于等于 '8' 且小于 '9' 的情况
+      9: '&4' # 该档位使用的颜色，对应上方大于等于 '9' 且小于 '10' 的情况
+      10: '&4' # 该档位使用的颜色，对应上方大于等于 '10' 的情况
+  # %dev% 占位符显示的符号，用于标记实验性检查项。
+  experimental-symbol: "*"
+
+#本段用于配置日志文件（violations.txt）
+log-file:
+  # 是否启用日志文件
+  enabled: true
+  # 玩家触发检查项时写入日志的内容。
+  # 可用占位符：%player%（玩家名）、%max-vl%（最大违规值）、%check%（检查项名称）、%description%（检查项描述）、
+  # %version%（玩家客户端版本）、%dev%（* 表示该检查项为实验性）、%vl%（违规值）、
+  # %ping%（玩家延迟）、%tps%（服务器 TPS）、%type%（检查项类型字母，A、B、C 等）。
+  alert-message: "%player% 触发了 %check% %dev%(类型 %type%)%dev% [VL: %vl%] [延迟: %ping%] [TPS: %tps%] [版本: %version%] [客户端: %client-brand%]"
+  # 玩家因检查项被处罚时写入日志的内容。可用占位符与上方相同。
+  # 若已启用（见下一段），处罚的详细信息还会写入 punishments.txt 文件。
+  punishment-message: "%player% 因 %check% %dev%(类型 %type%)%dev% 被处罚 [VL: %vl%] [延迟: %ping%] [TPS: %tps%] [客户端: %client-brand%]"
+
+unloaded-chunks:
+  # 是否对发送了与未加载区块相等移动数据的玩家执行拉回
+  setback-enabled: false
+  # 是否提醒管理员，设为 '' 可关闭该消息
+  message: '%prefix% &c%player% &7因处于未加载区块被拉回！'
+  # 超过多少 tick 后将玩家拉回
+  max-ticks: 40
+
+# 本段用于配置 punishments.txt 文件
+punishment-file:
+  # 是否启用 punishments.txt 文件
+  enabled: true
+
+# 本段用于配置违规值自动重置
+violation-reset:
+  # 是否自动重置违规值
+  enabled: true
+  # 自动重置违规值的时间间隔（单位：分钟）。
+  interval-in-minutes: 8
+  # 重置违规值时是否发送消息（仅发送给已开启 /alerts 的管理员）。
+  message-enabled: true
+  # 重置违规值时发送的消息（仅发送给已开启 /alerts 的管理员）。
+  message: '%prefix% &7所有在线玩家的违规值已重置！'
+
+# 本段用于客户端品牌警报与客户端品牌黑名单。
+client-brand-alerts:
+  # 是否尝试识别玩家的客户端品牌 - 关闭后将完全不注册
+  # 对应的消息通道。
+  resolve: true
+  # 是否启用客户端品牌警报。
+  enabled: true
+  # 不发送警报的客户端品牌列表。无需完全匹配，例如
+  # 'lunar' 即可匹配 'lunarclient' 等。
+  ignore-alerts-list:
+    - 'vanilla'
+  # 玩家加入服务器时发送的消息。可用占位符：%player%（玩家名）、%prefix%（插件前缀）、
+  # %client-brand%（玩家的客户端品牌）、%client-version%（玩家的客户端版本）。
+  message: '%prefix% &c%player% &7使用 &f%client-brand% &7加入了服务器！'
+  # 不允许加入、进服即被踢出的客户端品牌列表。采用字符串包含匹配，
+  # 无需完全一致，例如 'forge' 会匹配 Forge，'lunar' 会匹配 lunar 等。
+  blocked-client-brands: []
+  unallowed-client-brand-kick-message: '&c你不能使用 %client-brand% 加入服务器！'
+  # 客户端品牌警报是否同时输出到控制台
+  console: false
+  # 输出到控制台的消息（需开启上方选项）
+  console-message: '[Vulcan] %player% 使用 %client-brand% 加入了服务器！'
+  # 是否启用客户端品牌白名单。加入时客户端品牌不在
+  # 下方列表中的玩家将无法进入服务器
+  whitelist-enabled: false
+  # 客户端品牌白名单。采用字符串包含匹配，无需完全一致，例如
+  # 'forge' 会匹配 Forge，'lunar' 会匹配 lunar 等。
+  whitelisted-client-brands: []
+
+connection:
+  debug-messages: false
+  ignore-ids-over-0: false
+  other-anticheat-support: false
+  invalid:
+    # 玩家回复了我们从未发送的确认包（不可能发生），将玩家踢出。
+    # 除非存在插件不兼容，否则这里绝不应误判。不，你无法禁用它，
+    # 我们也不会提供禁用选项——否则玩家可以借此禁用整个插件并
+    # 肆意作弊，或导致所有检查全部误报。如有问题请联系官方支持。
+    # 下方踢出消息伪装成原版超时异常（ReadTimeoutException），建议保持原样以免暴露反作弊。
+    kick-message: 'Internal Exception: io.netty.handler.timeout.ReadTimeoutException'
+    staff-alert-message: '%prefix% &c%player% &7因发送无效确认包被踢出！（ID: &c%id%&7）'
+    console-alert-message: '[Vulcan] &c%player% &7因发送无效确认包被踢出！（ID: &c%id%&7）'
+  out-of-order:
+    # 玩家以错误的顺序回复确认包，将玩家踢出。卡顿不影响此判定：TCP
+    # 本身保证数据包顺序，哪怕你从月球用 500 万延迟游玩也不会误判，
+    # 除非存在插件不兼容，或者数据包被其他东西拦截。
+    # 不，你无法禁用它，我们也不会提供禁用选项——否则玩家可以借此
+    # 禁用整个插件并肆意作弊，或导致所有检查全部误报。如有问题请联系官方支持。
+    kick-message: 'Internal Exception: io.netty.handler.timeout.ReadTimeoutException'
+    staff-alert-message: '%prefix% &c%player% &7因确认包乱序被踢出！(&7收到 &c%id% &7!= 期望 &c%last-id%&7)'
+    console-alert-message: '[Vulcan] %player% 因确认包乱序被踢出！(&7收到 &c%id% &7!= 期望 &c%last-id%&7)'
+  no-response:
+    # 超过 x 秒未回复确认包，将玩家踢出。
+    delay-in-seconds: 30
+    kick-message: 'Internal Exception: io.netty.handler.timeout.ReadTimeoutException'
+    staff-alert-message: '%prefix% &c%player% &7因未响应确认包被踢出！(&c%delay%&7ms)'
+    console-alert-message: '[Vulcan] %player% 因未响应确认包被踢出！(&c%delay%&7ms)'
+    code-of-conduct-fix: true
+  max-size:
+    # 这表示我们已向玩家发送了 2000 个对方尚未响应的数据包，这……很多了。
+    # 如果你服务器上有人频繁因此被踢，多半是其他插件也在发送确认包，
+    # 需要把数值调大一点，或者该玩家网络极差/断线了几秒。
+    # 需要帮助请联系官方支持。
+    amount: 2000
+    kick-message: 'Internal Exception: io.netty.handler.timeout.ReadTimeoutException'
+    staff-alert-message: '%prefix% &c%player% &7因待确认包过多被踢出！(&c%size%&7)'
+    console-alert-message: '[Vulcan] %player% 因待确认包过多被踢出！(&c%size%&7)'
+  keepalive:
+    # 长时间未回复 KeepAlive 包，将玩家踢出。
+    kick-enabled: true
+    max-delay: 45000
+    kick-message: 'Internal Exception: io.netty.handler.timeout.ReadTimeoutException'
+    staff-alert-message: '%prefix% &c%player% &7因长时间未响应 KeepAlive 包被踢出！&7(&c%delay%ms&7)'
+    console-message: '[Vulcan] &c%player% &7因长时间未响应 KeepAlive 包被踢出！&7(&c%delay%ms&7)'
+  max-ping:
+    # 延迟超过设定值并持续指定 tick 数时踢出玩家
+    kick-enabled: true
+    max-ping: 20000
+    max-ticks: 20
+    kick-message: 'Internal Exception: io.netty.handler.timeout.ReadTimeoutException'
+    staff-alert-message: '%prefix% &c%player% &7因延迟过高被踢出！&7(&c%ping%ms&7)'
+    console-message: '[Vulcan] &c%player% &7因延迟过高被踢出！&7(&c%ping%ms&7)'
+
+# 对已触发过检查项的玩家，临时取消其攻击/伤害
+cancel-hits:
+  # 对所有检查项启用。保持 false 并在下方手动添加可只对特定检查项生效，添加格式见下方说明。
+  enabled-for-all-checks: false
+  # 最后一次触发后持续多少毫秒内取消攻击
+  duration: 3000
+  # 是完全取消攻击事件，还是仅把伤害设为 0。默认不完全取消攻击，而是把伤害设为 0，
+  # 让作弊者以为自己仍在造成伤害。设为 true 则完全拦截攻击。
+  cancel-event: false
+  # 将被取消攻击的检查项列表。格式很宽松，"kill aura a"、"killauraa"、"killaura b"、"jumpb"、"Jump B" 等任何
+  # 大小写或写法都可以，只要同时包含检查项名称和类型。例如想阻止锤击（Mace Damage）一击秒杀，
+  # 可以把 Jump A + Jump B 都加进来。
+  checks: []
+
+# 本段用于配置处罚
+punishments:
+  # 玩家被处罚时发送的消息（仅发送给已开启 /alerts 的管理员）
+  message: '%prefix% &c%player% &7因 &f%check% &7（&f类型 %type%&7） &7[&4x%vl%&7] 被处罚'
+  # 玩家被处罚时向全服广播的消息
+  broadcast:
+    - "&7&m---»--*-------------------------------------*--«---"
+    - "&cVulcan &7检测到 &c%player% &7作弊，已将其移出服务器。"
+    - "&7&m---»--*-------------------------------------*--«---"
+
+#审判日（Judgement Day）选项
+judgement-days:
+  # 有人执行 /jday start 后向全服广播的消息
+  started-broadcast:
+    - "&7&m---»--*-------------------------------------*--«---"
+    - "&cVulcan 审判日 v1 已开始……"
+    - "&7&m---»--*-------------------------------------*--«---"
+  # 审判日结束时向全服广播的消息。
+  ended-broadcast:
+    - "&7&m---»--*-------------------------------------*--«---"
+    - "&c审判日已结束……共处罚了 %amount% 名玩家。"
+    - "&7&m---»--*-------------------------------------*--«---"
+  # 将要执行的命令，%player% 表示被加入审判日的玩家（/jday add (玩家名)）
+  commands:
+    - "ban %player% &c[Vulcan] 审判日 v1"
+  # 审判日中有人被处罚时向全服广播的消息。
+  broadcast:
+    - '&7&m---»--*-------------------------------------*--«---'
+    - '&c%player% &7已被封禁，理由：&c[Vulcan] 审判日 v1&7。'
+    - '&7&m---»--*-------------------------------------*--«---'
+  # 审判日队列中两名玩家之间的处理间隔
+  cooldown: 1000
+  # 是否按固定间隔自动执行审判日（需开启上方选项）
+  run-at-interval: false
+  # 若开启，此处为执行间隔（单位：tick，20 tick = 1 秒，默认 36000 tick = 30 分钟）
+  interval: 36000
+
+freeze:
+  # 玩家在被冻结期间退出游戏时执行的命令列表，可自定义
+  logged-out-while-frozen-commands: []
+
+# 是否启用幽灵方块修复。玩家会被拉回，周围方块会被重新更新。
+ghost-blocks-fix:
+  # 是否启用幽灵方块修复。
+  enabled: true
+  # 是否尝试处理幽灵水方块
+  ghost-water-fix: true
+  # 低于此 TPS 时该功能不生效，设为 -1 可禁用
+  minimum-tps: 18.5
+  # 由于 ViaVersion 的设置，是否忽略 1.17 以下客户端版本玩家在 y1 处的幽灵方块
+  ignore-legacy-via: true
+  # 缓冲区设置
+  buffer:
+    max: 3
+    decay: .1
+  # 是否启用幽灵方块拉回。
+  setback: true
+  # 是否向玩家脚底周围发送方块更新包，重新刷新其脚下方块
+  update-blocks: false
+  # 悬空多少 tick 后才判定为站在幽灵方块上（默认 3）
+  ticks: 3
+  # 周围幽灵方块被更新时是否给玩家发送提示消息
+  message-enabled: false
+  # 玩家站在幽灵方块上时收到的消息（需开启上方选项）
+  message: '&c你刚才走在幽灵方块上，方块已为你更新！'
+  # 有人因幽灵方块被拉回时是否提醒管理员
+  staff-message-enabled: true
+  # 玩家因幽灵方块被更新位置时发送给管理员的消息。
+  staff-message: '%prefix% &c%player% &7因处于幽灵方块上，位置已被更新！（%world%, %x%, %y%, %z%）&7[%ticks%]'
+  # 幽灵方块消息是否同时输出到控制台
+  print-to-console: true
+  # 若开启，输出到控制台的消息。
+  console-message: '%player% 因处于幽灵方块上，位置已被更新！（%world%, %x%, %y%, %z%）&7[%ticks%]'
+
+# 消息选项 - 含义都很直白，不再赘述。
+messages:
+  no-permission: '&c你没有权限执行这个命令！'
+  cant-execute-from-console: '&c你不能在控制台中执行这个命令！'
+  ban-command-syntax: '%prefix% &7正确用法：&c/vulcan ban (玩家)&7。'
+  kb-command-syntax: '%prefix% &7正确用法：&c/vulcan knockback (玩家) &8| &c/vulcan kb (玩家)&7。'
+  profile-command-syntax: '%prefix% &7正确用法：&c/vulcan profile (玩家)&7。'
+  jday-command-syntax: '%prefix% &7正确用法：&c/jday add (玩家) &8| &c/jday execute &8| &c/jday list &8| &c/jday remove (玩家)&7。'
+  reload-success: '%prefix% &aVulcan 重载成功！'
+  invalid-target: '%prefix% &c找不到指定的玩家！'
+  kb-test-success: '%prefix% &a已成功对 %player% 执行击退测试！'
+  jday-no-pending-bans: '%prefix% &c当前没有待处理的封禁！'
+  jday-added-to-list: '%prefix% &c%player% &7已成功加入列表！'
+  reset-command: '%prefix% &7所有在线玩家的违规值已重置！'
+  disable-check-command-syntax: '%prefix% &c正确用法：/vulcan disablecheck (检查名) - 区分大小写。'
+  invalid-check: '%prefix% &c无效的检查名！示例：AimA、BadPacketsF、AutoClickerJ。'
+  removed-check: '%prefix% &c已禁用检查 %check%！'
+  disabled-check: '%prefix% &c已禁用检查 %check%！'
+  violations-command-syntax: '%prefix% &c正确用法：/vulcan violations (玩家)'
+  no-logs: '%prefix% &c该玩家没有任何违规记录！'
+  cps-command-syntax: '%prefix% &c正确用法：/vulcan cps (玩家)'
+  connection-command-syntax: '%prefix% &c正确用法：/vulcan connection (玩家)'
+  logs-command-syntax: '%prefix% &c正确用法：/logs (玩家) (页码)'
+  no-logs-file: '%prefix% &c日志文件不存在！'
+  logs-command-no-logs: '%prefix% &c没有找到 %player% 的违规记录！'
+  no-page: '%prefix% &c%player% 没有 %page% 页！'
+  update-available: '%prefix% &7&cVulcan &7有新版本可用！(&cv%new-version%&7)'
+  latest-version: '%prefix% &a你正在运行最新版本的 Vulcan！'
+  injection-failure: '你加入得太快了，请稍后再试！'
+  frozen: '&c你已被冻结！请等待管理员的指示。'
+  logged-out-while-frozen: '%prefix% &c%player% 在被冻结期间退出了游戏！'
+  froze: '%prefix% &7你已冻结 &a%player%&7！'
+  unfroze: '%prefix% &7你已解除 &c%player% &7的冻结&7！'
+  freeze-command-syntax: '%prefix% &c正确用法：/vulcan freeze (玩家)'
+  shuffle-command-syntax: '%prefix% &c正确用法：/vulcan shuffle (玩家)'
+  shuffled-hotbar: '%prefix% &a已成功打乱 %player% 的快捷栏！'
+  rotate-command-syntax: '%prefix% &c正确用法：/vulcan rotate (玩家)'
+  randomly-rotated: '%prefix% &a已成功旋转 %player% 的视角！'
+  reset-command-syntax: '%prefix% &c正确用法：/vulcan reset (玩家)'
+  violations-reset: '%prefix% &a已成功重置 %player% 的违规值！'
+  unknown-command: '%prefix% &c未知命令！'
+  unfroze-staff-broadcast: '%prefix% &c%player% &7的冻结已被 &c%staff% &7解除&7！'
+  froze-staff-broadcast: '%prefix% &c%player% &7已被 &c%staff% &7冻结&7！'
+  removed-from-jday: '%prefix% &a已成功将 %player% 移出审判日！'
+  jday-remove-syntax: '%prefix% &c正确用法：/jday remove (玩家)'
+  punishlogs-syntax: '%prefix% &c正确用法：/punishlogs (玩家)'
+  sent-test-alert: '%prefix% &a测试警报已成功发送！'
+  description-command-syntax: '%prefix% &c正确用法：/vulcan description (检查名) '
+
+# 命令配置项。
+commands:
+  # Vulcan help 命令的输出内容。
+  help:
+    - "&7&m---»--*-------------------------------------*--«---"
+    - "&cVulcan 作弊检测 v%version% 作者：&cfrep (.frap)"
+    - "&r"
+    - "&c/vulcan help &8- &7打开此帮助菜单"
+    - "&c/vulcan profile &8 - &7查看玩家的 Vulcan 档案。"
+    - "&c/vulcan ban (玩家) &8- &7通过 Vulcan 封禁一名玩家。"
+    - "&c/vulcan reload &8- &7重载所有文件。"
+    - "&c/vulcan disablecheck (检查名) &8- &7禁用一项检查（区分大小写）。"
+    - "&c/vulcan violations (玩家) &8- &7查看指定玩家的全部违规值。"
+    - "&c/vulcan cps (玩家) &8- &7显示玩家的 CPS（每秒点击数）。"
+    - "&c/vulcan kb (玩家) &8 | &c/vulcan knockback (玩家) &8- &7对玩家施加击退。"
+    - "&c/vulcan connection (玩家) &8- &7查看玩家的连接信息。"
+    - "&c/vulcan freeze (玩家) &8- &7冻结/解冻一名玩家。"
+    - "&c/vulcan rotate (玩家) &8- &7随机旋转玩家的视角（yaw/pitch）。"
+    - "&c/vulcan shuffle (玩家) &8- &7随机打乱玩家的快捷栏槽位。"
+    - "&c/vulcan top &8- &7显示各类别违规值最高的玩家。"
+    - "&c/vulcan testalert &8- &7测试 Discord Webhook 联动。"
+    - "&r"
+    - "&c/jday add (玩家) &8- &7将玩家加入审判日。"
+    - "&c/jday execute &8- &7执行一次审判日。"
+    - ""
+    - "&c/alerts &8- &7开关作弊警报。"
+    - ""
+    - "&c/logs (玩家) (页码) &8- &7查看玩家的违规记录。"
+    - "&c/punishlogs (玩家) &8- &7查看玩家的处罚记录。"
+    - "&7&m---»--*-------------------------------------*--«---"
+  ban:
+    # 执行 /vulcan ban (玩家) 时将执行的命令
+    commands:
+      - 'ban %player% &c[Vulcan] 检测到作弊'
+    # 执行 /vulcan ban (玩家) 时向全服广播的消息
+    broadcast:
+      - "&7&m---»--*-------------------------------------*--«---"
+      - "&cVulcan &7检测到 &c%player% &7作弊，已将其移出服务器。"
+      - "&7&m---»--*-------------------------------------*--«---"
+  # /vulcan profile (玩家名) 命令的显示选项
+  profile:
+    - "&7&m---»--*-------------------------------------*--«---"
+    - "&c%player% 的 Vulcan 档案："
+    - " &8» &7%uuid%"
+    - ""
+    - "&7游戏版本：&c%client-version%"
+    - "&7客户端品牌：&c%client-brand%"
+    - "&7鼠标灵敏度：&c%sensitivity%%"
+    - "&7最近 CPS：&c%cps% CPS"
+    - "&7移动速度：&c%move-speed%"
+    - ""
+    - "&7总违规值（&c%total-violations%&7）："
+    - " &8» &7战斗：&c%combat-violations%"
+    - " &8» &7移动：&c%movement-violations%"
+    - " &8» &7玩家行为：&c%player-violations%"
+    - ""
+    - "&7碰撞信息："
+    - "&8» &7附近方块：%nearby-blocks%"
+    - "&8» &7附近实体：%nearby-entities%"
+    - ""
+    - "&7药水效果：%potion-effects%"
+    - "&7&m---»--*-------------------------------------*--«---"
+  cps: "%prefix% &7&c%player% &7最近的 CPS：&c%cps%"
+  connection:
+    - "&7&m---»--*-------------------------------------*--«---"
+    - "&c%player% 的连接信息："
+    - ""
+    - "&7Transaction 延迟：&c%transaction-ping%ms"
+    - "&7KeepAlive 延迟：&c%keepalive-ping%ms"
+    - ""
+    - "&7最近响应的 Transaction：&c%last-replied-transaction%ms 前"
+    - "&7排队中的 Transaction：&c%queued-transactions%"
+    - ""
+    - "&7Flying 包延迟：&c%flying-delay%ms"
+    - "&7&m---»--*-------------------------------------*--«---"
+  logs:
+    color: '&7'
+    header-footer: '&7&m---»--*--&r&7[ &c%player% &7的违规记录（&c%page%&8/&c%max-pages%&7） ]&7&m--*--«---'
+  top:
+    - "&7&m---»--*-------------------------------------*--«---"
+    - "&c总违规值排行："
+    - " &8- &7%total-1-name% &7(&c%total-1-violations% VL&7)"
+    - " &8- &7%total-2-name% &7(&c%total-2-violations% VL&7)"
+    - " &8- &7%total-3-name% &7(&c%total-3-violations% VL&7)"
+    - " &8- &7%total-4-name% &7(&c%total-4-violations% VL&7)"
+    - " &8- &7%total-5-name% &7(&c%total-5-violations% VL&7)"
+    - ""
+    - "&c战斗违规值排行："
+    - " &8- &7%combat-1-name% &7(&c%combat-1-violations% VL&7)"
+    - " &8- &7%combat-2-name% &7(&c%combat-2-violations% VL&7)"
+    - " &8- &7%combat-3-name% &7(&c%combat-3-violations% VL&7)"
+    - " &8- &7%combat-4-name% &7(&c%combat-4-violations% VL&7)"
+    - " &8- &7%combat-5-name% &7(&c%combat-5-violations% VL&7)"
+    - ""
+    - "&c移动违规值排行："
+    - " &8- &7%movement-1-name% &7(&c%movement-1-violations% VL&7)"
+    - " &8- &7%movement-2-name% &7(&c%movement-2-violations% VL&7)"
+    - " &8- &7%movement-3-name% &7(&c%movement-3-violations% VL&7)"
+    - " &8- &7%movement-4-name% &7(&c%movement-4-violations% VL&7)"
+    - " &8- &7%movement-5-name% &7(&c%movement-5-violations% VL&7)"
+    - ""
+    - "&c玩家行为违规值排行："
+    - " &8- &7%player-1-name% &7(&c%player-1-violations% VL&7)"
+    - " &8- &7%player-2-name% &7(&c%player-2-violations% VL&7)"
+    - " &8- &7%player-3-name% &7(&c%player-3-violations% VL&7)"
+    - " &8- &7%player-4-name% &7(&c%player-4-violations% VL&7)"
+    - " &8- &7%player-5-name% &7(&c%player-5-violations% VL&7)"
+    - "&7&m---»--*-------------------------------------*--«---"
+  jday:
+    list-header-footer: "&7&m---»--*-------------------------------------*--«---"
+    list-format: " &8- &7%name%"
+  punishlogs:
+    header-footer: '&7&m---»--*--&r&7[ &c%player% &7的处罚记录 ]&7&m--*--«---'
+  description: "%prefix% &7&c%check% &7的描述：%description%"
+
+punishment-statistics-broadcast:
+  # 是否向全服播报 Vulcan 处罚了多少玩家。
+  enabled: false
+  # 播报间隔（单位：tick）（默认 18000 tick = 15 分钟）
+  interval: 18000
+  # 要播报的消息
+  broadcast:
+    - '&7&m---»--*-------------------------------------*--«---'
+    - '&7过去 7 天内，&cVulcan &7共处罚了 &c%amount% &7名玩家。'
+    - '&7&m---»--*-------------------------------------*--«---'
+
+# 一些基础设置
+settings:
+  # 拥有 "vulcan.alerts" 权限的玩家进服时是否自动开启警报
+  toggle-alerts-on-join: true
+  # %severity% 占位符按单项检查违规值还是玩家总违规值计算
+  per-check-severities: true
+  # 是否在特定瞄准类检查中检测电影模式（cinematic）。这无关紧要，
+  # 保持关闭也没问题，因为除非刻意触发否则几乎永远不会出现。开启后会
+  # 拖慢部分检查项的检测速度。
+  cinematic: false
+  # 这一项只是防止作者发版时忘记删调试消息。如果你在服务器上看到 [Vulcan Debug]，
+  # 就把它关掉（正常情况下开或关都不影响你，
+  # 但如果你在聊天里看到 [Vulcan Debug]，请把它设为 false 然后重载）。
+  debug: true
+  # PacketEvents 的设置项，如果你注入遇到问题，我们可能会让你调整它。
+  # 如果一切正常，不要动它。
+  inject-early: true
+  # violations.txt 超过该大小（单位：KB）后会被压缩并移入 logs 文件夹
+  max-logs-file-size: 7500
+  # 如果你有 Bungee 跨服网络，想给处罚/警报等消息指定具体子服名称
+  server-name: 'Default'
+  # 警报消息在主线程发送还是异步发送。如果你的服务器接入了 Bungee，
+  # 建议保持关闭：警报这类携带大量信息（悬浮文本、点击命令等）的大型聊天组件消息
+  # 有时会导致玩家被踢出并提示 "The server you were on has went down" 之类的错误。
+  # 简单总结：
+  # - BungeeCord 跨服网络：保持 FALSE
+  # - 单一服务器：设为 TRUE 可节省一些性能
+  async-alerts: false
+  enable-api: true
+  # 延迟时间（单位：毫秒，1000ms = 1 秒）
+  punishment-delay: 10000
+  # 是否通过 Floodgate 的 API 自动忽略基岩版玩家。
+  ignore-floodgate: true
+  # 强烈建议保持 false，因为客户端可以伪造品牌信息；但如果你在用 Geyser
+  # 且由于种种原因无法让 Floodgate 正常工作，可以开启此项。如果你的服务器
+  # 已装 floodgate-bukkit 且 Geyser 工作正常，不要动它。
+  ignore-flags-geyser-client-brand: false
+  # 插件完全初始化前等待多久才开始检查玩家（单位：毫秒）。默认
+  # 为 2500ms。
+  join-check-wait-time: 2500
+  # 是否忽略 UUID 以 '000000' 开头的玩家，不对其进行标记 -
+  # 用于其他手段都无效时豁免 Geyser 玩家。
+  ignore-geyser-uuids: true
+  # 是否忽略名字以特定字符/字符串开头的玩家的触发记录
+  ignore-geyser-prefixes: true
+  # 要忽略的字符串 - 名字以 * 开头的玩家都不会被标记（非符号字符区分大小写）
+  ignore-geyser-prefix: "*"
+  # 最大违规值（超过此值的警报不再发送）
+  max-alert-violation: 250
+  # 玩家使用 /fly 后豁免检查多久（默认 40 tick = 2 秒）
+  flight-cooldown: 40
+  # /vulcan top 命令在数据不足无法排序时显示的内容
+  top-command-unresolved: "暂无数据"
+  # 审判日队列中的玩家是否还能再次被封禁。
+  ignore-if-in-judgement-day: false
+  # 是否忽略使用 Vivecraft 加入的玩家。注意这可以被伪造，谨慎开启。
+  ignore-vivecraft: false
+  # 脚手架是出了名的"坏方块"，是否在部分检查项中对脚手架更宽容。
+  lenient-scaffolding: true
+  # 是否加载 bStats 统计
+  bstats: true
+  # 是否处理实体碰撞
+  entity-collision: true
+  # 如可用，是否与 mcMMO 联动。
+  hook-mcmmo: true
+  # 如可用，是否与 MythicMobs 联动。
+  hook-mythicmobs: true
+  # 如可用，是否与 GSit 联动
+  hook-gsit: true
+  # 如可用，是否与 Brewery 联动
+  hook-brewery: true
+  # 是否忽略超过最大违规值阈值的警报
+  ignore-alerts-over-max-violations: false
+  # 超过最大违规值多少才忽略（例如设为 3 表示：若最大违规值
+  # 设为 10，则超过 VL 13 的警报都会被忽略）
+  ignore-alerts-over-max-violations-amount: 3
+  # 当你可能使用了不兼容的 Spigot 分支或插件时，Vulcan 是否发出警告。
+  incompatability-manager: true
+  # 是否发送插件消息（plugin messaging）
+  plugin-messaging: true
+  # 当玩家位置低于其上一个着地位置时是否拉回（这可能导致
+  # 反虚空效果，如果你的服务器是空岛战争/起床战争类玩法，不太推荐开启）
+  dont-setback-lower-positions: false
+  # 玩家存在至少多少 tick 后才被检查，与上方 join-check-wait-time 类似
+  min-ticks-existed: 3
+  # 是否计算玩家与世界边界的距离，以防止 Velocity 类检查误报。
+  # 只在非常特殊的服务器上才需要开启。
+  velocity-world-border: false
+  # 是否处理"海量实体堆在一起把你弹飞"导致的误判。99% 的服务器
+  # 都用不到这个选项
+  entity-cram-fix-enabled: false
+  # 触发统计的实体数量阈值
+  entity-cram-entities-amount: 10
+  # 遇到上述实体堆叠情况时检查豁免多久
+  entity-cram-exempt-ticks: 30
+  # 除非我们让你改，否则不要动这个
+  dont-register-geyser: false
+  # 测试用选项
+  testing-stuff: false
+
+  ######################################################################################################################
+  # Discord WEBHOOK（网页钩子）配置                                                                                    #
+  ######################################################################################################################
+discord-webhook:
+  # 是否启用冷却限制
+  cooldown: false
+  # 计数器重置间隔（单位：tick）（默认 12000 tick = 10 分钟，20 tick = 1 秒）
+  cooldown-reset-ticks: 12000
+  # 上述时间段内允许的最大 Webhook 数量
+  cooldown-max-webhooks: 100
+  # Discord Webhook 警报配置段
+  alerts:
+    # 是否启用 Discord Webhook 警报
+    enabled: false
+    # 在此粘贴你的 Webhook URL。创建 Webhook 的教程见 https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks
+    url: 'insert-webhook-url-here'
+    # Webhook 的头像
+    avatar: 'https://i.imgur.com/JPG1Kwk.png'
+    # Webhook 的缩略图
+    thumbnail: 'http://cravatar.eu/avatar/%name%/64.png'
+    # Webhook 的颜色（可在 https://www.rapidtables.com/web/color/RGB_Color.html 之类的网站上取色）
+    color-r: 252
+    color-g: 140
+    color-b: 3
+    # Username of the webhook
+    username: 'Vulcan'
+    # Title of the webhook
+    title: 'Vulcan 警报'
+    # Description of the webhook
+    description: '**`%player%`** 触发了 %check% %dev%(类型 %type%)%dev% [%vl%/%max-vl%]'
+    # content 会在嵌入卡片之外发送纯文本，例如可以用来 @ 身份组或成员。
+    content: ''
+    information-field: false
+    client-version-field: true
+    client-brand-field: true
+    server-name-field: false
+    description-field: false
+    location-field: true
+    ping-tps-field: true
+  punishments:
+    # 配置项与说明同上
+    enabled: false
+    url: 'insert-webhook-url-here'
+    avatar: 'https://i.imgur.com/JPG1Kwk.png'
+    thumbnail: 'http://cravatar.eu/avatar/%name%/64.png'
+    color-r: 255
+    color-g: 0
+    color-b: 0
+    username: 'Vulcan'
+    title: 'Vulcan 处罚'
+    description: '**`%player%`** 因 %check%（类型 %type%）被处罚 [VL: %vl%]'
+    content: ''
+    description-field: false
+    server-name-field: false
+    client-brand-field: false
+    client-version-field: false
+    ping-tps-field: false
+    location-field: false
+
+########################################################################################################################
+# 检查项配置。
+# enabled: 该检查项启用还是禁用
+# punishable: 达到最大违规值时是否执行处罚命令
+# broadcast-punishment: 达到最大违规值时是否发送处罚广播（见上方配置）
+# max-violations: 最大违规值阈值；达到该值时执行处罚命令（若 punishable 为 true）
+# alert-interval: 该检查项警报的发送频率，例如设为 2 表示只在 VL 为 2、4、6、8 时发送警报；
+#                 设为 3 则在违规值 3、6、9、12 等时发送。想减少聊天刷屏可以用它。
+# dont-alert-until: 只有高于该值的警报才会发送。例如设为 6，
+#                   则只有 6 及以上的警报会发送（更低的仍会记入日志，只是不发给管理员）
+# maximum-ping: 默认 100000，正常情况下延迟不会高到被 KeepAlive 超时踢出。
+#               基本不需要修改：延迟几乎不影响任何检查项，而调低它
+#               反而可能被延迟伪造（ping spoof）钻空子。
+# minimum-tps: TPS 低于该值时该检查项不生效。
+#
+# buffer（缓冲区）：
+# max: 缓冲区指玩家需要连续"失败"多少次检查项才会真正报警。这基本决定了
+#         检查项的灵敏度。建议保持默认；如果你想让反作弊更灵敏或更迟钝，
+#         可以小幅调整。不要设得太低或太高，否则要么误报过多，
+#         要么完全不报警。
+# multiple: 警报发出后缓冲区乘以的系数。例如设为 1 则毫无作用，
+#           因为 (1 * x) 就是 x 本身。想让警报来得更慢也可以改它，例如
+#           设为 0 表示玩家达到缓冲区上限（如 5）后，缓冲区直接归 0，
+#           而不是减半为 2.5（若 multiple 为 0.5 就会是这样）。
+# decay: 玩家没有触发检查项时缓冲区的衰减速度。同样，不清楚原理的话
+#        别乱动，否则检查项要么完全不报警，要么频繁误报。缓冲区的增长与衰减
+#        需要保持平衡比例。所谓平衡是指：衰减设 1、增长设 1 并不平衡，
+#        因为玩家只要作弊一个 tick 然后停手就能绕过；
+#        反过来，衰减 0.1 对增长 1 就平衡得多：持续作弊的人会不断报警并受罚，
+#        而偶尔的小失误会被过滤掉、不会触发警报。
+#        filtered out and not alert.
+# hotbar-shuffle（快捷栏打乱）：
+# enabled: 是否启用该功能。对战斗类（combat）检查项，如果玩家持续触发检查，会打乱
+#          其手中的物品栏位。看着作弊者手忙脚乱地搞不清状况相当有趣。
+# minimum-vl-to-shuffle: 触发该功能所需的最低违规值。
+# shuffle-every: 该功能的执行间隔。
+#
+# random-rotation（随机视角旋转）：
+# enabled: 是否启用该功能。当玩家触发战斗类（combat）检查项时，其视角会被甩向
+#          随机方向。同样，观赏性极佳。
+# minimum-vl-to-randomly-rotate: 触发该功能所需的最低违规值。
+# rotate-every: 该功能的执行间隔。
+# 配置有问题？欢迎加入官方 Discord 或私信作者！https://discord.gg/SCNuwUG | frap#0002
+########################################################################################################################
+checks:
+  combat:
+    aim:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .75
+          decay: .5
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 8
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 6
+          multiple: .5
+          decay: .65
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      c:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 5
+          multiple: .5
+          decay: .75
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      d:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 8
+          multiple: .5
+          decay: .75
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      e:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 3
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .75
+          decay: .25
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      f:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 12
+          multiple: .5
+          decay: .45
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      g:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .5
+          decay: .75
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      h:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 7
+          multiple: .5
+          decay: .75
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      i:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 7
+          multiple: .5
+          decay: .75
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      k:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 6
+          multiple: .5
+          decay: .25
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      l:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 10
+          multiple: .45
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      m:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 3
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .4
+          decay: .25
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      n:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 5
+          multiple: .5
+          decay: .5
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      o:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 5
+          multiple: .5
+          decay: .25
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      p:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .4
+          decay: .25
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      q:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 6
+          multiple: .5
+          decay: .25
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      r:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 20
+          multiple: .3
+          decay: .5
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      s:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 20
+          multiple: .25
+          decay: .5
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      u:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      w:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 20
+          multiple: .25
+          decay: .125
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      x:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 12
+          multiple: .25
+          decay: .125
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      y:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: -1
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+    autoblock:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 3
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 3
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      c:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 3
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .5
+          decay: .5
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      d:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 3
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+    # 不太建议依赖 AutoClicker 类检查项封人，因为永远无法 100% 确定；
+    # 把违规值调高一点就稳妥了，但说到底这只是概率/统计判定。
+    autoclicker:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        max-cps: 25
+      b:
+        enabled: true
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .5
+          decay: .5
+      c:
+        enabled: true
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .5
+          decay: 1
+      d:
+        enabled: true
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .5
+          decay: .5
+      e:
+        enabled: true
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .5
+          decay: .75
+      f:
+        enabled: true
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .5
+          decay: 1.25
+      g:
+        enabled: true
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 5
+          multiple: .25
+          decay: 1.25
+      h:
+        enabled: true
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .5
+          decay: 1
+      i:
+        enabled: true
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 5
+          multiple: .5
+          decay: 1.25
+      j:
+        enabled: true
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .5
+          decay: 1.25
+      k:
+        enabled: true
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .5
+          decay: .75
+      l:
+        enabled: true
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .25
+          decay: 1
+      m:
+        enabled: true
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .25
+          decay: .75
+      n:
+        enabled: true
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 25
+          multiple: .15
+          decay: .75
+      o:
+        enabled: true
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 5
+          multiple: .25
+          decay: 1.25
+      p:
+        enabled: true
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .25
+      q:
+        enabled: true
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 35
+          multiple: .3
+          decay: 2.0
+      r:
+        enabled: true
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 50
+          multiple: .15
+          decay: 10
+      s:
+        enabled: true
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 30
+          multiple: .15
+          decay: .825
+      t:
+        enabled: true
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 25
+          multiple: .15
+          decay: .75
+        min-kurtosis: 13
+    reach:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 8
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .25
+          decay: .035
+        max-reach: 3.03
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 6
+          multiple: .25
+          decay: .225
+        max-reach: 3.15
+    fastbow:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .5
+          decay: .125
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+    criticals:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 1
+          multiple: .5
+          decay: .05
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 1
+          multiple: .5
+          decay: .05
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+    killaura:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 3
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .5
+          decay: .5
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 3
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 5
+          multiple: .6
+          decay: .5
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      c:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 2
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .5
+          decay: .25
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+      d:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      f:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 3
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 10
+          multiple: .25
+          decay: 2
+      h:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      j:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 1
+          multiple: .5
+          decay: .5
+      k:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .5
+          decay: .75
+      l:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 5
+          multiple: .6
+          decay: .5
+        hotbar-shuffle:
+          enabled: false
+          minimum-vl-to-shuffle: 2
+          shuffle-every: 2
+        random-rotation:
+          enabled: false
+          minimum-vl-to-randomly-rotate: 2
+          rotate-every: 2
+    hitbox:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .25
+          decay: .125
+        max-angle: .36
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 6
+          multiple: .25
+          decay: .125
+        max-angle: 45
+    velocity:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .25
+          decay: .075
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .35
+          decay: .125
+      c:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 5
+          multiple: .25
+          decay: .175
+      d:
+        enabled: false
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .25
+          decay: .05
+  movement:
+    noslow:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .25
+          decay: .15
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 7
+          multiple: .25
+          decay: .075
+      c:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 7
+          multiple: .25
+          decay: .15
+      d:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 7
+          multiple: .25
+          decay: .15
+      e:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 7
+          multiple: .25
+          decay: .15
+    motion:
+      a:
+        enabled: true
+        punishable: true
+        setback: false
+        min-vl-to-setback: 1
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .25
+          decay: .25
+      b:
+        enabled: true
+        punishable: true
+        setback: false
+        min-vl-to-setback: 1
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .25
+          decay: .25
+      c:
+        enabled: true
+        punishable: true
+        setback: false
+        min-vl-to-setback: 1
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 1
+          multiple: .5
+          decay: .05
+      d:
+        enabled: true
+        punishable: true
+        setback: false
+        min-vl-to-setback: 1
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .25
+          decay: .05
+      e:
+        enabled: true
+        punishable: true
+        setback: false
+        min-vl-to-setback: 1
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 3
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 1
+          multiple: .5
+          decay: .05
+      g:
+        enabled: true
+        punishable: true
+        setback: false
+        min-vl-to-setback: 1
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 20
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .25
+          decay: .15
+      h:
+        enabled: false
+        punishable: true
+        setback: false
+        min-vl-to-setback: 1
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 20
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .25
+          decay: .15
+    jump:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .25
+          decay: .15
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .25
+          decay: .15
+      c:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .25
+          decay: .15
+    step:
+      a:
+        enabled: true
+        punishable: true
+        setback: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      b:
+        enabled: true
+        punishable: true
+        setback: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 6
+          multiple: .25
+          decay: .35
+      c:
+        enabled: true
+        punishable: true
+        setback: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .25
+          decay: .1
+    boatfly:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .33
+          decay: .125
+        kick-out: false
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 5
+          multiple: .25
+          decay: .25
+        kick-out: false
+      c:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 5
+          multiple: .25
+          decay: .125
+        kick-out: false
+    entityflight:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 5
+          multiple: .5
+          decay: .25
+        kick-out: false
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 5
+          multiple: .5
+          decay: .25
+    antilevitation:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 8
+          multiple: .25
+          decay: .075
+    nosaddle:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 6
+          multiple: .5
+          decay: .125
+    entityspeed:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 5
+          multiple: .5
+          decay: .25
+        kick-out: false
+        min-difference: .01
+    elytra:
+      a:
+        enabled: true
+        punishable: true
+        setback: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 1
+          multiple: .5
+          decay: .25
+        max-speed: 4.25
+      b:
+        enabled: true
+        punishable: true
+        setback: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 8
+          multiple: .25
+          decay: .125
+      c:
+        enabled: true
+        punishable: true
+        setback: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 6
+          multiple: .5
+          decay: .125
+      f:
+        enabled: true
+        punishable: true
+        setback: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 6
+          multiple: .25
+          decay: .125
+      g:
+        enabled: true
+        punishable: false
+        setback: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 25
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .25
+          decay: .1
+      i:
+        enabled: true
+        punishable: true
+        setback: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .25
+          decay: .1
+      k:
+        enabled: true
+        punishable: true
+        setback: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .25
+          decay: .1
+      l:
+        enabled: true
+        punishable: true
+        setback: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .25
+          decay: .1
+      m:
+        enabled: true
+        punishable: true
+        setback: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .25
+          decay: .1
+      n:
+        enabled: false
+        punishable: false
+        discord-alert-interval: 1
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 20
+        alert-interval: 1
+        dont-alert-until: 2
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .25
+          decay: .045
+    speed:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 12
+        alert-interval: 1
+        dont-alert-until: 2
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 5
+          multiple: .35
+          decay: .125
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 20
+        alert-interval: 1
+        dont-alert-until: 2
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .25
+          decay: .045
+        min-difference: .0025
+      c:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 2
+        dont-alert-until: 2
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .25
+          decay: .045
+        min-difference: .001
+      d:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 20
+        alert-interval: 1
+        dont-alert-until: 2
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .25
+          decay: .045
+        min-difference: .0025
+      e:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 20
+        alert-interval: 1
+        dont-alert-until: 2
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .25
+          decay: .025
+    fastclimb:
+      a:
+        enabled: true
+        punishable: true
+        setback: false
+        min-vl-to-setback: 1
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .5
+          decay: .125
+    wallclimb:
+      a:
+        enabled: true
+        punishable: true
+        setback: false
+        min-vl-to-setback: 1
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .35
+          decay: .225
+    jesus:
+      a:
+        enabled: true
+        punishable: true
+        setback: false
+        min-vl-to-setback: 1
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 2
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .5
+          decay: .025
+      b:
+        enabled: true
+        punishable: true
+        setback: false
+        min-vl-to-setback: 1
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 2
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .5
+          decay: .175
+      c:
+        enabled: true
+        punishable: true
+        setback: false
+        min-vl-to-setback: 1
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 2
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 10
+          multiple: .45
+          decay: .75
+      d:
+        enabled: true
+        punishable: true
+        setback: false
+        min-vl-to-setback: 1
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .45
+          decay: .175
+      e:
+        enabled: true
+        punishable: true
+        setback: false
+        min-vl-to-setback: 1
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 2
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 10
+          multiple: .25
+          decay: .175
+    flight:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 5
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 30
+        alert-interval: 2
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .65
+          decay: .275
+        # 对于疑似幽灵方块导致的误判，是否禁用该检查项 - 开启后这些检查项容易被
+        # 某些伪造 onGround 值、假装站在幽灵方块上的飞行模块绕过，因此开启后
+        # 请务必同时启用 ghost-blocks-fix 段中的幽灵方块拉回（setback）。
+        ignore-ghost-blocks: true
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 5
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 30
+        alert-interval: 2
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .5
+          decay: .275
+      c:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 5
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 30
+        alert-interval: 2
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .75
+          decay: .225
+        # 对于疑似幽灵方块导致的误判，是否禁用该检查项 - 开启后这些检查项容易被
+        # 某些伪造 onGround 值、假装站在幽灵方块上的飞行模块绕过，因此开启后
+        # 请务必同时启用 ghost-blocks-fix 段中的幽灵方块拉回（setback）。
+        ignore-ghost-blocks: true
+      d:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 5
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 30
+        alert-interval: 2
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .35
+          decay: .275
+        # 对于疑似幽灵方块导致的误判，是否禁用该检查项 - 开启后这些检查项容易被
+        # 某些伪造 onGround 值、假装站在幽灵方块上的飞行模块绕过，因此开启后
+        # 请务必同时启用 ghost-blocks-fix 段中的幽灵方块拉回（setback）。
+        ignore-ghost-blocks: true
+      e:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 5
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 30
+        alert-interval: 2
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .4
+          decay: .5
+        # 对于疑似幽灵方块导致的误判，是否禁用该检查项 - 开启后这些检查项容易被
+        # 某些伪造 onGround 值、假装站在幽灵方块上的飞行模块绕过，因此开启后
+        # 请务必同时启用 ghost-blocks-fix 段中的幽灵方块拉回（setback）。
+        ignore-ghost-blocks: true
+      f:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 5
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 30
+        alert-interval: 2
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .4
+          decay: .04
+    vclip:
+      a:
+        enabled: true
+        punishable: false
+        setback: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 20
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+    sprint:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 6
+          multiple: .25
+          decay: .4
+    strafe:
+      a:
+        enabled: true
+        punishable: true
+        setback: false
+        min-vl-to-setback: 1
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 2
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .5
+          decay: .05
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .15
+          decay: .075
+  player:
+    fastuse:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+    fastplace:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        max-blocks: 15
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 1
+          multiple: .25
+          decay: .5
+        max-blocks: 4
+    fastbreak:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .25
+          decay: .5
+        min-difference: -125
+    tower:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .5
+          decay: .75
+    scaffold:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 3
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .25
+          decay: .25
+      c:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .25
+          decay: .5
+      d:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .25
+          decay: .5
+      e:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .25
+          decay: .5
+      f:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 3
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .5
+          decay: .1
+      g:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .25
+          decay: .25
+      h:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 8
+          multiple: .25
+          decay: .35
+      i:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      j:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      k:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 1
+          multiple: .5
+          decay: .35
+        max-blocks: 6
+      m:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 12
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 1
+          multiple: .5
+          decay: .25
+      n:
+        enabled: false
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 12
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .5
+          decay: .25
+      o:
+        enabled: false
+        punishable: false
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 12
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+    timer:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 2
+        dont-alert-until: 3
+        maximum-ping: 100000
+        minimum-tps: 19.8
+        punishment-commands:
+          - 'minecraft:kick %player% Internal Exception: io.netty.handler.timeout.ReadTimeoutException'
+        buffer:
+          max: 35
+          multiple: .425
+          decay: 1.85
+        max-speed: 1.05
+      d:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 35
+        alert-interval: 2
+        dont-alert-until: 8
+        maximum-ping: 100000
+        minimum-tps: 19.8
+        punishment-commands:
+          - 'minecraft:kick %player% Internal Exception: io.netty.handler.timeout.ReadTimeoutException'
+        buffer:
+          max: 3
+          multiple: .5
+          decay: .25
+        max-balance: 75
+    baritone:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 20
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 20
+          multiple: .5
+          decay: .25
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 20
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .5
+          decay: .05
+    ghosthand:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 3
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        cancel: true
+    airplace:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+    badpackets:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 3
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .5
+          decay: .25
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      c:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      d:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .25
+          decay: .01
+      e:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      f:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      g:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 3
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      h:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 3
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      i:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 3
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      j:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 3
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      k:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .5
+          decay: .4
+      m:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 5
+          multiple: .33
+          decay: .25
+      n:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 20
+          multiple: .25
+          decay: 2.5
+      o:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .5
+          decay: .15
+      p:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .5
+          decay: .15
+      q:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .5
+          decay: .15
+      r:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 6
+          multiple: .5
+          decay: .25
+      s:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      t:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      u:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      v:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 8
+          multiple: .5
+          decay: .075
+        kick-out: false
+      w:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 8
+          multiple: .5
+          decay: .75
+      x:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 6
+          multiple: .5
+          decay: .35
+      y:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      z:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 3
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      1:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 12
+          multiple: .25
+          decay: .25
+      2:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 12
+          multiple: .25
+          decay: .25
+      4:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .25
+          decay: .025
+      5:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      6:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .25
+          decay: .05
+      7:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      8:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 5
+          multiple: .25
+          decay: .05
+      9:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+    inventory:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .25
+          decay: .25
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .25
+          decay: .25
+    invalid:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+      c:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 8
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .25
+          decay: .045
+      d:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 10
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 8
+          multiple: .25
+          decay: .5
+      e:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 8
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 1
+          multiple: .5
+          decay: .01
+      f:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 1
+          multiple: .5
+          decay: .01
+      g:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 20
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 2
+          multiple: .5
+          decay: .025
+      h:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 20
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .5
+          decay: .05
+      i:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 20
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 3
+          multiple: .5
+          decay: .05
+      j:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        setback: false
+        min-vl-to-setback: 1
+        broadcast-punishment: false
+        max-violations: 20
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 1
+          multiple: .5
+          decay: .05
+    groundspoof:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .5
+          decay: .125
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 5
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .5
+          decay: .125
+      c:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 15
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        buffer:
+          max: 4
+          multiple: .5
+          decay: .125
+    improbable:
+      a:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        max-combat-violations: 25
+      b:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        max-movement-violations: 30
+      c:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        max-player-violations: 30
+      d:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        max-autoclicker-violations: 30
+      e:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        max-total-violations: 50
+      f:
+        enabled: true
+        punishable: true
+        discord-alert-interval: 1
+        broadcast-punishment: false
+        max-violations: 1
+        alert-interval: 1
+        dont-alert-until: 1
+        maximum-ping: 100000
+        minimum-tps: 19.0
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] 检测到作弊'
+        max-scaffold-violations: 25
+#w0d1tWcNxGSHBnU09mTH9GeOdFVPhGMipWOH10Q50GVOVzaRhkUCBzbNF3YOhkUCBzbNd1V
