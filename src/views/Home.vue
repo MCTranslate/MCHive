@@ -11,21 +11,24 @@ const totalDownloads = computed(() => pluginIndex.reduce((sum, plugin) => sum + 
 // 笨蛋开服的服主路线提炼：准备环境 → 选择核心 → 启动 → 装插件 → 开放 → 运维
 const launchSteps = [
   { number: '01', title: '准备环境', detail: 'Java 与系统要求', guide: 'quick-start' },
-  { number: '02', title: '选择服务端', detail: 'Paper · Purpur · Mili', guide: 'choose-core' },
-  { number: '03', title: '启动服务器', detail: '首次运行与配置', guide: 'quick-start' },
-  { number: '04', title: '安装插件', detail: '权限 · 经济 · 保护', guide: 'plugin-combos' },
-  { number: '05', title: '性能调优', detail: 'JVM 与配置文件', guide: 'performance-tuning' },
-  { number: '06', title: '运维与排错', detail: '备份 · 日志 · 故障', guide: 'faq' }
+  { number: '02', title: '让外网连上', detail: '端口 · 防火墙 · 内网穿透', guide: 'port-forwarding' },
+  { number: '03', title: '选择服务端', detail: 'Paper · Purpur · Folia', guide: 'choose-core' },
+  { number: '04', title: '安装插件', detail: '权限 · 经济 · 保护 · 商店', guide: 'plugin-combos' },
+  { number: '05', title: '汉化与本地化', detail: '让插件显示中文', guide: 'plugin-localization' },
+  { number: '06', title: '权限与经济', detail: '分组 · 前缀 · 余额 · 商店', guide: 'permissions-design' },
+  { number: '07', title: '性能与安全', detail: 'JVM · spark · 白名单', guide: 'performance-tuning' },
+  { number: '08', title: '运维与排错', detail: '备份 · 日志 · 故障', guide: 'server-maintenance' }
 ]
 
-// 从笨蛋开服的「知识地图」提炼：按主题分类而非按功能堆砌
 const categories = [
   { name: '基础入门', detail: '从第一次启动开始', icon: '01', guide: 'quick-start' },
-  { name: '服务端核心', detail: '核心选型与版本对照', icon: '02', guide: 'choose-core' },
-  { name: '插件与组合', detail: '按服务器类型选方案', icon: '03', guide: 'plugin-combos' },
-  { name: '性能调优', detail: 'JVM 参数与配置项', icon: '04', guide: 'performance-tuning' },
-  { name: '运维与排错', detail: '备份、日志与故障排查', icon: '05', guide: 'faq' },
-  { name: '安全加固', detail: '防崩防爆与权限最小化', icon: '06', guide: 'security-hardening' }
+  { name: '网络与端口', detail: '让外网连上你的服务器', icon: '02', guide: 'port-forwarding' },
+  { name: '服务端核心', detail: '核心选型与版本对照', icon: '03', guide: 'choose-core' },
+  { name: '插件与组合', detail: '按服务器类型选方案', icon: '04', guide: 'plugin-combos' },
+  { name: '汉化与本地化', detail: '每个插件的真实汉化机制', icon: '05', guide: 'plugin-localization' },
+  { name: '权限与经济', detail: '分组设计与货币系统', icon: '06', guide: 'permissions-design' },
+  { name: '多世界与群组服', detail: '世界管理到跨服架构', icon: '07', guide: 'multi-world-setup' },
+  { name: '性能与安全', detail: '调优 · 加固 · 排错', icon: '08', guide: 'performance-tuning' }
 ]
 
 // 整合插件分类：把插件按 category 分组
@@ -63,6 +66,7 @@ function submitSearch() {
           <div class="hero-actions">
             <RouterLink class="button-primary" to="/guides">开始第一次开服 <span aria-hidden="true">→</span></RouterLink>
             <RouterLink class="button-ghost" to="/tutorials">浏览知识库 <span aria-hidden="true">↗</span></RouterLink>
+            <RouterLink class="button-ghost" to="/tools/script-generator">🛠 启动脚本生成</RouterLink>
           </div>
           <div class="hero-metrics">
             <span><strong>{{ guideIndex.length }}</strong> 篇实用指南</span>

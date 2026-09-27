@@ -17,13 +17,13 @@ const repository = 'https://github.com/MCTranslate/MCHive'
       <article class="glass-card">
         <span class="step">01</span>
         <h2>新增教程</h2>
-        <p>在 <code>content/guides/</code> 新建 Markdown 文件，并在 <code>data/guides.json</code> 添加标题、简介和标签。</p>
+        <p>在 <code>content/guides/</code> 新建 Markdown 文件，并在文件顶部用 frontmatter 写 <code>id</code>、<code>title</code>、<code>description</code>、<code>tags</code>。</p>
         <a :href="repository + '/tree/master/content/guides'" target="_blank" rel="noreferrer">查看现有教程 <span aria-hidden="true">↗</span></a>
       </article>
       <article class="glass-card">
         <span class="step">02</span>
         <h2>补充插件资料</h2>
-        <p>复制 <code>content/plugins/_template/</code> 作为起点，在插件索引中登记元数据和内容章节。</p>
+        <p>复制 <code>content/plugins/_template/</code> 作为起点，在 <code>tutorial.md</code> 的 frontmatter 中写插件元数据（名称、版本、描述、分类等）。</p>
         <a :href="repository + '/tree/master/content/plugins/_template'" target="_blank" rel="noreferrer">查看插件模板 <span aria-hidden="true">↗</span></a>
       </article>
       <article class="glass-card">

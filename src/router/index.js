@@ -6,6 +6,7 @@ import ContentIndex from '../views/ContentIndex.vue'
 import SearchResults from '../views/SearchResults.vue'
 import Contribute from '../views/Contribute.vue'
 import NotFound from '../views/NotFound.vue'
+import ScriptGenerator from '../views/ScriptGenerator.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -13,6 +14,7 @@ const routes = [
   { path: '/tutorials', name: 'Tutorials', component: ContentIndex, props: { kind: 'tutorials' } },
   { path: '/plugins', name: 'Plugins', component: ContentIndex, props: { kind: 'plugins' } },
   { path: '/tools', name: 'Tools', component: ContentIndex, props: { kind: 'tools' } },
+  { path: '/tools/script-generator', name: 'ScriptGenerator', component: ScriptGenerator },
   { path: '/search', name: 'Search', component: SearchResults },
   { path: '/contribute', name: 'Contribute', component: Contribute },
   { path: '/plugin/:id', name: 'PluginDetail', component: PluginDetail },
