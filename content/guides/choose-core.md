@@ -4,7 +4,7 @@ title: 核心怎么选：决策树版
 description: 不堆术语、不罗列特性 — 说需求给答案。从 Paper / Purpur / Folia / Leaves / Mili 等主流核心中，通过决策树帮你锁定唯一选择。
 icon: 🎯
 tags: [核心, 选型, 版本]
-order: 3
+order: 4
 ---
 
 # 核心怎么选：决策树版

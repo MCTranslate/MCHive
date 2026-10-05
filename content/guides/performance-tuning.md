@@ -4,7 +4,7 @@ title: 性能调优从入门到精通
 description: JVM 参数怎么配、paper-global.yml / paper-world-defaults.yml 哪些项目该动、实体和区块调什么 — 每条参数附工作原理逐行注解，从「卡了怎么办」到「我全都要」。
 icon: 🚀
 tags: [性能, JVM, 优化, 配置]
-order: 14
+order: 16
 ---
 
 # 性能调优从入门到精通

@@ -4,7 +4,7 @@ title: 记分板与 Tab 列表实战：让服务器「看得见」信息
 description: 侧边栏记分板、Tab 列表、BossBar 怎么显示余额和前缀 — 先讲清 PlaceholderAPI / TAB / LuckPerms 三者分工，再给 TAB 6.2.0 的真实配置键、变量速查表与常见坑。
 icon: 📊
 tags: [记分板, Tab列表, 变量, PlaceholderAPI, TAB, 美化]
-order: 20
+order: 22
 ---
 
 # 记分板与 Tab 列表实战：让服务器「看得见」信息

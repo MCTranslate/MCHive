@@ -4,7 +4,7 @@ title: 客户端版本兼容：让各版本玩家都能进服
 description: 先分清「新客户端连老服」与「老客户端连新服」两个方向 —— ViaVersion / ViaBackwards / ViaRewind 各管哪一段、装了要付什么代价、什么情况坚决别装，附官方 jar 解包核实的配置键与排错方法。
 icon: 🧭
 tags: [版本兼容, 客户端, ViaVersion, 协议]
-order: 11
+order: 12
 ---
 
 > 本教程更新于 2026 年 9 月，适用 Paper 26.x（服务端 26.3）与各版本 Java 版客户端。

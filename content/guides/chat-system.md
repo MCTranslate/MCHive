@@ -4,7 +4,7 @@ title: 聊天系统：格式、私聊、广播与 Discord 互通
 description: 从「聊天前缀怎么加」到「怎么让服里消息同步到 Discord」— 讲清 EssentialsX 本体、EssentialsXChat 模块、原版自带的防刷屏开关各自管哪一段，附真实配置键与命令。
 icon: 💬
 tags: [聊天, 格式, 广播, Discord, EssentialsX]
-order: 22
+order: 24
 ---
 
 > 本教程更新于 2026 年 9 月，适用 Paper 26.x（MC 26.3）。EssentialsX 相关配置键与命令对照官方 jar 核实，`server.properties` 键名对照官方文档核对。

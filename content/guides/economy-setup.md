@@ -4,7 +4,7 @@ title: 经济系统搭建：从零让服务器「有钱」
 description: EssentialsX 管钱、Vault 当接口、商店当消费方 — 三者关系、EssentialsX 经济最小配置、免费商店插件选型（QuickShop-Hikari 实测），以及 Vault 与 VaultUnlocked 的取舍。
 icon: 💰
 tags: [经济, 货币, Vault, 商店, EssentialsX]
-order: 7
+order: 8
 ---
 
 # 经济系统搭建：从零让服务器「有钱」

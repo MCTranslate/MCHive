@@ -4,7 +4,7 @@ title: 卡顿时怎么查：从「卡了」到「是谁在卡」
 description: 别再发 timings 了 — 官方已把它标记为 deprecated。用 Paper 自带的 spark 采样、/paper chunkinfo 与 /paper entity list 定位卡顿元凶，附排查决策树与常见元凶对照表。
 icon: 🔍
 tags: [卡顿, 排查, spark, 性能, TPS]
-order: 15
+order: 17
 ---
 
 > 本教程更新于 2026 年 9 月，适用 Paper 26.x（MC 26.3）。spark 命令语法取自官方 spark 文档，Paper 自带命令取自官方 Paper 命令文档。

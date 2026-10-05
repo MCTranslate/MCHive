@@ -3,7 +3,7 @@ id: chestshop
 name: ChestShop
 description: 经典箱子商店 — 玩家在箱子旁挂招牌即可买卖物品，与 QuickShop 二选一的另一种经济交易方案。
 category: 经济交易
-version: 3.13-pre-1（MC 1.13 - 26.2）
+version: 3.12.2（MC 1.13.2 - 26.2）
 tags: [商店, 经济, 交易, 箱子]
 sections:
   - id: tutorial
@@ -32,12 +32,13 @@ sections:
 
 ### 2. 版本与下载
 
-当前版本 **3.13-pre-1**（2026-07-15，beta），项目声明支持 MC **1.13 – 26.2**。开源协议 LGPL-2.1。
+当前最新**稳定版**为 **3.12.2**，Hangar 上登记的 Paper 支持区间是 **MC 1.13.2 – 26.2**。开源协议 LGPL-2.1。
 
 - [GitHub Releases](https://github.com/ChestShop-authors/ChestShop-3/releases)
 - [Modrinth](https://modrinth.com/plugin/chestshop)
+- [Hangar](https://hangar.papermc.io/ChestShop/ChestShop)
 
-> ⚠ 当前最新版是 **beta 预发布**。如果追求稳定，等正式版发布后再升级。
+> 官方同时在推进 3.13 预发布版。**生产服请用 3.12.2 稳定版**，预发布版的配置不保证向下兼容。
 
 ### 3. 安装
 

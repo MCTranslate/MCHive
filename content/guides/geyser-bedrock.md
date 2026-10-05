@@ -4,7 +4,7 @@ title: 基岩版互通：让手机和主机玩家进 Java 服
 description: 手机/主机/Win10 版玩家也能进来 — Geyser 负责协议翻译、Floodgate 负责身份认证，讲清两者的分工、UDP 端口这个最大的坑，以及与权限经济的配合。
 icon: 📱
 tags: [基岩版, Geyser, Floodgate, 跨平台, 互通]
-order: 19
+order: 21
 ---
 
 > 本教程更新于 2026 年 9 月，适用 Paper 26.x（MC 26.3）+ Java 25。Geyser / Floodgate 的版本、配置键与端口均对照官方安装文档（GeyserMC wiki）与官方项目说明核实；文中会明确标出**哪些结论是官方一手、哪些来自第三方教程交叉印证**。

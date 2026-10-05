@@ -4,7 +4,7 @@ title: 地图渲染与网页地图
 description: 让玩家的浏览器里长出整张服务器地图 — BlueMap 与 Dynmap 该怎么选、端口与反向代理怎么配、渲染开销和磁盘怎么控，以及「地形公开」这件事的代价。
 icon: 🗺️
 tags: [地图, 网页地图, BlueMap, Dynmap, 渲染, 运维, 安全]
-order: 21
+order: 23
 ---
 
 # 地图渲染与网页地图

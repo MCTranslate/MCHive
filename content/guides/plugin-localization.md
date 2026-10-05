@@ -4,7 +4,7 @@ title: 插件汉化与本地化完全指南
 description: 先搞清机制再动手 — 每个插件的语言文件格式、放置目录、启用方式都不一样，附 8 个主流插件的实测结论与自助核查方法。
 icon: 🌐
 tags: [汉化, 语言, 本地化, 插件]
-order: 5
+order: 6
 ---
 
 > 本教程更新于 2026 年 9 月，适用 Paper 26.x（MC 26.3）。文中每个插件的汉化机制均来自官方 jar 解包核实，版本号与下载源取自各插件官方渠道。
@@ -54,23 +54,47 @@ ls -la plugins/插件名/
 
 > **判断技巧**：如果在 `unzip -l` 的输出里搜不到任何 `lang`、`i18n`、`messages`、`locale` 相关文件，这个插件大概率属于 D 类——**这时无论你放什么文件进去都不会生效**，别再折腾语言文件了。
 
-## 三、9 个主流插件的实测结论（已解包核对）
+## 三、主流插件的实测结论（已解包核对）
 
-下表是本站对 9 个常用插件的官方 jar 逐一解包核对的结果，可以直接照做：
+下表是本站逐一解包核对官方 jar / 仓库文件树的结果，可以直接照做：
 
 | 插件 | 类型 | 你要做什么 | 中文覆盖 |
 |------|------|-----------|----------|
 | [EssentialsX](#/plugin/essentialsx) | A | `config.yml` 里把 `#locale: en` 改成 `locale: zh` | 完整（自带 `messages_zh.properties`） |
 | [CoreProtect](#/plugin/coreprotect) | A | `config.yml` 里把 `language: en` 改成 `language: zh-CN` | 169 / 189 条约 89% |
+| [Slimefun](#/plugin/slimefun) | A | 保持 `forceEnglishInterface: false` 即可 | 216 个语言文件里 15 个中文文件，覆盖 categories / messages / recipes / researches |
+| [BetonQuest](#/plugin/betonquest) | A | 无需操作；有改动写进 `zh-CN.patch.yml` | 42 个语言文件，中文有 `zh-CN.yml` + **增量补丁机制** |
+| [Carbon](#/plugin/carbon) | B | 无需操作，跟随客户端语言 | `messages-zh_CN.properties` + `messages-zh_TW.properties`（共 20 个语言文件） |
+| Residence | A | `config.yml` 里 `language: Chinese` | `Language/Chinese.yml` + `ChineseTW.yml`（简体 + 繁体都有） |
+| CMI | A | `config.yml` 里 `locale: ZH` | `Translations/Locale_ZH.yml` |
+| [Nova](#/plugin/nova) | B | 无需操作 | `zh_cn.json` + `zh_tw.json`（**118 个语言文件，完整度极高**） |
+| [Skript](#/plugin/skript) | B | 无需操作 | `simplifiedchinese.lang` —— **注意是 `.lang` 后缀，机制和其他插件都不同** |
+| [GSit](#/plugin/gsit) | B | 无需操作 | `zh_cn.yml` + `zh_tw.yml`（共 19 个语言文件） |
+| [AuraSkills](#/plugin/auraskills) | B | 无需操作 | `messages_zh-CN.yml` + `messages_zh-TW.yml`（共 21 个语言文件） |
+| [LifestealZ](#/plugin/lifestealz) | B | 无需操作 | `zh-CN.yml`（共 15 个语言文件） |
+| [BentoBox](#/plugin/bentobox) | A | `config.yml` 里 `locale: zh-CN` | `locales/zh-CN.yml` + `zh-TW.yml` |
+| [PlayerPoints](#/plugin/playerpoints) | A | `config.yml` 里指定 locale | `locale/zh_CN.yml` + `zh_TW.yml` |
 | [LuckPerms](#/plugin/luckperms) | B | 控制台执行 `/lp translations install` | 跟随社区翻译进度 |
 | [Multiverse-Core](#/plugin/multiverse-core) | B | 无需操作，自动跟随客户端语言 | 306 / 330 条约 93% |
+| [Multiverse-Inventories](#/plugin/multiverse-inventories) | B | 无需操作 | `multiverse-inventories_zh.properties` |
 | [WorldEdit](#/plugin/worldedit) | B | 无需操作，自动跟随客户端语言 | 451 / 461 条约 98% |
+| AuthMe 登录插件 | B | 无需操作，自动跟随客户端语言 | `messages_zhcn.yml` + `messages_zhtw.yml` + 对应的 help 文件（共 5 个） |
+| TrMenu | B | 无需操作，自动跟随客户端语言 | `lang/zh_CN.yml` + `zh_TW.yml` |
+| [Maintenance](#/plugin/maintenance) | B | 无需操作 | **只有繁体** `language-zh_tw.yml`，无简体 |
 | QuickShop-Hikari（箱子商店） | B | 无需操作，默认 `enabled-languages: ['*']` | 38 种语言含 `zh-CN` |
 | [WorldGuard](#/plugin/worldguard) | **D** | 区域提示用 `deny-message` 等 flag 直接写中文 | 无语言机制 |
+| [PacketEvents](#/plugin/packetevents) | **D** | 无需汉化（底层库，不向玩家输出文案） | 仓库内语言文件数为 0 |
+| [SkinsRestorer](#/plugin/skinsrestorer) | **D** | 菜单按钮文字硬编码在代码里，**改不了** | 无独立语言文件 |
 | [PlaceholderAPI](#/plugin/placeholderapi) | **D** | 无需汉化（它本身不向玩家输出文案） | 不适用 |
 | [Vault](#/plugin/vault) | **D** | 无需汉化（同上，只是 API 桥） | 不适用 |
+| PlotSquared | **D** | 有 `resources/lang/` 但**不含中文** | 无中文 |
+| Shopkeepers | **D** | 有 `resources/lang/` 但**不含中文** | 无中文 |
 
-> 注意：8 个是本站插件库里的常驻插件，QuickShop-Hikari 是 [经济系统搭建](#/guide/economy-setup) 里推荐的免费商店插件——顺手一起核了，免得读者再来问"商店怎么汉化"。
+> ⚠️ **Citizens 是个例外，值得单独提**：它的中文文件只有 `zh-tw.json`，也就是**只有繁体，没有简体**。如果你要简体，得自己补一份 `zh-cn.json`。
+>
+> 另外本站核实过一批插件（HuskChat、Towny、GriefPrevention、LibertyBans、GrimAC、MythicMobs、GSit 之外的多数玩法插件等）**在官方仓库里找不到中文语言文件**。这类插件的文档里我们都如实标注了「未核实到汉化机制」——**宁可说不知道，也不能编一个不存在的语言文件路径**，否则你会照着找一个永远不生效的文件。
+>
+> **反过来也要说清楚**：本站也有把「没核实到」纠正成「确实有」的案例。Carbon 一开始被判为无汉化，后来定位到官方仓库确实带 `messages-zh_CN.properties`。所以**看到「未核实到」不代表一定没有**，只是本站没验证到——以你自己服务器上生成的目录为准。
 
 下面逐个说清「为什么」和「怎么改」。
 

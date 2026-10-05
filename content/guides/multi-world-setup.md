@@ -4,7 +4,7 @@ title: 多世界与主城实战
 description: 从「一个世界够用吗」讲到落地配置 — 创建/导入世界、给玩家看中文别名、按世界独立规则、以及 5.x 与旧教程差异最大的那几个坑。
 icon: 🌍
 tags: [多世界, 主城, Multiverse, 世界管理]
-order: 8
+order: 9
 ---
 
 > 本教程更新于 2026 年 9 月，适用 Paper 26.x（MC 26.3）。Multiverse-Core 5.8.1 的 worlds.yml 字段与命令均对照官方 jar 与官方文档核实。

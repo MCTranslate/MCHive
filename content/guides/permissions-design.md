@@ -4,7 +4,7 @@ title: 权限系统设计：别让权限越用越乱
 description: 从分组模型到排查思路 — 教新手服主设计一套能长期维护的 LuckPerms 权限体系，而不是每次来需求就临时加一条权限。
 icon: 🎚️
 tags: [权限, LuckPerms, 分组, 继承, 管理]
-order: 6
+order: 7
 ---
 
 # 权限系统设计：别让权限越用越乱

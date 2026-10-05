@@ -4,7 +4,7 @@ title: 用 Velocity 搭建群组服（一个入口 · 多台子服）
 description: 当「主城 + 生存 + 小游戏」需要各自独立、玩家用 /server 互相往返时才值得上代理。手把手从 Velocity 4.2.0 到 Paper 26.3 子服配对，附真实配置键与报错速查。
 icon: 🔗
 tags: [群组服, 代理, Velocity, 跨服, 进阶]
-order: 12
+order: 13
 ---
 
 # 用 Velocity 搭建群组服（一个入口 · 多台子服）

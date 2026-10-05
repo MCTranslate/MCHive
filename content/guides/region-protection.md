@@ -4,7 +4,7 @@ title: 领地与保护实战
 description: 从「圈一块不让拆的主城」到「让玩家自己圈地」— 讲清 WorldGuard 的选区、定义区域、flag、优先级与权限分配，以及那些让保护看起来「失效」的坑。
 icon: 🏰
 tags: [领地, 保护, WorldGuard, WorldEdit, 防熊, flag]
-order: 9
+order: 10
 ---
 
 > 本教程更新于 2026 年 9 月，适用 Paper 26.x（MC 26.3）。`/rg` 命令的语法与别名取自 WorldGuard **7.0.19** 的 jar（`RegionCommands.class` / `MemberCommands.class` 内的命令注解）并对照官方文档核对；flag 名称取自 jar 内 `Flags.class` 与官方 Region Flags 文档；圈地相关的配置键与默认值取自官方源码 `BukkitWorldConfiguration.java`。
