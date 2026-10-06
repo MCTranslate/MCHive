@@ -281,13 +281,14 @@ const relatedPlugins = computed(function() {
 
 <style scoped>
 .plugin-detail {
-  max-width: 880px;
+  width: min(1120px, calc(100% - 64px));
+  max-width: none;
   margin: 0 auto;
-  padding: 32px 40px;
+  padding: 32px 0 48px;
 }
-.breadcrumb { display: flex; gap: 8px; margin-bottom: 28px; color: var(--text-muted); font-size: 11px; }
+.breadcrumb { display: flex; gap: 8px; margin-bottom: 28px; color: var(--text-muted); font-size: var(--fs-caption); }
 .breadcrumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
-.breadcrumb a:hover { color: var(--accent); }
+.breadcrumb a:hover { color: var(--accent-strong); }
 
 .detail-header {
   margin-bottom: 28px;
@@ -317,7 +318,7 @@ const relatedPlugins = computed(function() {
   justify-content: center;
   font-size: 24px;
   font-weight: 800;
-  color: var(--accent);
+  color: var(--accent-strong);
   flex-shrink: 0;
   box-shadow: 0 4px 16px rgba(110, 231, 183, 0.15);
 }
@@ -331,7 +332,7 @@ const relatedPlugins = computed(function() {
 }
 
 .tagline {
-  font-size: 14px;
+  font-size: var(--fs-body);
   color: var(--text-secondary);
   margin-bottom: 12px;
 }
@@ -355,7 +356,10 @@ const relatedPlugins = computed(function() {
 .tab-content {
   margin-bottom: 40px;
   min-height: 300px;
+  /* 插件文档正文宽度上限（表格/配置项较多，比教程略宽） */
+  max-width: var(--measure-plugin);
 }
+.tab-content .markdown-body { max-width: var(--measure-plugin); }
 
 .section-desc {
   margin-bottom: 18px;
@@ -390,9 +394,9 @@ const relatedPlugins = computed(function() {
 }
 
 .file-name {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--accent);
+  color: var(--accent-strong);
   font-weight: 500;
 }
 
@@ -438,7 +442,7 @@ const relatedPlugins = computed(function() {
   box-shadow: var(--shadow), inset 0 1px 0 var(--glass-highlight);
 }
 .related-plugins a span {
-  color: var(--accent);
+  color: var(--accent-strong);
   font-size: 9px;
   font-weight: 600;
   text-transform: uppercase;
@@ -448,9 +452,13 @@ const relatedPlugins = computed(function() {
 .related-plugins a small {
   overflow: hidden;
   color: var(--text-muted);
-  font-size: 10px;
+  font-size: 11px;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.related-plugins a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .tabs {
@@ -467,7 +475,7 @@ const relatedPlugins = computed(function() {
 }
 
 @media (max-width: 768px) {
-  .plugin-detail { padding: 18px; }
+  .plugin-detail { width: 100%; padding: 18px; }
   .breadcrumb { margin-bottom: 24px; flex-wrap: wrap; }
   .header-info { flex-direction: column; gap: 14px; }
   .plugin-icon-lg { width: 52px; height: 52px; font-size: 20px; }

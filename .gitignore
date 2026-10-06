@@ -6,3 +6,4 @@ dist
 .idea
 data
 .workbuddy
+vite.config.js.timestamp-*.mjs

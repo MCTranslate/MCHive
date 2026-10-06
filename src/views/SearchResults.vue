@@ -51,10 +51,10 @@ const results = computed(() => searchContent(query.value))
 .search-page { padding-top: 28px; padding-bottom: 48px; }
 .breadcrumb { display: flex; gap: 8px; color: var(--text-muted); font-size: 11px; }
 .breadcrumb a { color: var(--text-muted); text-decoration: none; transition: color .2s; }
-.breadcrumb a:hover { color: var(--accent); }
+.breadcrumb a:hover { color: var(--accent-strong); }
 
 .search-header { margin-top: 40px; padding-bottom: 24px; border-bottom: 1px solid var(--glass-border); }
-.section-kicker { color: var(--accent); font: 10px var(--font-mono); letter-spacing: 1.5px; text-transform: uppercase; }
+.section-kicker { color: var(--accent-strong); font: 10px var(--font-mono); letter-spacing: 1.5px; text-transform: uppercase; }
 .search-header h1 { margin-top: 10px; font-size: 32px; font-weight: 700; letter-spacing: -.5px; }
 .search-header p { margin-top: 10px; color: var(--text-muted); font-size: 13px; }
 
@@ -71,18 +71,18 @@ const results = computed(() => searchContent(query.value))
   backdrop-filter: blur(12px); transform: translateX(4px);
   box-shadow: var(--shadow), inset 0 1px 0 var(--glass-highlight);
 }
-.result-type { width: 44px; flex: none; color: var(--accent); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+.result-type { width: 44px; flex: none; color: var(--accent-strong); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
 .result-copy { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 5px; }
 .result-copy b { font-size: 14px; font-weight: 630; }
 .result-copy small { color: var(--text-muted); font-size: 11px; }
 .result-arrow { color: var(--text-muted); transition: transform .2s var(--ease-spring); }
-.result-row:hover .result-arrow { transform: translateX(4px); color: var(--accent); }
+.result-row:hover .result-arrow { transform: translateX(4px); color: var(--accent-strong); }
 
 .search-empty { padding: 80px 20px; text-align: center; }
-.search-empty .empty-kicker { color: var(--accent); font: 10px var(--font-mono); letter-spacing: 1.5px; text-transform: uppercase; }
+.search-empty .empty-kicker { color: var(--accent-strong); font: 10px var(--font-mono); letter-spacing: 1.5px; text-transform: uppercase; }
 .search-empty h2 { margin-top: 14px; font-size: 20px; font-weight: 650; }
 .search-empty p { max-width: 440px; margin: 10px auto 0; color: var(--text-muted); font-size: 12px; line-height: 1.7; }
-.inline-link { display: inline-block; margin-top: 24px; color: var(--accent); text-decoration: none; font-size: 12px; transition: color .2s; }
+.inline-link { display: inline-block; margin-top: 24px; color: var(--accent-strong); text-decoration: none; font-size: 12px; transition: color .2s; }
 .inline-link:hover { color: var(--accent-hover); }
 .inline-link b { margin-left: 6px; }
 

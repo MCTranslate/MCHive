@@ -188,18 +188,18 @@ const categoryCounts = computed(() => {
 .index-page { padding-top: 28px; padding-bottom: 48px; }
 .breadcrumb { display: flex; gap: 8px; color: var(--text-muted); font-size: 11px; }
 .breadcrumb a { color: var(--text-muted); text-decoration: none; transition: color .2s; }
-.breadcrumb a:hover { color: var(--accent); }
+.breadcrumb a:hover { color: var(--accent-strong); }
 
 .index-header {
   display: flex; justify-content: space-between; align-items: end; gap: 24px;
   margin-top: 40px; padding-bottom: 24px;
   border-bottom: 1px solid var(--glass-border);
 }
-.section-kicker { color: var(--accent); font: 10px var(--font-mono); letter-spacing: 1.5px; text-transform: uppercase; }
+.section-kicker { color: var(--accent-strong); font: 10px var(--font-mono); letter-spacing: 1.5px; text-transform: uppercase; }
 .index-header h1 { margin-top: 10px; font-size: 32px; line-height: 1.25; font-weight: 700; letter-spacing: -.5px; }
 .index-header p { max-width: 600px; margin-top: 10px; color: var(--text-muted); font-size: 13px; line-height: 1.8; }
 .index-count { display: flex; align-items: baseline; gap: 10px; flex: none; color: var(--text-muted); font: 9px var(--font-mono); }
-.index-count strong { color: var(--accent); font-size: 24px; font-weight: 600; }
+.index-count strong { color: var(--accent-strong); font-size: 24px; font-weight: 600; }
 
 .index-toolbar {
   min-height: 60px; display: flex; align-items: center;
@@ -235,15 +235,15 @@ const categoryCounts = computed(() => {
 .resource-mark {
   display: grid; place-items: center; width: 40px; height: 40px; flex: none;
   border: 1px solid var(--glass-border); border-radius: var(--radius-sm);
-  background: var(--accent-dim); color: var(--accent); font-size: 16px; font-weight: 600;
+  background: var(--accent-dim); color: var(--accent-strong); font-size: 16px; font-weight: 600;
 }
 .resource-main { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 5px; flex: 1; }
-.resource-type { color: var(--accent); font: 9px var(--font-mono); text-transform: uppercase; letter-spacing: .5px; }
+.resource-type { color: var(--accent-strong); font: 9px var(--font-mono); text-transform: uppercase; letter-spacing: .5px; }
 .resource-main b { font-size: 14px; font-weight: 630; }
 .resource-main small { color: var(--text-muted); font-size: 11px; line-height: 1.6; }
 .resource-meta { margin-top: 4px; color: var(--text-muted); font: 9px var(--font-mono); }
 .resource-arrow { align-self: flex-start; padding-top: 8px; color: var(--text-muted); font-size: 15px; transition: transform .2s var(--ease-spring); }
-.resource-row:hover .resource-arrow { color: var(--accent); transform: translateX(4px); }
+.resource-row:hover .resource-arrow { color: var(--accent-strong); transform: translateX(4px); }
 .index-empty { padding: 48px 20px; text-align: center; color: var(--text-muted); font-size: 13px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .empty-icon { font-size: 32px; }
 .index-empty h3 { font-size: 14px; font-weight: 500; color: var(--text-secondary); }
@@ -257,7 +257,7 @@ const categoryCounts = computed(() => {
 .tools-note { margin-top: 28px; padding: 20px; border-top: 1px solid var(--glass-border); }
 .tools-note > span { color: var(--text-primary); font-size: 12px; font-weight: 650; }
 .tools-note p { margin-top: 8px; color: var(--text-muted); font-size: 11px; line-height: 1.7; }
-.tools-note a { display: inline-block; margin-top: 12px; color: var(--accent); font-size: 11px; text-decoration: none; transition: color .2s; }
+.tools-note a { display: inline-block; margin-top: 12px; color: var(--accent-strong); font-size: 11px; text-decoration: none; transition: color .2s; }
 .tools-note a:hover { color: var(--accent-hover); }
 .tools-note b { margin-left: 6px; }
 

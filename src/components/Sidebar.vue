@@ -117,9 +117,10 @@ function goToGuide(id) {
       <div class="plugin-list">
         <!-- 快速开始 / 教程区块 -->
         <div class="section-label" v-if="filteredGuides.length">📖 快速开始</div>
-        <div
+        <button
           v-for="guide in filteredGuides"
           :key="guide.id"
+          type="button"
           class="plugin-item guide-item"
           :class="{ active: isGuideActive(guide.id) }"
           @click="goToGuide(guide.id)"
@@ -131,13 +132,14 @@ function goToGuide(id) {
             <span class="plugin-name">{{ guide.name }}</span>
             <span class="plugin-desc">{{ guide.description }}</span>
           </div>
-        </div>
+        </button>
 
         <!-- 插件库区块 -->
         <div class="section-label" v-if="filteredPlugins.length">🔌 插件库</div>
-        <div
+        <button
           v-for="plugin in filteredPlugins"
           :key="plugin.id"
+          type="button"
           class="plugin-item"
           :class="{ active: isPluginActive(plugin.id) }"
           @click="goToPlugin(plugin.id)"
@@ -149,7 +151,7 @@ function goToGuide(id) {
             <span class="plugin-name">{{ plugin.name }}</span>
             <span class="plugin-desc">{{ plugin.description }}</span>
           </div>
-        </div>
+        </button>
 
         <div v-if="filteredPlugins.length === 0 && filteredGuides.length === 0" class="no-result">
           没有找到匹配的内容
@@ -216,7 +218,7 @@ function goToGuide(id) {
 .logo {
   font-size: 16px;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--accent-strong);
   line-height: 1.2;
 }
 
@@ -313,7 +315,7 @@ function goToGuide(id) {
 .cat-btn.active {
   background: var(--accent-dim);
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-strong);
 }
 
 .plugin-list {
@@ -340,6 +342,7 @@ function goToGuide(id) {
 }
 
 .plugin-item {
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -348,6 +351,10 @@ function goToGuide(id) {
   cursor: pointer;
   transition: all 0.2s var(--ease-standard);
   border: 1px solid transparent;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
 }
 .plugin-item:hover {
   background: var(--surface-hover);
@@ -356,6 +363,10 @@ function goToGuide(id) {
 .plugin-item.active {
   background: var(--accent-dim);
   border-color: var(--accent);
+}
+.plugin-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .plugin-icon {
@@ -374,7 +385,7 @@ function goToGuide(id) {
 .default-icon {
   font-size: 14px;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--accent-strong);
 }
 
 .plugin-info {
@@ -442,7 +453,7 @@ function goToGuide(id) {
 .icon-item.active {
   background: var(--accent-dim);
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-strong);
   box-shadow: 0 2px 12px rgba(110, 231, 183, 0.15);
 }
 

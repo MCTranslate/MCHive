@@ -182,7 +182,7 @@ function downloadName(item) {
 
 .download-tip code {
   background: rgba(110, 231, 183, 0.12);
-  color: var(--accent);
+  color: var(--accent-strong);
   padding: 2px 7px;
   border-radius: 5px;
   font-size: 11px;

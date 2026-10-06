@@ -15,6 +15,9 @@ const loading = ref(false)
 const error = ref(null)
 const activeHeading = ref('')
 const contentRef = ref(null)
+const articleRef = ref(null)
+const progress = ref(0)          // 0~1 阅读进度
+const showBackToTop = ref(false)
 let loadToken = 0
 
 const guide = computed(function() {
@@ -45,6 +48,8 @@ function loadGuide() {
     if (token !== loadToken) return
     html.value = parseMarkdown(raw || '')
     loading.value = false
+    // 等 DOM 落地后再写标题 id，否则查不到元素
+    nextTick(setHeadingIds)
   }).catch(function(err) {
     if (token !== loadToken) return
     html.value = ''
@@ -77,11 +82,30 @@ const headings = computed(function() {
   return result
 })
 
+// 阅读时间预估：中文 350 字/分钟（设计系统规范 §3.6）
+const readingMinutes = computed(function() {
+  const text = html.value.replace(/<[^>]*>/g, '')
+  const chars = text.replace(/\s/g, '').length
+  return Math.max(1, Math.round(chars / 350))
+})
+
+// 正文较长时启用更大的字号（规范 §3.2）
+const isLongRead = computed(function() { return readingMinutes.value >= 9 })
+
 const guidePosition = computed(function() {
   return guideIndex.findIndex(function(item) { return item.id === route.params.id })
 })
 const previousGuide = computed(function() { return guideIndex[guidePosition.value - 1] || null })
 const nextGuide = computed(function() { return guideIndex[guidePosition.value + 1] || null })
+
+// 目录项的阅读状态：已读 / 当前 / 未读
+function tocState(index) {
+  const activeIndex = headings.value.findIndex(function(h) { return h.id === activeHeading.value })
+  if (activeIndex === -1) return 'unread'
+  if (index < activeIndex) return 'read'
+  if (index === activeIndex) return 'active'
+  return 'unread'
+}
 
 function headingId(title, index) {
   return 'section-' + index + '-' + title.toLowerCase().replace(/[^\w\u4e00-\u9fa5]+/g, '-')
@@ -107,12 +131,47 @@ function updateActiveHeading() {
   activeHeading.value = current.id
 }
 
+// 阅读进度：已滚过正文的高度占正文总高度的比例
+function updateProgress() {
+  const el = articleRef.value
+  if (!el) return
+  const rect = el.getBoundingClientRect()
+  const start = window.scrollY + rect.top
+  const total = el.offsetHeight - window.innerHeight * 0.4
+  const passed = window.scrollY - start + window.innerHeight * 0.4
+  const ratio = total > 0 ? passed / total : 0
+  progress.value = Math.min(1, Math.max(0, ratio))
+  showBackToTop.value = window.scrollY > window.innerHeight * 2
+}
+
+function onScroll() {
+  updateActiveHeading()
+  updateProgress()
+}
+
 function setHeadingIds() {
   nextTick(function() {
     renderedHeadings().forEach(function(element, index) {
       element.id = headings.value[index] ? headings.value[index].id : headingId(element.textContent, index)
+      // 标题锚点：hover 浮出 # 图标，点击复制该节链接
+      if (!element.querySelector('.heading-anchor')) {
+        var anchor = document.createElement('a')
+        anchor.className = 'heading-anchor'
+        anchor.textContent = '#'
+        anchor.href = '#' + element.id
+        anchor.setAttribute('aria-label', '复制本节链接')
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault()
+          var url = window.location.href.split('#')[0] + '#' + element.id
+          navigator.clipboard.writeText(url).catch(function() {})
+          anchor.textContent = '✓'
+          window.setTimeout(function() { anchor.textContent = '#' }, 1400)
+        })
+        element.appendChild(anchor)
+      }
     })
     updateActiveHeading()
+    updateProgress()
   })
 }
 
@@ -122,6 +181,10 @@ function scrollToHeading(id, index) {
   const target = document.getElementById(id) || renderedHeadings()[index]
   if (!target) return
   target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 function copyCode(event) {
@@ -137,25 +200,34 @@ function copyCode(event) {
   })
 }
 
-watch(html, setHeadingIds)
-
 onMounted(function() {
-  window.addEventListener('scroll', updateActiveHeading, { passive: true })
+  window.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('resize', onScroll, { passive: true })
 })
 
 onBeforeUnmount(function() {
-  window.removeEventListener('scroll', updateActiveHeading)
+  window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('resize', onScroll)
 })
 </script>
 
 <template>
   <div class="guide-detail" v-if="guide">
+    <!-- 阅读进度条 -->
+    <div class="reading-progress" aria-hidden="true">
+      <div class="reading-progress__bar" :style="{ width: (progress * 100) + '%' }"></div>
+    </div>
+
     <div class="breadcrumb"><RouterLink to="/">首页</RouterLink><span>/</span><RouterLink to="/guides">开服指南</RouterLink><span>/</span><span>{{ guide.name }}</span></div>
     <header class="guide-header">
       <div>
         <span class="section-kicker">SERVER SETUP GUIDE</span>
         <h1>{{ guide.name }}</h1>
         <p class="tagline">{{ guide.description }}</p>
+        <div class="guide-meta">
+          <span class="reading-time">🕐 约 {{ readingMinutes }} 分钟</span>
+          <span class="reading-time" v-if="headings.length">{{ headings.length }} 个小节</span>
+        </div>
       </div>
     </header>
 
@@ -169,7 +241,7 @@ onBeforeUnmount(function() {
       </aside>
 
       <main class="article-column">
-        <article class="article-content">
+        <article class="article-content" ref="articleRef">
           <div v-if="loading" class="empty-state">
             <span class="icon">⚙️</span>
             <h3>正在加载内容...</h3>
@@ -181,13 +253,30 @@ onBeforeUnmount(function() {
             <p>请检查 content/guides/ 目录下是否存在对应文件</p>
           </div>
 
-          <div v-else class="markdown-body" ref="contentRef" v-html="html" @click="copyCode"></div>
+          <div
+            v-else
+            class="markdown-body"
+            ref="contentRef"
+            :data-reading-length="isLongRead ? 'long' : 'normal'"
+            v-html="html"
+            @click="copyCode"
+          ></div>
         </article>
       </main>
 
-      <aside class="guide-toc" v-if="headings.length">
+      <aside class="guide-toc" v-if="headings.length" aria-label="本页目录">
         <span class="toc-title">本页目录</span>
-        <a v-for="(heading, index) in headings" :key="heading.id" :href="`#${heading.id}`" :class="['toc-level-' + heading.level, { active: activeHeading === heading.id }]" @click.prevent="scrollToHeading(heading.id, index)">{{ heading.title }}</a>
+        <a
+          v-for="(heading, index) in headings"
+          :key="heading.id"
+          :href="`#${heading.id}`"
+          :class="['toc-item', 'toc-level-' + heading.level, 'is-' + tocState(index)]"
+          :aria-current="tocState(index) === 'active' ? 'location' : undefined"
+          @click.prevent="scrollToHeading(heading.id, index)"
+        >
+          <span class="toc-item__dot" aria-hidden="true"></span>
+          <span>{{ heading.title }}</span>
+        </a>
       </aside>
     </div>
 
@@ -200,20 +289,24 @@ onBeforeUnmount(function() {
         <span v-else></span>
       </div>
       <div class="related-list">
-        <div
+        <RouterLink
           v-for="g in relatedGuides"
           :key="g.id"
+          :to="'/guide/' + g.id"
           class="related-item"
-          @click="router.push('/guide/' + g.id)"
         >
-          <span class="related-icon">{{ g.icon }}</span>
+          <span class="related-icon" aria-hidden="true">{{ g.icon }}</span>
           <div>
             <span class="related-name">{{ g.name }}</span>
             <span class="related-desc">{{ g.description }}</span>
           </div>
-        </div>
+        </RouterLink>
       </div>
     </footer>
+
+    <button class="back-to-top" :class="{ 'is-visible': showBackToTop }" aria-label="回到顶部" @click="scrollToTop">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+    </button>
   </div>
 
   <div v-else class="guide-detail">
@@ -234,8 +327,8 @@ onBeforeUnmount(function() {
 }
 .breadcrumb { display: flex; gap: 8px; margin-bottom: 32px; color: var(--text-muted); font-size: 11px; }
 .breadcrumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
-.breadcrumb a:hover { color: var(--accent); }
-.section-kicker { color: var(--accent); font: 10px var(--font-mono); letter-spacing: 1.5px; }
+.breadcrumb a:hover { color: var(--accent-strong); }
+.section-kicker { color: var(--accent-strong); font: 10px var(--font-mono); letter-spacing: 1.5px; }
 
 .guide-header {
   display: flex;
@@ -256,57 +349,29 @@ onBeforeUnmount(function() {
 }
 
 .tagline {
-  font-size: 14px;
+  font-size: var(--fs-body);
   color: var(--text-secondary);
 }
 
-.guide-layout { display: grid; grid-template-columns: 240px minmax(0, 720px); gap: 44px; align-items: start; }
+.guide-meta { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
 
-/* TOC */
+/* TOC 基础样式（三态 .toc-item 定义见 main.css）
+   布局相关（grid 列、sticky）在下方的文档布局段统一声明，
+   这里只定义外观，避免出现两处互相覆盖的 .guide-toc 规则。 */
 .guide-toc {
-  position: sticky;
-  top: 88px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  max-height: calc(100vh - 120px);
+  gap: 2px;
   overflow-y: auto;
   padding: 16px 12px;
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius);
   backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   box-shadow: var(--shadow), inset 0 1px 0 var(--glass-highlight);
 }
 .toc-title { margin: 0 0 8px; padding: 0 10px; color: var(--text-primary); font-size: 14px; font-weight: 650; }
-.guide-toc a {
-  position: relative;
-  display: block;
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-size: 13px;
-  line-height: 1.7;
-  overflow-wrap: anywhere;
-  transition: all 0.18s var(--ease-standard);
-}
-.guide-toc a:hover { color: var(--accent); background: var(--surface-hover); }
-.guide-toc a.active {
-  color: var(--accent);
-  background: var(--accent-dim);
-  font-weight: 600;
-}
-.guide-toc a.active::before {
-  content: '';
-  position: absolute;
-  top: 4px;
-  bottom: 4px;
-  left: 0;
-  width: 3px;
-  border-radius: 3px;
-  background: var(--accent);
-}
 .guide-toc .toc-level-3 { padding-left: 22px; font-size: 12px; }
 .guide-toc .toc-level-4 { padding-left: 32px; font-size: 12px; }
 
@@ -316,8 +381,11 @@ onBeforeUnmount(function() {
   padding-top: 28px;
   margin-top: 48px;
 }
-.guide-sequence { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+/* grid 子项默认 min-width:auto，长标题会把列撑爆并溢出页面；
+   用 minmax(0,1fr) + 子项 min-width:0 双保险（移动端溢出根因）。 */
+.guide-sequence { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 28px; }
 .sequence-item {
+  min-width: 0;
   min-height: 68px;
   display: flex;
   flex-direction: column;
@@ -338,18 +406,22 @@ onBeforeUnmount(function() {
   box-shadow: var(--shadow);
 }
 .sequence-item span { color: var(--text-muted); font-size: 9px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
-.sequence-item b { font-size: 12px; font-weight: 600; }
+.sequence-item b { min-width: 0; font-size: 12px; font-weight: 600; overflow-wrap: anywhere; }
 .sequence-item.next { text-align: right; }
 
 .related h3 { font-size: 15px; font-weight: 650; margin-bottom: 14px; color: var(--text-primary); }
 
-.related-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+/* min(240px,100%) 兜底：容器窄于 240px 时列宽跟随容器，不再溢出 */
+.related-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); gap: 12px; }
 .related-item {
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
   cursor: pointer;
+  color: inherit;
+  text-decoration: none;
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius);
@@ -361,22 +433,25 @@ onBeforeUnmount(function() {
   transform: translateY(-2px);
   box-shadow: var(--shadow);
 }
+.related-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 .related-icon { font-size: 20px; }
 .related-item > div { display: flex; flex-direction: column; min-width: 0; gap: 3px; }
 .related-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
 .related-desc { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 @media (max-width: 768px) {
-  .guide-detail { padding: 18px; }
-  .breadcrumb { margin-bottom: 24px; flex-wrap: wrap; }
-  .guide-header { flex-direction: column; gap: 8px; }
-  .guide-layout { display: block; }
-  .guide-toc { position: static; max-height: none; margin: 0 0 24px; padding: 14px 12px; }
-  .guide-sequence { gap: 8px; }
-  .sequence-item { padding: 10px 12px; }
+  .related-desc { font-size: 11px; }
 }
 
-/* Desktop docs layout */
+/* ============================================================
+   文档布局：基础样式定义为桌面三列，媒体查询按 max-width 降序排列。
+   ⚠ 顺序很关键：媒体查询不增加特异性，若把「桌面规则」写在
+   「移动端规则」之后，移动端会被桌面规则覆盖（历史 bug：
+   390px 屏上误用三列 grid 导致正文横向溢出）。
+   ============================================================ */
 .guide-detail {
   width: min(1440px, calc(100% - 64px));
   max-width: none;
@@ -422,42 +497,48 @@ onBeforeUnmount(function() {
   transition: all 0.18s var(--ease-standard);
 }
 .guide-sidebar a span { min-width: 0; overflow-wrap: anywhere; }
-.guide-sidebar a small { flex: none; color: var(--text-muted); font-size: 10px; }
-.guide-sidebar a:hover { color: var(--accent); background: var(--surface-hover); }
-.guide-sidebar a.active { color: var(--accent); background: var(--accent-dim); font-weight: 600; }
-.guide-toc { grid-column: 3; min-width: 0; }
+.guide-sidebar a small { flex: none; color: var(--text-muted); font-size: 11px; }
+.guide-sidebar a:hover { color: var(--accent-strong); background: var(--surface-hover); }
+.guide-sidebar a.active { color: var(--accent-strong); background: var(--accent-dim); font-weight: 600; }
 
+/* TOC 布局：桌面固定在第三列右侧，跟随滚动 */
+.guide-toc {
+  grid-column: 3;
+  min-width: 0;
+  position: sticky;
+  top: 88px;
+  max-height: calc(100vh - 120px);
+}
+
+/* Article column —— v3：正文宽度由 tokens 的 --measure-guide 统一封顶，
+   宽屏靠留白而非加长行（设计系统规范 §3.1）。 */
+.article-column { min-width: 0; width: 100%; grid-column: 2; grid-row: 1; }
+.article-content { min-width: 0; width: 100%; margin: 0; }
+.article-content .markdown-body {
+  min-width: 0;
+  width: 100%;
+  max-width: var(--measure-guide);
+}
+
+/* 平板 / 窄桌面：TOC 移到顶部，双列 */
 @media (max-width: 1199px) {
   .guide-detail { width: min(1120px, calc(100% - 48px)); }
   .guide-layout { grid-template-columns: 220px minmax(0, 1fr); column-gap: 28px; }
   .guide-toc { grid-column: 1 / -1; grid-row: 1; position: static; max-height: none; margin-bottom: 24px; }
   .guide-sidebar { grid-column: 1; grid-row: 2; }
+  .article-column { grid-column: 2; grid-row: 2; }
+  .article-content, .article-content .markdown-body { width: 100%; max-width: none; }
 }
+
+/* 移动端：单列，隐藏侧栏 */
 @media (max-width: 768px) {
   .guide-detail { width: 100%; padding: 18px; }
   .guide-layout { display: block; }
   .guide-sidebar { display: none; }
-  .guide-toc { margin: 0 0 24px; }
-}
-
-/* Article column */
-.article-column { min-width: 0; width: 100%; grid-column: 2; grid-row: 1; }
-.article-content { min-width: 0; width: 100%; margin: 0; }
-.article-content .markdown-body {
-  min-width: 0;
-  width: min(100%, 820px);
-  max-width: 820px;
-}
-@media (max-width: 1199px) {
-  .article-column { grid-column: 2; grid-row: 2; }
-  .article-content, .article-content .markdown-body { width: 100%; max-width: none; }
-}
-@media (max-width: 768px) {
+  .guide-toc { position: static; max-height: none; margin: 0 0 24px; }
   .article-column { display: block; width: 100%; }
   .article-content, .article-content .markdown-body { width: 100%; max-width: none; }
+  .guide-sequence, .related-list { grid-template-columns: minmax(0, 1fr); }
+  .sequence-item.next { text-align: left; }
 }
-
-.guide-sequence { grid-template-columns: 1fr; }
-.sequence-item.next { text-align: left; }
-.related-list { grid-template-columns: 1fr; }
 </style>

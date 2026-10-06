@@ -21,7 +21,8 @@ export function parseMarkdown(markdown) {
   const placeholder = (kind, index) => `${sentinel}${kind}${index}${sentinel}`
   const codeBlockRef = new RegExp(`${escapeRegExp(sentinel)}CB(\\d+)${escapeRegExp(sentinel)}`, 'g')
   const inlineCodeRef = new RegExp(`${escapeRegExp(sentinel)}IC(\\d+)${escapeRegExp(sentinel)}`, 'g')
-  const placeholderLine = new RegExp(`^${escapeRegExp(sentinel)}(?:CB|IC)\\d+${escapeRegExp(sentinel)}$`)
+  const quotedTableRef = new RegExp(`${escapeRegExp(sentinel)}QT(\\d+)${escapeRegExp(sentinel)}`, 'g')
+  const placeholderLine = new RegExp(`^${escapeRegExp(sentinel)}(?:CB|IC|QT)\\d+${escapeRegExp(sentinel)}$`)
 
   const codeBlocks = []
   html = html.replace(/```([\w-]*)\n([\s\S]*?)```/g, (_, language, code) => {
@@ -49,6 +50,30 @@ export function parseMarkdown(markdown) {
     const target = safeHref(href)
     return target ? `<a href="${target}" target="_blank" rel="noopener noreferrer">${label}</a>` : label
   })
+
+  // 引用块内的表格：形如
+  //   &gt; | 概念 | 含义 |
+  //   &gt; |------|------|
+  //   &gt; | TPS  | ...  |
+  // 必须在「引用块 → blockquote」之前处理，否则每一行会各自变成独立 blockquote，
+  // 表格永远匹配不到（行首已不是 `|`）。这里先摘出来生成真实 table，
+  // 再用哨兵占位，最后随 blockquote 一起还原。
+  const quotedTables = []
+  html = html.replace(/(?:^&gt;\s*\|.*\|\s*$\n?)+/gm, match => {
+    const rows = match.split('\n')
+      .map(line => line.replace(/^&gt;\s*/, '').trim())
+      .filter(line => line)
+    if (rows.length < 2) return match
+    const cells = row => row.split('|').slice(1, -1).map(cell => cell.trim())
+    const header = cells(rows[0]).map(cell => `<th>${cell}</th>`).join('')
+    const body = rows.slice(2)
+      .filter(row => !/^\|[\s\-:|]+\|$/.test(row))
+      .map(row => `<tr>${cells(row).map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('')
+    const index = quotedTables.length
+    quotedTables.push(`<table><thead><tr>${header}</tr></thead><tbody>${body}</tbody></table>`)
+    return `${sentinel}QT${index}${sentinel}\n`
+  })
+
   html = html.replace(/^(?:&gt;\s?)+(.+)$/gm, '<blockquote>$1</blockquote>')
 
   html = html.replace(/((?:^\|.+\|\s*\n?)+)/gm, match => {
@@ -73,6 +98,7 @@ export function parseMarkdown(markdown) {
   })
 
   html = html.replace(codeBlockRef, (_, index) => codeBlocks[Number(index)] || '')
+  html = html.replace(quotedTableRef, (_, index) => quotedTables[Number(index)] || '')
   html = html.replace(inlineCodeRef, (_, index) => inlineCodes[Number(index)] || '')
   return html.replace(/\n{3,}/g, '\n\n')
 }

@@ -1,0 +1,514 @@
+/* ============================================================
+   MCHive Design Tokens v1.0
+   设计规范实现 · 面向长文档阅读场景 · 三主题同步定义
+   对接方式：把本文件 @import 到 src/styles/main.css 顶部，
+             或直接替换 main.css 中对应的 token 区块。
+   ⚠ 每个 token 必须在 :root / [data-theme='dark'] /
+     :root[data-theme='system'] 三处同步，缺一即为缺陷。
+   ============================================================ */
+
+/* ---------- 1. Token: Light (default) ---------- */
+:root {
+  color-scheme: light;
+
+  /* ===== 缓动 ===== */
+  --ease-standard: cubic-bezier(.22,.61,.36,1);
+  --ease-spring:   cubic-bezier(.34,1.56,.64,1);
+  --ease-smooth:   cubic-bezier(.4,0,.2,1);
+
+  /* ===== 层级背景 ===== */
+  --bg-primary:   #f5f7fa;
+  --bg-secondary: #ffffff;
+  --surface:        rgba(255,255,255,.7);
+  --surface-hover:  rgba(255,255,255,.85);
+  --surface-active: rgba(240,243,248,.9);
+  --surface-accent: rgba(16,185,129,.06);
+  --bg-card:     rgba(255,255,255,.75);
+  --bg-tertiary: rgba(237,241,247,.7);
+
+  /* ===== 文字（对比度已核对，见规范 §2.1）===== */
+  --text-primary:   #1a2332;  /* 14.71:1 ✓ */
+  --text-secondary: #4a5568;  /*  7.01:1 ✓ */
+  --text-muted:     #667085;  /*  4.64:1 ✓ 修正：原 #8896a6 仅 2.81:1；选 #667085 而非压线的 #6b7280 */
+  --code-text:      #24313f;  /* 12.34:1 ✓ */
+
+  /* ===== 强调色 =====
+     定位：--accent 仅用于装饰（图标/指示条/进度条/边框）；
+     一切「绿色文字」用 --accent-strong，双主题均 ≥4.5:1。 */
+  --accent:        #10b981;   /* 2.36:1 — 仅装饰，禁止用作正文文字 */
+  --accent-hover:  #059669;
+  --accent-strong: #047857;   /* 5.11:1 ✓ 正文链接用这个 */
+  --accent-dim:    rgba(16,185,129,.1);
+  --button-text:   #ffffff;
+
+  /* ===== Hero ===== */
+  --hero-bg:   linear-gradient(160deg, #f0f5f2 0%, #e8f0eb 40%, #ddebe4 100%);
+  --hero-text: #1a2332;
+  --hero-grid: rgba(16,185,129,.1);
+
+  /* ===== 边框 ===== */
+  --border:        rgba(200,210,225,.6);
+  --border-strong: rgba(170,185,205,.7);
+
+  /* ===== 状态色（用于文字时同样需 ≥4.5:1）===== */
+  --success: #047857;  /* 5.11:1 ✓ 修正：原 #10b981 仅 2.36:1 */
+  --warning: #b45309;  /* 4.68:1 ✓ 修正：原 #d97706 仅 2.4:1 */
+  --danger:  #b91c1c;  /* 6.03:1 ✓ 修正：原 #dc2626 仅 4.50:1 压线，提到 6.03 留余量 */
+  --info:    #2563eb;  /* 4.82:1 ✓ */
+  --success-dim: rgba(4,120,87,.08);
+  --warning-dim: rgba(180,83,9,.08);
+  --danger-dim:  rgba(185,28,28,.08);
+  --info-dim:    rgba(37,99,235,.08);
+
+  /* ===== 阴影 ===== */
+  --shadow:    0 2px 12px rgba(40,60,80,.06), 0 1px 3px rgba(40,60,80,.04);
+  --shadow-lg: 0 12px 40px rgba(40,60,80,.08), 0 4px 12px rgba(40,60,80,.04);
+
+  /* ===== 玻璃拟态 ===== */
+  --glass-bg:         rgba(255,255,255,.55);
+  --glass-border:     rgba(255,255,255,.6);
+  --glass-highlight:  rgba(255,255,255,.85);
+  --glass-iridescent: rgba(16,185,129,.04);
+  --blur-amount: 24px;
+
+  /* ===== 字体 ===== */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+  --font-mono: 'Cascadia Code', 'SFMono-Regular', Consolas, monospace;
+
+  /* ===== 排版阶梯（1.25 模数，桌面不小于移动）===== */
+  --fs-caption: 12px;  --lh-caption: 1.6;
+  --fs-small:   13px;  --lh-small:   1.65;
+  --fs-body:    15px;  --lh-body:     1.75;   /* ← 原 14px/1.85：字小行松，改为字大行紧 */
+  --fs-body-lg: 16px;  --lh-body-lg:  1.8;    /* 长文正文 */
+  --fs-h4:      17px;  --lh-h4:       1.45;
+  --fs-h3:      20px;  --lh-h3:       1.4;
+  --fs-h2:      25px;  --lh-h2:       1.35;
+  --fs-h1:      31px;  --lh-h1:       1.25;
+
+  /* ===== 间距（4px 基，主序列 8 的倍数）===== */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+
+  /* ===== 阅读语义间距 ===== */
+  --space-paragraph:      16px;
+  --space-heading-before: 40px;  /* 标题上方 2×段距，形成分组 */
+  --space-heading-after:  12px;  /* 标题下方 0.75×段距，紧贴下文 */
+  --space-block:          24px;  /* 代码块/表格/引用上下 */
+
+  /* ===== 阅读容器宽度（见规范 §3.1）===== */
+  --measure-guide:  42rem;  /* 教程正文上限 */
+  --measure-plugin: 46rem;  /* 插件文档上限（表格多，略宽）*/
+  --measure-prose:  38rem;  /* 列表页描述文字 */
+
+  /* ===== 圆角 ===== */
+  --radius-sm:   10px;
+  --radius:      14px;
+  --radius-lg:   20px;
+  --radius-full: 9999px;
+
+  /* ===== 动效时长 ===== */
+  --dur-fast: 150ms;
+  --dur-base: 250ms;
+  --dur-slow: 400ms;
+}
+
+/* ---------- 2. Token: Dark theme ---------- */
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg-primary:   #08090b;
+  --bg-secondary: #0d0e11;
+  --surface:        rgba(255,255,255,.04);
+  --surface-hover:  rgba(255,255,255,.07);
+  --surface-active: rgba(255,255,255,.09);
+  --surface-accent: rgba(255,255,255,.06);
+  --bg-card:     rgba(255,255,255,.03);
+  --bg-tertiary: rgba(255,255,255,.05);
+
+  --text-primary:   #f0f2f5;  /* 17.76:1 ✓ */
+  --text-secondary: #a8b3c4;  /*  9.40:1 ✓ */
+  --text-muted:     #7d8b9e;  /*  5.57:1 ✓ 微调：原 #6b7a8d 在卡片底上仅 4.41:1 */
+  --code-text:      #d1fae5;  /* 17.56:1 ✓ */
+
+  --accent:        #6ee7b7;   /* 13.07:1 ✓ 深色下可安全用作文字 */
+  --accent-hover:  #86efac;
+  --accent-strong: #4ade80;   /* 11.43:1 ✓ */
+  --accent-dim:    rgba(110,231,183,.08);
+  --button-text:   #08090b;
+
+  --hero-bg:   #050608;
+  --hero-text: #f0f2f5;
+  --hero-grid: rgba(110,231,183,.08);
+
+  --border:        rgba(255,255,255,.06);
+  --border-strong: rgba(255,255,255,.12);
+
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger:  #f87171;
+  --info:    #60a5fa;
+  --success-dim: rgba(52,211,153,.1);
+  --warning-dim: rgba(251,191,36,.1);
+  --danger-dim:  rgba(248,113,113,.1);
+  --info-dim:    rgba(96,165,250,.1);
+
+  --shadow:    0 4px 24px rgba(0,0,0,.4);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,.5);
+
+  --glass-bg:         rgba(255,255,255,.04);
+  --glass-border:     rgba(255,255,255,.09);
+  --glass-highlight:  rgba(255,255,255,.14);
+  --glass-iridescent: rgba(110,231,183,.03);
+  --blur-amount: 20px;
+}
+
+/* ---------- 3. Token: system-dark（跟随系统的深色）---------- */
+@media (prefers-color-scheme: dark) {
+  :root[data-theme='system'] {
+    color-scheme: dark;
+
+    --bg-primary:   #08090b;
+    --bg-secondary: #0d0e11;
+    --surface:        rgba(255,255,255,.04);
+    --surface-hover:  rgba(255,255,255,.07);
+    --surface-active: rgba(255,255,255,.09);
+    --surface-accent: rgba(255,255,255,.06);
+    --bg-card:     rgba(255,255,255,.03);
+    --bg-tertiary: rgba(255,255,255,.05);
+
+    --text-primary:   #f0f2f5;
+    --text-secondary: #a8b3c4;
+    --text-muted:     #7d8b9e;
+    --code-text:      #d1fae5;
+
+    --accent:        #6ee7b7;
+    --accent-hover:  #86efac;
+    --accent-strong: #4ade80;
+    --accent-dim:    rgba(110,231,183,.08);
+    --button-text:   #08090b;
+
+    --hero-bg:   #050608;
+    --hero-text: #f0f2f5;
+    --hero-grid: rgba(110,231,183,.08);
+
+    --border:        rgba(255,255,255,.06);
+    --border-strong: rgba(255,255,255,.12);
+
+    --success: #34d399;
+    --warning: #fbbf24;
+    --danger:  #f87171;
+    --info:    #60a5fa;
+    --success-dim: rgba(52,211,153,.1);
+    --warning-dim: rgba(251,191,36,.1);
+    --danger-dim:  rgba(248,113,113,.1);
+    --info-dim:    rgba(96,165,250,.1);
+
+    --shadow:    0 4px 24px rgba(0,0,0,.4);
+    --shadow-lg: 0 16px 48px rgba(0,0,0,.5);
+
+    --glass-bg:         rgba(255,255,255,.04);
+    --glass-border:     rgba(255,255,255,.09);
+    --glass-highlight:  rgba(255,255,255,.14);
+    --glass-iridescent: rgba(110,231,183,.03);
+    --blur-amount: 20px;
+  }
+}
+
+/* ============================================================
+   4. 阅读正文基线（应用 token 的 markdown-body）
+   关键变更：宽度封顶 + 字号上行 + 单向 margin + 前松后紧
+   ============================================================ */
+.markdown-body {
+  min-width: 0;
+  max-width: var(--measure-guide);
+  color: var(--text-secondary);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  overflow-wrap: anywhere;
+}
+/* 长文（教程）用更大字号，降低视觉疲劳 */
+.markdown-body[data-reading-length='long'] {
+  font-size: var(--fs-body-lg);
+  line-height: var(--lh-body-lg);
+}
+
+.markdown-body h1, .markdown-body h2,
+.markdown-body h3, .markdown-body h4 {
+  color: var(--text-primary);
+  font-weight: 700;
+  scroll-margin-top: 92px;
+}
+.markdown-body h1 { margin: var(--space-8) 0 var(--space-heading-after); font-size: var(--fs-h1); line-height: var(--lh-h1); }
+.markdown-body h2 { margin: var(--space-heading-before) 0 var(--space-heading-after); padding-bottom: .35em; border-bottom: 1px solid var(--border); font-size: var(--fs-h2); line-height: var(--lh-h2); }
+.markdown-body h3 { margin: var(--space-heading-before) 0 var(--space-heading-after); font-size: var(--fs-h3); line-height: var(--lh-h3); }
+.markdown-body h4 { margin: var(--space-6) 0 var(--space-3); font-size: var(--fs-h4); line-height: var(--lh-h4); }
+
+/* 段落：单向 margin，避免折叠带来的不可预测间距 */
+.markdown-body p { margin: 0 0 var(--space-paragraph); }
+.markdown-body ul, .markdown-body ol { margin: 0 0 var(--space-paragraph); padding-left: 1.65em; }
+.markdown-body li { margin: 0 0 var(--space-1); padding-left: .15em; }
+
+/* 正文链接：保留下划线（色觉障碍用户唯一可用的区分手段） */
+.markdown-body a {
+  color: var(--accent-strong);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  overflow-wrap: anywhere;
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+.markdown-body a:hover { color: var(--accent-hover); text-decoration-thickness: 2px; }
+
+.markdown-body blockquote {
+  margin: 0 0 var(--space-block);
+  padding: var(--space-4) var(--space-6);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--surface-accent);
+  color: var(--text-secondary);
+}
+
+/* 表格：首列不换行保证键名完整，表头语义在长表格滚动时保持 */
+.markdown-body table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 var(--space-block);
+  border-collapse: collapse;
+  overflow-x: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+.markdown-body th, .markdown-body td {
+  min-width: 100px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+.markdown-body th { background: var(--surface); color: var(--text-primary); font-weight: 600; }
+
+.markdown-body img { display: block; max-width: 100%; height: auto; border-radius: var(--radius-sm); }
+.markdown-body hr { height: 1px; margin: var(--space-6) 0; border: 0; background: var(--border); }
+
+/* 行内码：0.93 倍，用 accent-strong 保证双主题可读 */
+.markdown-body :not(pre) > code {
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--accent-strong);
+  font: .93em var(--font-mono);
+}
+
+/* 代码块：13px（正文 15px 的 0.87 倍），行高 1.7 */
+pre.code-block, .file-content {
+  max-width: 100%;
+  margin: 0 0 var(--space-block);
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--code-text);
+  font: var(--fs-small)/1.7 var(--font-mono);
+  tab-size: 2;
+}
+.code-block code { display: block; min-width: max-content; padding: var(--space-4); color: inherit; font: inherit; white-space: pre; }
+
+/* ============================================================
+   5. 阅读辅助组件
+   ============================================================ */
+
+/* 5.1 阅读进度条（装饰性，用 --accent 安全） */
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 60;
+  background: transparent;
+  pointer-events: none;
+}
+.reading-progress__bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+  transform-origin: left center;
+  transition: width var(--dur-fast) linear;
+}
+
+/* 5.2 三态目录（已读 / 当前 / 未读） */
+.toc-item {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: var(--fs-small);
+  line-height: 1.7;
+  transition: all var(--dur-fast) var(--ease-standard);
+}
+.toc-item__dot {
+  flex: none;
+  width: 6px; height: 6px;
+  margin-top: .55em;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--text-muted);
+  background: transparent;
+}
+.toc-item.is-read { color: var(--text-muted); }
+.toc-item.is-read .toc-item__dot { border-color: var(--text-muted); background: var(--text-muted); }
+.toc-item.is-active {
+  color: var(--accent-strong);           /* 用 strong，不用 accent */
+  background: var(--accent-dim);
+  font-weight: 600;
+}
+.toc-item.is-active .toc-item__dot { border-color: var(--accent); background: var(--accent); }
+.toc-item.is-active::before {
+  content: '';
+  position: absolute;
+  top: 4px; bottom: 4px; left: 0;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--accent);
+}
+.toc-item:hover { color: var(--accent-strong); background: var(--surface-hover); }
+
+/* 5.3 标题锚点（hover 浮出） */
+.heading-anchor {
+  margin-left: var(--space-2);
+  color: var(--text-muted);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-standard);
+}
+.markdown-body h2:hover .heading-anchor,
+.markdown-body h3:hover .heading-anchor,
+.markdown-body h4:hover .heading-anchor { opacity: 1; }
+
+/* 5.4 回到顶部 */
+.back-to-top {
+  position: fixed;
+  right: var(--space-6);
+  bottom: var(--space-6);
+  z-index: 55;
+  width: 40px; height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-full);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px) saturate(180%);
+  color: var(--text-secondary);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: all var(--dur-base) var(--ease-spring);
+}
+.back-to-top.is-visible { opacity: 1; pointer-events: auto; }
+.back-to-top:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+/* 5.5 提示框（Callout） */
+.callout {
+  margin: 0 0 var(--space-block);
+  padding: var(--space-4) var(--space-6);
+  border-left: 3px solid var(--info);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--info-dim);
+  color: var(--text-secondary);   /* 正文用 text-secondary，不用状态色 */
+}
+.callout--warning { border-left-color: var(--warning); background: var(--warning-dim); }
+.callout--danger  { border-left-color: var(--danger);  background: var(--danger-dim); }
+.callout--success { border-left-color: var(--success); background: var(--success-dim); }
+.callout__title { display: block; margin-bottom: var(--space-2); color: var(--text-primary); font-weight: 600; }
+
+/* 5.6 阅读时间徽章 */
+.reading-time {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: var(--fs-caption);
+}
+
+/* ============================================================
+   6. 组件：按钮 / 标签（规格化）
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 40px;              /* md 默认 */
+  padding: 0 var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-small);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--dur-base) var(--ease-standard);
+}
+.btn--sm { min-height: 32px; padding: 0 var(--space-3); }
+.btn--lg { min-height: 48px; padding: 0 var(--space-6); font-size: var(--fs-body); }
+.btn:disabled { opacity: .5; cursor: not-allowed; pointer-events: none; }
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+  color: var(--button-text);
+  border-color: var(--accent);
+  box-shadow: 0 2px 12px var(--accent-dim);
+}
+.btn-primary:hover { transform: translateY(-1px); filter: brightness(1.05); }
+.btn-primary:active { transform: scale(.97); }
+.btn-secondary {
+  border-color: var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+}
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent-strong); background: var(--accent-dim); }
+.btn-ghost { background: transparent; color: var(--text-secondary); }
+.btn-ghost:hover { background: var(--surface-hover); color: var(--text-primary); }
+
+/* 移动端触达区扩展（不改视觉尺寸） */
+@media (pointer: coarse) {
+  .btn::after { content: ''; position: absolute; inset: -6px; }
+  .btn { position: relative; }
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  background: var(--accent-dim);
+  color: var(--accent-strong);
+  font-size: var(--fs-caption);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.tag--success { background: var(--success-dim); color: var(--success); }
+.tag--warning { background: var(--warning-dim); color: var(--warning); }
+.tag--danger  { background: var(--danger-dim);  color: var(--danger); }
+
+/* ============================================================
+   7. 玻璃降级（不支持 backdrop-filter 时）
+   ============================================================ */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-card, .site-header, .guide-toc, .guide-sidebar {
+    background: var(--bg-secondary);
+    opacity: 1;
+  }
+}

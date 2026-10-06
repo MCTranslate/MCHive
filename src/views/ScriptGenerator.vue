@@ -365,7 +365,7 @@ const flagExplanations = computed(() => {
 /* 内存滑块 */
 .sg-mem-row { display: flex; align-items: center; gap: 12px; }
 .sg-mem-row input[type="range"] { flex: 1; accent-color: var(--accent); }
-.sg-mem-value { min-width: 52px; text-align: right; font: 14px var(--font-mono); font-weight: 600; color: var(--accent); }
+.sg-mem-value { min-width: 52px; text-align: right; font: 14px var(--font-mono); font-weight: 600; color: var(--accent-strong); }
 
 /* GC 选项 */
 .sg-gc-options { display: flex; flex-direction: column; gap: 8px; }
@@ -399,14 +399,14 @@ const flagExplanations = computed(() => {
   background: var(--surface);
 }
 .sg-script-title { display: flex; align-items: center; gap: 8px; color: var(--text-primary); font-size: 12px; font-weight: 600; }
-.sg-script-title svg { color: var(--accent); }
+.sg-script-title svg { color: var(--accent-strong); }
 .sg-copy-btn {
   padding: 4px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm);
   background: var(--surface-hover); color: var(--text-secondary);
   font-size: 11px; cursor: pointer; transition: all .15s;
 }
-.sg-copy-btn:hover { border-color: var(--accent); color: var(--accent); }
-.sg-copy-btn.copied { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.sg-copy-btn:hover { border-color: var(--accent); color: var(--accent-strong); }
+.sg-copy-btn.copied { border-color: var(--accent); color: var(--accent-strong); background: var(--accent-dim); }
 .sg-code { margin: 0; padding: 14px 16px; overflow-x: auto; background: var(--bg-primary); }
 .sg-code code { font: 12px/1.7 var(--font-mono); color: var(--text-primary); white-space: pre; }
 

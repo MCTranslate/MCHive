@@ -58,7 +58,7 @@ const repository = 'https://github.com/MCTranslate/MCHive'
 .contribute-page { width: min(1000px, calc(100% - 64px)); margin: auto; padding: 28px 0 72px; }
 .breadcrumb { display: flex; gap: 9px; color: var(--text-muted); font-size: 11px; }
 .breadcrumb a { color: inherit; text-decoration: none; transition: color .2s; }
-.breadcrumb a:hover { color: var(--accent); }
+.breadcrumb a:hover { color: var(--accent-strong); }
 
 .page-heading { max-width: 720px; margin: 64px 0 54px; }
 .eyebrow { color: var(--accent-strong); font: 10px var(--font-mono); letter-spacing: 1px; }
@@ -83,7 +83,7 @@ const repository = 'https://github.com/MCTranslate/MCHive'
 .contribution-types p { min-height: 94px; margin-top: 9px; color: var(--text-muted); font-size: 12px; line-height: 1.8; }
 .contribute-page code { padding: 2px 5px; border: 1px solid var(--border); border-radius: 3px; background: var(--surface); color: var(--accent-strong); font: 11px var(--font-mono); overflow-wrap: anywhere; }
 .contribution-types a, .contribute-footer a { color: var(--accent-strong); font-size: 12px; text-decoration: none; transition: color .2s; }
-.contribution-types a:hover, .contribute-footer a:hover { color: var(--accent); }
+.contribution-types a:hover, .contribute-footer a:hover { color: var(--accent-strong); }
 
 .workflow { display: grid; grid-template-columns: .8fr 1.2fr; gap: 50px; padding: 47px 0; border-bottom: 1px solid var(--border); }
 .workflow h2 { margin-top: 9px; }

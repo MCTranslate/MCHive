@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCHive 设计系统规范 · 预览</title>
+<link rel="stylesheet" href="tokens.css">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    transition: background-color .4s var(--ease-smooth), color .4s var(--ease-smooth);
+  }
+
+  /* ---- 页头 ---- */
+  .ds-header {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; height: 64px; padding: 0 32px;
+    border-bottom: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(180%);
+  }
+  .ds-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; }
+  .ds-mark {
+    width: 30px; height: 30px; display: grid; place-items: center;
+    border-radius: var(--radius-sm); color: var(--button-text); font-size: 15px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+  }
+  .theme-switch { display: flex; gap: 4px; padding: 4px; border: 1px solid var(--glass-border);
+    border-radius: var(--radius-full); background: var(--glass-bg); }
+  .theme-switch button {
+    padding: 6px 14px; border: 0; border-radius: var(--radius-full);
+    background: transparent; color: var(--text-secondary);
+    font: inherit; font-size: var(--fs-caption); cursor: pointer;
+    transition: all var(--dur-fast) var(--ease-standard);
+  }
+  .theme-switch button.active { background: var(--accent); color: var(--button-text); font-weight: 600; }
+
+  /* ---- 布局 ---- */
+  .ds-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 40px;
+    max-width: 1240px; margin: 0 auto; padding: 40px 32px 96px; }
+  .ds-nav { position: sticky; top: 96px; align-self: start;
+    display: flex; flex-direction: column; gap: 2px; }
+  .ds-nav a { padding: 8px 12px; border-radius: var(--radius-sm); color: var(--text-secondary);
+    text-decoration: none; font-size: var(--fs-small); transition: all var(--dur-fast) var(--ease-standard); }
+  .ds-nav a:hover { color: var(--accent-strong); background: var(--surface-hover); }
+
+  section { margin-bottom: 56px; scroll-margin-top: 96px; }
+  h2.ds-h { margin: 0 0 6px; font-size: var(--fs-h2); font-weight: 700; letter-spacing: -.4px; }
+  .ds-sub { margin: 0 0 24px; color: var(--text-muted); font-size: var(--fs-small); }
+  h3.ds-h3 { margin: 32px 0 12px; font-size: var(--fs-h4); font-weight: 650; }
+
+  .panel {
+    padding: 24px; border: 1px solid var(--glass-border); border-radius: var(--radius);
+    background: var(--bg-card); backdrop-filter: blur(14px);
+  }
+
+  /* ---- 色板 ---- */
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+  .swatch { border: 1px solid var(--glass-border); border-radius: var(--radius-sm); overflow: hidden;
+    background: var(--bg-card); }
+  .swatch .chip { height: 56px; }
+  .swatch .meta { padding: 10px 12px; }
+  .swatch .name { display: block; font-size: var(--fs-caption); font-weight: 600; }
+  .swatch .val { display: block; margin-top: 2px; color: var(--text-muted); font: var(--fs-caption) var(--font-mono); }
+  .swatch .ratio { display: inline-block; margin-top: 6px; font-size: 11px; font-weight: 600;
+    padding: 1px 7px; border-radius: var(--radius-full); }
+  .ok { background: var(--success-dim); color: var(--success); }
+  .bad { background: var(--danger-dim); color: var(--danger); }
+  .dec { background: var(--warning-dim); color: var(--warning); }
+
+  /* ---- 排版阶梯 ---- */
+  .type-row { display: flex; align-items: baseline; gap: 20px; padding: 14px 0;
+    border-bottom: 1px solid var(--border); }
+  .type-row:last-child { border-bottom: 0; }
+  .type-key { flex: none; width: 130px; color: var(--text-muted); font: var(--fs-caption) var(--font-mono); }
+  .type-spec { flex: none; width: 92px; color: var(--text-muted); font-size: var(--fs-caption); }
+
+  /* ---- 前后对照 ---- */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .compare .col { padding: 20px; border-radius: var(--radius); border: 1px solid var(--glass-border); }
+  .compare .before { background: var(--surface); }
+  .compare .after { background: var(--accent-dim); border-color: var(--accent); }
+  .compare h4 { margin: 0 0 4px; font-size: var(--fs-small); font-weight: 700; }
+  .compare .verdict { margin: 0 0 14px; font-size: var(--fs-caption); }
+  .demo-text { color: var(--text-secondary); overflow-wrap: anywhere; }
+  .demo-text.before { font-size: 14px; line-height: 1.85; }
+  .demo-text.after { font-size: 15px; line-height: 1.75; }
+
+  .meter { display: flex; align-items: center; gap: 8px; margin-top: 12px;
+    font-size: 11px; color: var(--text-muted); }
+  .meter .bar { flex: 1; height: 6px; border-radius: var(--radius-full); background: var(--border); overflow: hidden; }
+  .meter .fill { height: 100%; border-radius: var(--radius-full); }
+
+  /* ---- 组件演示 ---- */
+  .demo-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .btn { position: relative; }
+  .glass-card { padding: 20px; }
+
+  /* ---- 阅读进度条演示 ---- */
+  .progress-demo { position: relative; height: 3px; border-radius: var(--radius-full);
+    background: var(--border); overflow: hidden; margin: 8px 0 20px; }
+  .progress-demo i { position: absolute; inset: 0 auto 0 0; width: 62%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-hover)); }
+
+  /* ---- 三态 TOC 演示 ---- */
+  .toc-demo { display: flex; flex-direction: column; gap: 2px; max-width: 320px; }
+
+  /* ---- 表格 ---- */
+  table.spec { width: 100%; border-collapse: collapse; font-size: var(--fs-small); }
+  table.spec th, table.spec td { padding: 10px 14px; border: 1px solid var(--border); text-align: left; }
+  table.spec th { background: var(--surface); color: var(--text-primary); font-weight: 600; }
+  table.spec code { font-family: var(--font-mono); font-size: .92em; color: var(--accent-strong); }
+
+  .note { display: flex; gap: 10px; padding: 14px 18px; margin: 16px 0 0;
+    border-left: 3px solid var(--accent); border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    background: var(--surface-accent); color: var(--text-secondary); font-size: var(--fs-small); }
+
+  @media (max-width: 900px) {
+    .ds-layout { grid-template-columns: 1fr; gap: 24px; padding: 24px 18px 64px; }
+    .ds-nav { position: static; flex-direction: row; flex-wrap: wrap; }
+    .compare { grid-template-columns: 1fr; }
+    .ds-header { padding: 0 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="ds-header">
+  <div class="ds-brand"><span class="ds-mark">◈</span> MCHive 设计系统规范</div>
+  <div class="theme-switch" role="group" aria-label="主题切换">
+    <button data-set="light" class="active">浅色</button>
+    <button data-set="dark">深色</button>
+    <button data-set="system">跟随系统</button>
+  </div>
+</header>
+
+<div class="ds-layout">
+  <nav class="ds-nav" aria-label="规范目录">
+    <a href="#colors">颜色 Token</a>
+    <a href="#type">排版阶梯</a>
+    <a href="#reading">阅读体验对照</a>
+    <a href="#components">组件规格</a>
+    <a href="#a11y">无障碍基线</a>
+  </nav>
+
+  <main>
+    <!-- ===== 颜色 ===== -->
+    <section id="colors">
+      <h2 class="ds-h">颜色 Token</h2>
+      <p class="ds-sub">对比度依据 WCAG 2.1 实测。徽章含义：<span class="ratio ok">AA 正文 ✓</span>
+        ≥4.5:1 可作正文 · <span class="ratio dec">仅装饰</span> 不可作文字 · <span class="ratio bad">不达标</span></p>
+
+      <h3 class="ds-h3">文字色</h3>
+      <div class="swatches" id="sw-text"></div>
+
+      <h3 class="ds-h3">强调与状态色</h3>
+      <div class="swatches" id="sw-accent"></div>
+
+      <div class="note">
+        <span>⚠️</span>
+        <span><b>本次修正的关键项</b>：浅色 <code>--text-muted</code> 由 2.81:1 提至 4.62:1；
+        <code>--accent</code> 定位收窄为装饰色，绿色文字一律用 <code>--accent-strong</code>（5.11:1）。</span>
+      </div>
+    </section>
+
+    <!-- ===== 排版 ===== -->
+    <section id="type">
+      <h2 class="ds-h">排版阶梯</h2>
+      <p class="ds-sub">1.25 模数比。正文 15px，长文 16px —— 桌面不小于移动。</p>
+      <div class="panel" id="type-scale"></div>
+    </section>
+
+    <!-- ===== 阅读对照 ===== -->
+    <section id="reading">
+      <h2 class="ds-h">阅读体验对照</h2>
+      <p class="ds-sub">同一段中文，在修改前后的行宽与字号下的阅读密度差异。</p>
+
+      <div class="compare">
+        <div class="col before">
+          <h4>修改前</h4>
+          <p class="verdict" style="color: var(--danger)">14px / 1.85 · 820px 宽 · 约 58 汉字/行</p>
+          <p class="demo-text before">
+            服务器性能调优的第一步不是改配置，而是先测量。很多服主一上手就把 view-distance 调到最小值，
+            结果玩家抱怨视野太窄。正确的顺序是：先用 spark 抓一份火焰图，确认 CPU 时间真正花在哪里，
+            再决定调什么。如果瓶颈在实体 AI，调低视野没用；如果瓶颈在区块加载，才轮到 view-distance。
+          </p>
+          <div class="meter"><span>行宽</span><div class="bar"><i class="fill" style="width:100%;background:var(--danger)"></i></div><span>偏宽 58 字</span></div>
+        </div>
+        <div class="col after">
+          <h4>修改后</h4>
+          <p class="verdict" style="color: var(--success)">15px / 1.75 · 42rem 宽 · 约 44 汉字/行</p>
+          <p class="demo-text after">
+            服务器性能调优的第一步不是改配置，而是先测量。很多服主一上手就把 view-distance 调到最小值，
+            结果玩家抱怨视野太窄。正确的顺序是：先用 spark 抓一份火焰图，确认 CPU 时间真正花在哪里，
+            再决定调什么。如果瓶颈在实体 AI，调低视野没用；如果瓶颈在区块加载，才轮到 view-distance。
+          </p>
+          <div class="meter"><span>行宽</span><div class="bar"><i class="fill" style="width:76%;background:var(--success)"></i></div><span>舒适 44 字</span></div>
+        </div>
+      </div>
+
+      <h3 class="ds-h3">段落节奏（前松后紧）</h3>
+      <div class="panel">
+        <div class="demo-text after" style="max-width:42rem">
+          <h4 style="margin: 32px 0 12px; color: var(--text-primary);">为什么标题上方要留 40px？</h4>
+          <p style="margin:0 0 16px">标题上方 40px（2× 段距）让标题明确归属于它下方的内容，读者的眼动路径自然形成「分组」。</p>
+          <h4 style="margin: 32px 0 12px; color: var(--text-primary);">为什么下方只留 12px？</h4>
+          <p style="margin:0">下方 12px（0.75× 段距）让标题紧贴正文，避免标题与内容被视觉割裂。前松后紧是中文分节的关键。</p>
+        </div>
+      </div>
+
+      <h3 class="ds-h3">阅读进度 + 三态目录</h3>
+      <div class="panel">
+        <div class="progress-demo"><i></i></div>
+        <div class="toc-demo">
+          <a href="#" class="toc-item is-read"><span class="toc-item__dot"></span><span>环境准备与 Java 版本选择</span></a>
+          <a href="#" class="toc-item is-read"><span class="toc-item__dot"></span><span>下载与启动 Paper 核心</span></a>
+          <a href="#" class="toc-item is-active"><span class="toc-item__dot"></span><span>性能调优的测量方法</span></a>
+          <a href="#" class="toc-item"><span class="toc-item__dot"></span><span>常见瓶颈与对策</span></a>
+          <a href="#" class="toc-item"><span class="toc-item__dot"></span><span>上线前的检查清单</span></a>
+        </div>
+        <div class="note" style="margin-top:20px">
+          <span>▸</span>
+          <span>已读用 <code>--text-muted</code> 实心点（视觉后退），当前用 <code>--accent</code> 竖条 +
+          <code>--accent-strong</code> 文字（双主题达标），未读为空心点。读者一眼可判「读到 2/5 节」。</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 组件 ===== -->
+    <section id="components">
+      <h2 class="ds-h">组件规格</h2>
+
+      <h3 class="ds-h3">按钮</h3>
+      <div class="panel">
+        <div class="demo-row">
+          <button class="btn btn-primary">主操作</button>
+          <button class="btn btn-secondary">次操作</button>
+          <button class="btn btn-ghost">弱操作</button>
+          <button class="btn btn-primary btn--sm">小尺寸</button>
+          <button class="btn btn-primary btn--lg">大尺寸</button>
+          <button class="btn btn-primary" disabled>禁用</button>
+        </div>
+        <table class="spec" style="margin-top:20px">
+          <tr><th>尺寸</th><th>高度</th><th>水平内边距</th><th>用途</th></tr>
+          <tr><td><code>--sm</code></td><td>32px</td><td>12px</td><td>表格内、标签旁</td></tr>
+          <tr><td>默认</td><td>40px</td><td>16px</td><td>常规操作</td></tr>
+          <tr><td><code>--lg</code></td><td>48px</td><td>24px</td><td>主行动号召</td></tr>
+        </table>
+      </div>
+
+      <h3 class="ds-h3">标签</h3>
+      <div class="panel">
+        <div class="demo-row">
+          <span class="tag">经济系统</span>
+          <span class="tag">世界管理</span>
+          <span class="tag tag--success">已汉化</span>
+          <span class="tag tag--warning">需配置</span>
+          <span class="tag tag--danger">已停更</span>
+        </div>
+      </div>
+
+      <h3 class="ds-h3">提示框（Callout）</h3>
+      <div class="panel">
+        <div class="callout"><span class="callout__title">💡 提示</span>正文用 <code>--text-secondary</code>，不用状态色当正文色，保证 7.01:1 对比度。</div>
+        <div class="callout callout--warning"><span class="callout__title">⚠️ 注意</span>升级到 Paper 26.1 后世界存储结构改变，且无法降级。</div>
+        <div class="callout callout--danger"><span class="callout__title">⛔ 危险</span>执行 <code>rm -rf</code> 前务必确认目录，此操作不可恢复。</div>
+      </div>
+
+      <h3 class="ds-h3">链接</h3>
+      <div class="panel">
+        <p class="demo-text">正文内链接必须保留下划线：这里是 <a href="#">EssentialsX 的权限节点说明</a>，
+          以及 <a href="#">性能调优教程</a>。仅靠颜色区分链接对色觉障碍用户不可用。</p>
+      </div>
+    </section>
+
+    <!-- ===== 无障碍 ===== -->
+    <section id="a11y">
+      <h2 class="ds-h">无障碍基线</h2>
+      <p class="ds-sub">本次审计发现的待修项已标注。</p>
+      <div class="panel">
+        <table class="spec">
+          <tr><th>项目</th><th>标准</th><th>状态</th></tr>
+          <tr><td>正文对比度</td><td>≥ 4.5:1</td><td><span class="tag tag--success">修正后达标</span></td></tr>
+          <tr><td>大字号对比度</td><td>≥ 3:1</td><td><span class="tag tag--success">达标</span></td></tr>
+          <tr><td>焦点可见</td><td>2px outline + 2px offset</td><td><span class="tag tag--success">已实现</span></td></tr>
+          <tr><td>减少动效</td><td>尊重 prefers-reduced-motion</td><td><span class="tag tag--success">已实现</span></td></tr>
+          <tr><td>键盘可达</td><td>全功能可 Tab</td><td><span class="tag tag--warning">待修：卡片用 div@click</span></td></tr>
+          <tr><td>触达区</td><td>移动端 ≥ 44×44px</td><td><span class="tag tag--warning">待修：移动 TOC / 标签</span></td></tr>
+          <tr><td>文本缩放</td><td>200% 不破版</td><td><span class="tag tag--warning">待验：固定 px 容器</span></td></tr>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+/* ---- 主题切换 ---- */
+const root = document.documentElement
+document.querySelectorAll('.theme-switch button').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    document.querySelectorAll('.theme-switch button').forEach(function (b) { b.classList.remove('active') })
+    btn.classList.add('active')
+    root.dataset.theme = btn.dataset.set
+    root.style.colorScheme = btn.dataset.set === 'system' ? '' : btn.dataset.set
+  })
+})
+
+/* ---- 色板数据（含实测对比度）---- */
+var TEXT = [
+  { n: 'text-primary',   v: '#1a2332', d: '#f0f2f5', l: 14.71, o: 17.76 },
+  { n: 'text-secondary', v: '#4a5568', d: '#a8b3c4', l: 7.01,  o: 9.40 },
+  { n: 'text-muted',     v: '#667085', d: '#7d8b9e', l: 4.64,  o: 5.57, fix: true },
+  { n: 'code-text',      v: '#24313f', d: '#d1fae5', l: 12.34, o: 17.56 }
+]
+var ACCENT = [
+  { n: 'accent（仅装饰）', v: '#10b981', d: '#6ee7b7', l: 2.36, o: 13.07, deco: true },
+  { n: 'accent-strong',   v: '#047857', d: '#4ade80', l: 5.11, o: 11.43 },
+  { n: 'success', v: '#047857', d: '#34d399', l: 5.11, o: 10.36, fix: true },
+  { n: 'warning', v: '#b45309', d: '#fbbf24', l: 4.68, o: 11.93, fix: true },
+  { n: 'danger',  v: '#b91c1c', d: '#f87171', l: 6.03, o: 7.20, fix: true },
+  { n: 'info',    v: '#2563eb', d: '#60a5fa', l: 4.82, o: 7.83 }
+]
+
+function badge(item) {
+  if (item.deco) return '<span class="ratio dec">仅装饰</span>'
+  var light = item.l >= 4.5
+  var cls = light ? 'ok' : 'bad'
+  var txt = light ? 'AA 正文 ✓' : '不达标'
+  return '<span class="ratio ' + cls + '">' + txt + ' ' + item.l.toFixed(2) + ':1</span>'
+}
+function render(el, list) {
+  el.innerHTML = list.map(function (item) {
+    return '<div class="swatch">' +
+      '<div class="chip" style="background:' + item.v + '"></div>' +
+      '<div class="meta">' +
+        '<span class="name">' + item.n + (item.fix ? ' <span style="color:var(--success)">· 已修正</span>' : '') + '</span>' +
+        '<span class="val">浅 ' + item.v + ' / 深 ' + item.d + '</span>' +
+        badge(item) +
+      '</div></div>'
+  }).join('')
+}
+render(document.getElementById('sw-text'), TEXT)
+render(document.getElementById('sw-accent'), ACCENT)
+
+/* ---- 排版阶梯 ---- */
+var TYPE = [
+  { k: 'fs-h1',      s: '31px / 1.25', t: '一级标题 Heading 1' },
+  { k: 'fs-h2',      s: '25px / 1.35', t: '二级标题 Heading 2' },
+  { k: 'fs-h3',      s: '20px / 1.40', t: '三级标题 Heading 3' },
+  { k: 'fs-h4',      s: '17px / 1.45', t: '四级标题 Heading 4' },
+  { k: 'fs-body-lg', s: '16px / 1.80', t: '长文正文（≥3000 字教程）' },
+  { k: 'fs-body',    s: '15px / 1.75', t: '正文（桌面与移动一致）' },
+  { k: 'fs-small',   s: '13px / 1.65', t: '辅助说明、卡片描述' },
+  { k: 'fs-caption', s: '12px / 1.60', t: '元信息、标签、面包屑' }
+]
+document.getElementById('type-scale').innerHTML = TYPE.map(function (row) {
+  var size = getComputedStyle(root).getPropertyValue('--' + row.k)
+  return '<div class="type-row">' +
+    '<span class="type-key">--' + row.k + '</span>' +
+    '<span class="type-spec">' + row.s + '</span>' +
+    '<span style="font-size:' + size + ';font-weight:600;color:var(--text-primary)">' + row.t + '</span>' +
+  '</div>'
+}).join('')
+</script>
+</body>
+</html>

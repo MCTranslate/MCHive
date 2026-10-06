@@ -410,7 +410,7 @@ watch(() => route.fullPath, () => {
   transition: transform .3s var(--ease-spring);
 }
 .primary-nav a:hover { color: var(--text-primary); }
-.primary-nav a.active { color: var(--accent); }
+.primary-nav a.active { color: var(--accent-strong); }
 .primary-nav a.active::after { transform: scaleX(1); }
 
 /* ---------- Header Actions ---------- */
@@ -461,11 +461,11 @@ kbd {
   transition: all .25s var(--ease-spring);
   backdrop-filter: blur(12px);
 }
-.github-link:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); transform: translateY(-2px); }
+.github-link:hover { border-color: var(--accent); color: var(--accent-strong); background: var(--accent-dim); transform: translateY(-2px); }
 .github-link svg { width: 18px; height: 18px; fill: currentColor; }
 
 .menu-trigger { display: none; width: 38px; height: 38px; place-items: center; border: 1px solid var(--glass-border); border-radius: 10px; color: var(--text-secondary); background: var(--glass-bg); cursor: pointer; transition: all .2s; }
-.menu-trigger:hover { border-color: var(--accent); color: var(--accent); }
+.menu-trigger:hover { border-color: var(--accent); color: var(--accent-strong); }
 .menu-trigger svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; }
 
 /* ---------- Mobile Nav ---------- */
@@ -501,7 +501,7 @@ kbd {
   cursor: pointer;
 }
 .mobile-nav-item:last-child, .mobile-theme { border-bottom: 0; }
-.mobile-nav-item:hover { color: var(--accent); }
+.mobile-nav-item:hover { color: var(--accent-strong); }
 .mobile-theme small { font-size: 11px; color: var(--text-muted); }
 
 /* Mobile nav transition */
@@ -531,7 +531,7 @@ kbd {
 .footer-brand p { margin-top: 14px; color: var(--text-muted); font-size: 13px; line-height: 1.7; }
 .footer-links { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; color: var(--text-muted); font-size: 12px; }
 .footer-links a { color: var(--text-secondary); text-decoration: none; transition: color .2s; }
-.footer-links a:hover { color: var(--accent); }
+.footer-links a:hover { color: var(--accent-strong); }
 .footer-label { color: var(--text-primary); font-weight: 650; margin-bottom: 4px; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
 .footer-bottom {
   min-height: 48px;
@@ -602,7 +602,7 @@ kbd {
   cursor: pointer;
   transition: all .2s;
 }
-.close-search:hover { border-color: var(--accent); color: var(--accent); }
+.close-search:hover { border-color: var(--accent); color: var(--accent-strong); }
 .search-results { max-height: min(440px, 56vh); overflow-y: auto; padding: 10px 12px; }
 .search-caption { padding: 4px 10px 10px; color: var(--text-muted); font-size: 11px; font-weight: 500; }
 .search-result {
@@ -620,7 +620,7 @@ kbd {
   transition: all .18s var(--ease-standard);
 }
 .search-result:hover { background: var(--surface-hover); transform: translateX(4px); }
-.result-type { width: 48px; color: var(--accent); font-size: 10px; font-weight: 600; flex: none; text-transform: uppercase; letter-spacing: .5px; }
+.result-type { width: 48px; color: var(--accent-strong); font-size: 10px; font-weight: 600; flex: none; text-transform: uppercase; letter-spacing: .5px; }
 .result-copy { display: flex; min-width: 0; flex-direction: column; gap: 3px; flex: 1; }
 .result-copy strong { font-size: 13px; font-weight: 600; }
 .result-copy small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-muted); font-size: 11px; }
@@ -638,7 +638,7 @@ kbd {
 .search-dialog-foot button {
   border: 0;
   background: transparent;
-  color: var(--accent);
+  color: var(--accent-strong);
   font: inherit;
   cursor: pointer;
   transition: color .18s;
